@@ -1,4 +1,4 @@
-# 5. Gitlab pipeline to deploy Stage and Production
+# 6. Gitlab pipeline to deploy Stage and Production
 
 Date: 2022-09-05
 

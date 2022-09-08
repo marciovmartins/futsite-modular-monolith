@@ -1,4 +1,4 @@
-# 6. Setup Authentication and Authorisation for the Apis
+# 7. Setup Authentication and Authorisation for the Apis
 
 Date: 2022-09-05
 
