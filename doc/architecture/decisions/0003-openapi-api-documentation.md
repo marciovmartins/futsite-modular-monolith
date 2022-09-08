@@ -1,4 +1,4 @@
-# 3. OpenApi Api Documentation
+# 3. OpenAPI Api Documentation
 
 Date: 2022-09-05
 
@@ -8,12 +8,15 @@ Accepted
 
 ## Context
 
-The issue motivating this decision, and any context that influences or constrains the decision.
+External components and clients needs to have some way to learn about the api capabilities without have to look inside
+the code base.
 
 ## Decision
 
-The change that we're proposing or have agreed to implement.
+We will use the OpenAPI specification version 3.1. We will use Springdoc-openapi implementation to generate the openapi
+artifact and the UI interface also provided by it.
 
 ## Consequences
 
-What becomes easier or more difficult to do and any risks introduced by the change that will need to be mitigated.
+With the solid OpenApi specification, it is possible to use external frameworks and libraries to generate web
+documentation pages for the documentation, generate automatically clients for many programming languages.
