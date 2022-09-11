@@ -11,7 +11,7 @@ class HelloWorldController(
     private val getHelloWorld: GetHelloWorld
 ) {
     @GetMapping("/api/v1/helloworld")
-    fun helloWorldName(@RequestParam(value = "name", defaultValue = "John Doe") name: String): HelloWorldDTO {
+    fun helloWorldName(@RequestParam(value = "name") name: String?): HelloWorldDTO {
         return getHelloWorld.with(name)
     }
 }

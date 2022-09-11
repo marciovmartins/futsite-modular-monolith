@@ -1,4 +1,4 @@
-package com.gitlab.marciovmartins.futsite.modularmonolith.helloworld
+package com.gitlab.marciovmartins.futsite.modularmonolith.helloworld.infrastructure
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class HelloWorldControllerIT(
+internal class HelloWorldControllerIT(
     @Autowired private val restTemplate: TestRestTemplate,
 ) {
     @Test
