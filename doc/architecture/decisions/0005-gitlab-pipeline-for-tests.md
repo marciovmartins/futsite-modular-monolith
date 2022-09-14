@@ -8,12 +8,13 @@ Accepted
 
 ## Context
 
-The issue motivating this decision, and any context that influences or constrains the decision.
+The unit tests, integration tests for the main branch, feature branches, hotfix, should be visible and easy to run.
 
 ## Decision
 
-The change that we're proposing or have agreed to implement.
+We will use gitlab.com to run the pipelines with local runner in my local private kubernetes cluster.
 
 ## Consequences
 
-What becomes easier or more difficult to do and any risks introduced by the change that will need to be mitigated.
+It will be possible to run pipelines without cost limitation. Learn about gitlab runners in a microk8s kubernetes
+cluster with 3 nodes.
