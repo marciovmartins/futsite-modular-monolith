@@ -8,14 +8,16 @@ Accepted
 
 ## Context
 
-The issue motivating this decision, and any context that influences or constrains the decision.
-
-https://www.archunit.org/
+Different developers have different programming styles. It is important to have a unique way to develop the components.
 
 ## Decision
 
-The change that we're proposing or have agreed to implement.
+Use the ArchUnit library to enforce the onion architecture.
+
+The Onion Architecture has layers and each layer can have dependencies with itself and with the inner layers only.
+
+https://www.archunit.org/
 
 ## Consequences
 
-What becomes easier or more difficult to do and any risks introduced by the change that will need to be mitigated.
+Avoid put classes and files in the wrong package. Help to identify flaws in the design and classes.
