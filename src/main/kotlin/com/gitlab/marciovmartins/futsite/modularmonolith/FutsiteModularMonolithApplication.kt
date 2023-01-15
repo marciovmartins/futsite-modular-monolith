@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class FutsiteModularMonolithApplication
 
 fun main(args: Array<String>) {
-	runApplication<FutsiteModularMonolithApplication>(*args)
+    runApplication<FutsiteModularMonolithApplication>(*args)
 }
