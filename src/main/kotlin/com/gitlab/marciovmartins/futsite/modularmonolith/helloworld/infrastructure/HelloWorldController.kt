@@ -1,7 +1,7 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.helloworld.infrastructure
 
-import com.gitlab.marciovmartins.futsite.modularmonolith.helloworld.usecase.GetHelloWorld
-import com.gitlab.marciovmartins.futsite.modularmonolith.helloworld.usecase.HelloWorldDTO
+import com.gitlab.marciovmartins.futsite.modularmonolith.helloworld.application.GetHelloWorld
+import com.gitlab.marciovmartins.futsite.modularmonolith.helloworld.application.HelloWorldDTO
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController

@@ -1,4 +1,4 @@
-package com.gitlab.marciovmartins.futsite.modularmonolith.helloworld.usecase
+package com.gitlab.marciovmartins.futsite.modularmonolith.helloworld.application
 
 import com.gitlab.marciovmartins.futsite.modularmonolith.helloworld.domain.HelloWorld
 

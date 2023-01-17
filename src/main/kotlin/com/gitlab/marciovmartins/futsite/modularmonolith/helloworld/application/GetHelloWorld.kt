@@ -1,7 +1,7 @@
-package com.gitlab.marciovmartins.futsite.modularmonolith.helloworld.usecase
+package com.gitlab.marciovmartins.futsite.modularmonolith.helloworld.application
 
 import com.gitlab.marciovmartins.futsite.modularmonolith.helloworld.domain.HelloWorld
-import com.gitlab.marciovmartins.futsite.modularmonolith.helloworld.usecase.HelloWorldMapper.toDTO
+import com.gitlab.marciovmartins.futsite.modularmonolith.helloworld.application.HelloWorldMapper.toDTO
 import org.springframework.stereotype.Service
 
 @Service

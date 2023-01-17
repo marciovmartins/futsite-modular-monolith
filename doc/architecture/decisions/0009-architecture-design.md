@@ -13,20 +13,20 @@ mental load.
 
 ## Decision
 
-We will use the onion architecture for complex parts of the software with 3 layers (domain, usecase and infrastructure
+We will use the onion architecture for complex parts of the software with 3 layers (domain, application and infrastructure
 packages).
 
-The domain can only contains business logic and should not contain infrastructure information (e.g: Spring Boot annotations)
+The domain can only contain business logic and should not contain infrastructure information (e.g: Spring Boot annotations)
 
-The usecase should be the domain orchestration, calling classes and interfaces from the domain and mapping information from the infrastructure to the domain and mapping back from the domain to the DTOs or primitive classes.
+The usecase/application should be the domain orchestration, calling classes and interfaces from the domain and mapping information from the infrastructure to the domain and mapping back from the domain to the DTOs or primitive classes.
 
 E.g.:
 
 - ..modularmonolith.players.domain.Player
 - ..modularmonolith.players.domain.PlayerToCreate
 - ..modularmonolith.players.domain.PlayerRepository
-- ..modularmonolith.players.usecase.CreatePlayer
-- ..modularmonolith.players.usecase.PlayerMapper
+- ..modularmonolith.players.application.CreatePlayer
+- ..modularmonolith.players.application.PlayerMapper
 - ..modularmonolith.players.infrastructure.PlayerSpringDataRepository
 - ..modularmonolith.players.infrastructure.PlayerController
 

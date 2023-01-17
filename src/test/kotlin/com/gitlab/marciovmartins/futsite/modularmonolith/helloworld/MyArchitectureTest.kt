@@ -15,6 +15,6 @@ class MyArchitectureTest {
 
     @ArchTest
     val usecaseRules: ArchRule = ArchRuleDefinition.classes()
-        .that().resideInAPackage("..usecase..")
-        .should().accessClassesThat().resideInAnyPackage("..usecase..", "..domain..")
+        .that().resideInAPackage("..application..")
+        .should().accessClassesThat().resideInAnyPackage("..application..", "..domain..")
 }

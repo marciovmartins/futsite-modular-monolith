@@ -1,4 +1,4 @@
-package com.gitlab.marciovmartins.futsite.modularmonolith.helloworld.usecase
+package com.gitlab.marciovmartins.futsite.modularmonolith.helloworld.application
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
