@@ -10,6 +10,10 @@ class Gameday(
     val date: Date,
     val matches: List<Match>,
 ) {
+    init {
+        if (matches.isEmpty()) throw EmptyMatchesException()
+    }
+
     data class GamedayId(val value: UUID)
 
     data class Date(val value: Instant) {
@@ -48,6 +52,8 @@ class Gameday(
 
     abstract class InvalidGamedayException(
         val propertyName: String,
-        val propertyValue: Any,
+        val propertyValue: Any? = null,
     ) : Exception()
+
+    class EmptyMatchesException : InvalidGamedayException("matches")
 }

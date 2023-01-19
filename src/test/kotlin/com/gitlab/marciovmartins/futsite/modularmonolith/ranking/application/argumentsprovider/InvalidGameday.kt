@@ -34,6 +34,16 @@ object InvalidGameday : ArgumentsProvider {
                 "propertyValue" to Instant.parse("2030-01-01T00:00:00.000000Z"),
             ),
         ),
+        argument(
+            testDescription = "Empty matches",
+            gameday = RankingFixture.gamedayDTO().copy(
+                matches = emptyList(),
+            ),
+            exception = Gameday.EmptyMatchesException::class,
+            properties = mapOf(
+                "propertyName" to "matches",
+            ),
+        ),
     )
 }
 
