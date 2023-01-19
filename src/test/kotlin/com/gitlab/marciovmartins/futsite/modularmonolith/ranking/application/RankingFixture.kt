@@ -7,17 +7,36 @@ import java.time.Instant
 import java.util.UUID
 
 object RankingFixture {
-    fun gamedayToCreateDTO() = GamedayDTO(
-        id = UUID.randomUUID(),
-        amateurSoccerGroupId = UUID.randomUUID(),
-        date = Instant.now(),
-        matches = listOf(
-            MatchDTO(
-                players = setOf(
-                    PlayerDTO(UUID.randomUUID(), Team.A, 1u, 0u, 0u, 0u, 0u),
-                    PlayerDTO(UUID.randomUUID(), Team.B, 0u, 0u, 0u, 0u, 0u),
-                ),
-            ),
-        ),
+    fun gamedayDTO(
+        gamedayId: UUID = UUID.randomUUID(),
+        amateurSoccerGroupId: UUID = UUID.randomUUID(),
+        date: Instant = Instant.now(),
+        matches: List<MatchDTO> = listOf(
+            matchDTO(),
+        )
+    ) = GamedayDTO(
+        id = gamedayId,
+        amateurSoccerGroupId = amateurSoccerGroupId,
+        date = date,
+        matches = matches,
     )
+
+    fun matchDTO(
+        players: Set<PlayerDTO> = setOf(
+            playerDTO(team = Team.A),
+            playerDTO(team = Team.B),
+        )
+    ) = MatchDTO(
+        players = players,
+    )
+
+    fun playerDTO(
+        playerId: UUID = UUID.randomUUID(),
+        team: Team,
+        goalsInFavor: UByte = 1u,
+        goalsAgainst: UByte = 0u,
+        yellowCards: UByte = 0u,
+        blueCards: UByte = 0u,
+        redCards: UByte = 0u
+    ) = PlayerDTO(playerId, team, goalsInFavor, goalsAgainst, yellowCards, blueCards, redCards)
 }

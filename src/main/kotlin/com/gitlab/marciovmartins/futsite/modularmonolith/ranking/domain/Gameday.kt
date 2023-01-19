@@ -12,7 +12,14 @@ class Gameday(
 ) {
     data class GamedayId(val value: UUID)
 
-    data class Date(val value: Instant)
+    data class Date(val value: Instant) {
+        init {
+            if (value.isBefore(Instant.parse("2020-01-01T00:00:00Z"))) throw InvalidDateException(value)
+            if (value.isAfter(Instant.now())) throw InvalidDateException(value)
+        }
+
+        class InvalidDateException(value: Instant) : InvalidGamedayException("date", value)
+    }
 
     data class Match(
         val players: Set<Player>,
@@ -38,4 +45,9 @@ class Gameday(
             A, B
         }
     }
+
+    abstract class InvalidGamedayException(
+        val propertyName: String,
+        val propertyValue: Any,
+    ) : Exception()
 }
