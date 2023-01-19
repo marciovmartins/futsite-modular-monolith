@@ -50,10 +50,24 @@ object InvalidGameday : ArgumentsProvider {
                 matches = listOf(
                     RankingFixture.matchDTO(
                         players = emptySet(),
-                    )
+                    ),
                 ),
             ),
             exception = Gameday.Match.EmptyPlayersException::class,
+            properties = mapOf(
+                Gameday.InvalidGamedayException::propertyName.name to "matches.players",
+            ),
+        ),
+        argument(
+            testDescription = "Match with one player only",
+            gameday = RankingFixture.gamedayDTO().copy(
+                matches = listOf(
+                    RankingFixture.matchDTO(
+                        players = setOf(RankingFixture.playerDTO(team = GamedayDTO.MatchDTO.Team.A)),
+                    ),
+                ),
+            ),
+            exception = Gameday.Match.InsufficientPlayersException::class,
             properties = mapOf(
                 Gameday.InvalidGamedayException::propertyName.name to "matches.players",
             ),

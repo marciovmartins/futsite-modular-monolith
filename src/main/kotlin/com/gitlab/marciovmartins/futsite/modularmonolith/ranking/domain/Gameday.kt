@@ -30,6 +30,7 @@ class Gameday(
     ) {
         init {
             if (players.isEmpty()) throw EmptyPlayersException()
+            if (players.size == 1) throw InsufficientPlayersException()
         }
 
         data class Player(
@@ -54,6 +55,7 @@ class Gameday(
         }
 
         class EmptyPlayersException() : InvalidGamedayException("matches.players")
+        class InsufficientPlayersException() : InvalidGamedayException("matches.players")
     }
 
     abstract class InvalidGamedayException(
