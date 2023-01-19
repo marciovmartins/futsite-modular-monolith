@@ -11,7 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ArgumentsSource
 import kotlin.reflect.KClass
 
-class RegisterGamedayTest {
+class RegisterAndRetrieveGamedayTest {
     private lateinit var registerGameday: RegisterGameday
     private lateinit var retrieveGameday: RetrieveGameday
     private lateinit var gamedayRepository: GamedayRepository
