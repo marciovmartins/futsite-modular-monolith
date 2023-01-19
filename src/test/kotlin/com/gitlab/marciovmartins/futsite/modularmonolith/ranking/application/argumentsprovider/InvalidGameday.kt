@@ -72,6 +72,25 @@ object InvalidGameday : ArgumentsProvider {
                 Gameday.InvalidGamedayException::propertyName.name to "matches.players",
             ),
         ),
+        argument(
+            testDescription = "Match with more than 24 players",
+            gameday = RankingFixture.gamedayDTO().copy(
+                matches = listOf(
+                    RankingFixture.matchDTO(
+                        players = (
+                            IntRange(1, 12).map { RankingFixture.playerDTO(team = GamedayDTO.MatchDTO.Team.A) }
+                                + IntRange(1, 12).map { RankingFixture.playerDTO(team = GamedayDTO.MatchDTO.Team.B) }
+                                + RankingFixture.playerDTO(team = GamedayDTO.MatchDTO.Team.A)
+                            ).toSet(),
+                    ),
+                ),
+            ),
+            exception = Gameday.Match.TooManyPlayersException::class,
+            properties = mapOf(
+                Gameday.InvalidGamedayException::propertyName.name to "matches.players",
+                Gameday.Match.TooManyPlayersException::numberOfPlayers.name to 25,
+            ),
+        ),
     )
 }
 
