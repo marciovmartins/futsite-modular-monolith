@@ -19,8 +19,8 @@ object InvalidGameday : ArgumentsProvider {
             ),
             exception = Gameday.Date.InvalidDateException::class,
             properties = mapOf(
-                "propertyName" to "date",
-                "propertyValue" to Instant.parse("2019-12-31T23:59:59.999999Z"),
+                Gameday.InvalidGamedayException::propertyName.name to "date",
+                Gameday.InvalidGamedayException::propertyValue.name to Instant.parse("2019-12-31T23:59:59.999999Z"),
             ),
         ),
         argument(
@@ -30,8 +30,8 @@ object InvalidGameday : ArgumentsProvider {
             ),
             exception = Gameday.Date.InvalidDateException::class,
             properties = mapOf(
-                "propertyName" to "date",
-                "propertyValue" to Instant.parse("2030-01-01T00:00:00.000000Z"),
+                Gameday.InvalidGamedayException::propertyName.name to "date",
+                Gameday.InvalidGamedayException::propertyValue.name to Instant.parse("2030-01-01T00:00:00.000000Z"),
             ),
         ),
         argument(
@@ -41,7 +41,21 @@ object InvalidGameday : ArgumentsProvider {
             ),
             exception = Gameday.EmptyMatchesException::class,
             properties = mapOf(
-                "propertyName" to "matches",
+                Gameday.InvalidGamedayException::propertyName.name to "matches",
+            ),
+        ),
+        argument(
+            testDescription = "Match with empty players",
+            gameday = RankingFixture.gamedayDTO().copy(
+                matches = listOf(
+                    RankingFixture.matchDTO(
+                        players = emptySet(),
+                    )
+                ),
+            ),
+            exception = Gameday.Match.EmptyPlayersException::class,
+            properties = mapOf(
+                Gameday.InvalidGamedayException::propertyName.name to "matches.players",
             ),
         ),
     )

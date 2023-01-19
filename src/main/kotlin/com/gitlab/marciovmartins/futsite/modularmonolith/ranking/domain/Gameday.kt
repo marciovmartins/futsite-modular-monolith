@@ -28,6 +28,10 @@ class Gameday(
     data class Match(
         val players: Set<Player>,
     ) {
+        init {
+            if (players.isEmpty()) throw EmptyPlayersException()
+        }
+
         data class Player(
             val playerId: PlayerId,
             val team: Team,
@@ -48,6 +52,8 @@ class Gameday(
         enum class Team {
             A, B
         }
+
+        class EmptyPlayersException() : InvalidGamedayException("matches.players")
     }
 
     abstract class InvalidGamedayException(
