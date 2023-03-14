@@ -35,11 +35,21 @@ object InvalidGameday : ArgumentsProvider {
             ),
         ),
         argument(
-            testDescription = "Empty matches",
+            testDescription = "Gameday with empty matches",
             gameday = RankingFixture.gamedayDTO().copy(
                 matches = emptyList(),
             ),
             exception = Gameday.EmptyMatchesException::class,
+            properties = mapOf(
+                Gameday.InvalidGamedayException::propertyName.name to "matches",
+            ),
+        ),
+        argument(
+            testDescription = "Gameday with more than 99 matches",
+            gameday = RankingFixture.gamedayDTO().copy(
+                matches = (1..100).map { RankingFixture.matchDTO() }
+            ),
+            exception = Gameday.TooManyMatchesException::class,
             properties = mapOf(
                 Gameday.InvalidGamedayException::propertyName.name to "matches",
             ),

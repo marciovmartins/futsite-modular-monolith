@@ -13,6 +13,7 @@ class Gameday(
 ) {
     init {
         if (matches.isEmpty()) throw EmptyMatchesException()
+        if (matches.size > 99) throw TooManyMatchesException()
     }
 
     data class GamedayId(val value: UUID)
@@ -69,4 +70,5 @@ class Gameday(
     )
 
     class EmptyMatchesException : InvalidGamedayException("matches")
+    class TooManyMatchesException : InvalidGamedayException("matches")
 }
