@@ -17,7 +17,7 @@ class ControllerExceptionHandler {
 
         return ProblemDetail.forStatus(400).apply {
             this.type = typeUrl
-            this.detail = ex.message
+            this.detail = ex::class.simpleName?.removeSuffix("Exception")
             ex.properties.forEach { this.setProperty(it.key, it.value) }
         }
     }

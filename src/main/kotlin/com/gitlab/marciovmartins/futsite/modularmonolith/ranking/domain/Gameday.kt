@@ -1,6 +1,7 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain
 
 import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.domain.AmateurSoccerGroup.AmateurSoccerGroupId
+import com.gitlab.marciovmartins.futsite.modularmonolith.shared.exception.domain.IllegalPropertyException
 import java.time.Instant
 import java.util.UUID
 
@@ -55,15 +56,17 @@ class Gameday(
             A, B
         }
 
-        class EmptyPlayersException() : InvalidGamedayException("matches.players")
-        class InsufficientPlayersException() : InvalidGamedayException("matches.players")
+        class EmptyPlayersException : InvalidGamedayException("matches.players")
+        class InsufficientPlayersException : InvalidGamedayException("matches.players")
         class TooManyPlayersException(val numberOfPlayers: Int) : InvalidGamedayException("matches.players")
     }
 
     abstract class InvalidGamedayException(
         val propertyName: String,
         val propertyValue: Any? = null,
-    ) : Exception()
+    ) : IllegalPropertyException(
+        mapOf("propertyName" to propertyName, "propertyValue" to propertyValue)
+    )
 
     class EmptyMatchesException : InvalidGamedayException("matches")
 }

@@ -54,7 +54,6 @@ internal class HelloWorldControllerTest {
         val name = "H"
 
         every { getHelloWorld.with(name) } throws IllegalPropertyException(
-            message = "Name too short",
             properties = mapOf(
                 "propertyName" to "name",
                 "propertyValue" to "",
@@ -73,7 +72,7 @@ internal class HelloWorldControllerTest {
         // then
         response Then {
             statusCode(400)
-            body("detail", equalTo("Name too short"))
+            body("detail", equalTo("IllegalProperty"))
             body("type", equalTo("http://localhost/api/exception/illegal-property"))
             body("propertyName", equalTo("name"))
             body("propertyValue", equalTo(""))

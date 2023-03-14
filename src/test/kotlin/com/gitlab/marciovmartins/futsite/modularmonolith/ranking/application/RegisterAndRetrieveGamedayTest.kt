@@ -11,7 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ArgumentsSource
 import kotlin.reflect.KClass
 
-class RegisterAndRetrieveGamedayTest {
+internal class RegisterAndRetrieveGamedayTest {
     private lateinit var registerGameday: RegisterGameday
     private lateinit var retrieveGameday: RetrieveGameday
     private lateinit var gamedayRepository: GamedayRepository
@@ -27,6 +27,28 @@ class RegisterAndRetrieveGamedayTest {
     fun `register and retrieve minimum gameday`() {
         // given
         val gamedayToRegisterDTO = RankingFixture.gamedayDTO()
+
+        // when
+        registerGameday.with(gamedayToRegisterDTO)
+        val gamedayDTO = retrieveGameday.by(gamedayToRegisterDTO.id)
+
+        // then
+        assertThat(gamedayDTO).isEqualTo(gamedayToRegisterDTO)
+    }
+
+    @Test
+    fun `register and retrieve maximum gameday`() {
+        // given
+        val gamedayToRegisterDTO = RankingFixture.gamedayDTO(
+            matches = (1..99).map {
+                RankingFixture.matchDTO(
+                    players = (
+                        (1..12).map { RankingFixture.playerDTO(team = GamedayDTO.MatchDTO.Team.A) }
+                            + (1..12).map { RankingFixture.playerDTO(team = GamedayDTO.MatchDTO.Team.B) }
+                        ).toSet()
+                )
+            }
+        )
 
         // when
         registerGameday.with(gamedayToRegisterDTO)
