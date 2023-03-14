@@ -44,7 +44,6 @@ internal class GetHelloWorldTest {
         // given
         val getHelloWorld = GetHelloWorld()
         val emptyName = ""
-        val expectedException = IllegalArgumentException("Empty hello world name")
 
         // when
         val actualException = assertThrows<IllegalArgumentException> {
@@ -52,6 +51,7 @@ internal class GetHelloWorldTest {
         }
 
         // then
-        assertThat(actualException).usingRecursiveComparison().isEqualTo(expectedException)
+        assertThat(actualException).isInstanceOf(IllegalArgumentException::class.java)
+        assertThat(actualException.message).isEqualTo("Empty hello world name")
     }
 }

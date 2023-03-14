@@ -11,10 +11,12 @@ class MyArchitectureTest {
     @ArchTest
     val domainRules: ArchRule = ArchRuleDefinition.classes()
         .that().resideInAPackage("..domain..")
-        .should().accessClassesThat().resideInAPackage("..domain..")
+        .should().accessClassesThat().areInnerClasses()
+        .orShould().accessClassesThat().resideInAnyPackage("..domain..", "java..")
 
     @ArchTest
     val usecaseRules: ArchRule = ArchRuleDefinition.classes()
         .that().resideInAPackage("..application..")
-        .should().accessClassesThat().resideInAnyPackage("..application..", "..domain..")
+        .should().accessClassesThat().areInnerClasses()
+        .orShould().accessClassesThat().resideInAnyPackage("..application..", "..domain..", "java..")
 }
