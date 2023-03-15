@@ -8,17 +8,19 @@ Accepted
 
 ## Context
 
-Define the architectural designs for the application. Needed to facilitate the onboard of new developers. Decrease the
+Define the architectural designs for the application. Needed to facilitate the new developers onboarding. Decrease the
 mental load.
 
 ## Decision
 
-We will use the onion architecture for complex parts of the software with 3 layers (domain, application and infrastructure
-packages).
+We will use the onion architecture for complex parts of the software with 3 layers (domain, application and
+infrastructure packages).
 
-The domain can only contain business logic and should not contain infrastructure information (e.g: Spring Boot annotations)
+The domain can only contain business logic and should not contain infrastructure information (e.g: Spring Boot
+annotations)
 
-The usecase/application should be the domain orchestration, calling classes and interfaces from the domain and mapping information from the infrastructure to the domain and mapping back from the domain to the DTOs or primitive classes.
+The usecase/application should be the domain orchestration, calling classes and interfaces from the domain and mapping
+information from the infrastructure to the domain and mapping back from the domain to the DTOs or primitive classes.
 
 E.g.:
 
@@ -43,10 +45,11 @@ E.g.:
 We will use one layer architecture for CRUDs where the domain structure is the same of the presented data.
 
 E.g.:
+
 - ..modularmonolith.players.PlayerEntity
 - ..modularmonolith.players.PlayerSpringRestRepository
 
-It is allowed to have subpackages inside of each layer. Pay attention to do not introduce unnecessary complexity.
+It is allowed to have subpackages inside each layer. Pay attention to do not introduce unnecessary complexity.
 
 ## Consequences
 
