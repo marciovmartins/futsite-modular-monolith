@@ -1,0 +1,16 @@
+spring:
+  mvc:
+    problemdetails:
+      enabled: true
+  data:
+    rest:
+      base-path: "/api"
+  jpa:
+    database: "mysql"
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: none
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver

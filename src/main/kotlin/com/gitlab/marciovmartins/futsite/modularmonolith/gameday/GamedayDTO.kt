@@ -1,4 +1,4 @@
-package com.gitlab.marciovmartins.futsite.modularmonolith.ranking.application
+package com.gitlab.marciovmartins.futsite.modularmonolith.gameday
 
 import java.time.Instant
 import java.util.UUID
