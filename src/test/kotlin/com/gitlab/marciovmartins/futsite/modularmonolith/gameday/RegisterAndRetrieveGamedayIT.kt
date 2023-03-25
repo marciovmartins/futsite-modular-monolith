@@ -1,10 +1,11 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.gameday
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.argumentsprovider.InvalidGameDay
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ArgumentsSource
 import org.skyscreamer.jsonassert.JSONAssert.assertEquals
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -17,7 +18,6 @@ import org.springframework.web.context.request.ServletRequestAttributes
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.UUID
-import kotlin.reflect.KClass
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -51,8 +51,8 @@ internal class RegisterAndRetrieveGamedayIT {
             matches = listOf(
                 TestMatchDTO(
                     players = setOf(
-                        playerStatisticDTO(team = "A"),
-                        playerStatisticDTO(team = "B"),
+                        testPlayerStatisticDTO(team = "A"),
+                        testPlayerStatisticDTO(team = "B"),
                     ),
                 ),
             ),
@@ -102,8 +102,8 @@ internal class RegisterAndRetrieveGamedayIT {
             matches = listOf(
                 TestMatchDTO(
                     players = (
-                        (1..24).map { playerStatisticDTO(team = "A") }
-                            + (1..24).map { playerStatisticDTO(team = "B") }
+                        (1..24).map { testPlayerStatisticDTO(team = "A") }
+                            + (1..24).map { testPlayerStatisticDTO(team = "B") }
                         ).toSet()
                 ),
             ),
@@ -143,70 +143,33 @@ internal class RegisterAndRetrieveGamedayIT {
     }
 
     @ParameterizedTest(name = "{0}")
+    @ArgumentsSource(InvalidGameDay::class)
     fun `register game day with invalid information`(
         testDescription: String,
-        gamedayDTO: GamedayDTO,
-        expectedException: KClass<out Exception>,
+        gamedayToRegisterDTO: TestPostGameDayDTO,
+        expectedTitle: String,
+        expectedDetail: String,
         properties: Map<String, Any>
     ) {
-        TODO("need to be implemented")
-//        // when
-//        val exception = assertThrows<Exception> { registerGameday.with(gamedayDTO) }
-//
-//        // then
-//        assertThat(exception).isInstanceOf(expectedException.javaObjectType)
-//        properties.forEach { assertThat(exception).hasFieldOrPropertyWithValue(it.key, it.value) }
+        // when
+        val response = webTestClient
+            .post().uri("/api/gameDays")
+            .bodyValue(gamedayToRegisterDTO)
+            .header("Content-Type", "application/json")
+            .exchange()
+
+        // then
+        response
+            .expectStatus().isEqualTo(400)
+            .expectHeader().valueEquals("Content-Type", "application/problem+json")
+
+        val expectedBody = response.expectBody()
+            .jsonPath("$.type").isEqualTo("about:blank")
+            .jsonPath("$.title").isEqualTo(expectedTitle)
+            .jsonPath("$.status").isEqualTo(400)
+            .jsonPath("$.detail").isEqualTo(expectedDetail)
+            .jsonPath("$.instance").isEqualTo("/api/gameDays")
+
+        properties.forEach { expectedBody.jsonPath("$.${it.key}").isEqualTo(it.value) }
     }
-
-    private fun playerStatisticDTO(team: Any?) = TestPlayerStatisticDTO(
-        playerId = UUID.randomUUID().toString(),
-        team = team,
-        goalsInFavor = 0,
-        goalsAgainst = 0,
-        yellowCards = 0,
-        blueCards = 0,
-        redCards = 0,
-    )
-
-    data class TestPostGameDayDTO(
-        val gamedayId: Any?,
-        val amateurSoccerGroupId: Any?,
-        val date: Any?,
-        val matches: Any?,
-    )
-
-    data class TestRetrieveGameDayDTO(
-        val amateurSoccerGroupId: Any?,
-        val date: Any?,
-        val matches: Any?,
-        @JsonProperty("_links")
-        val links: Map<String, LinkDTO>,
-    )
-
-    data class TestMatchDTO(
-        val players: Any?,
-    )
-
-    data class TestPlayerStatisticDTO(
-        val playerId: Any?,
-        val team: Any?,
-        val goalsInFavor: Any?,
-        val goalsAgainst: Any?,
-        val yellowCards: Any?,
-        val blueCards: Any?,
-        val redCards: Any?,
-    )
-
-    data class LinkDTO(
-        val href: String,
-    )
-
-    fun TestPostGameDayDTO.toTestRetrieveGameDayDTO(
-        links: Map<String, LinkDTO>,
-    ) = TestRetrieveGameDayDTO(
-        amateurSoccerGroupId = this.amateurSoccerGroupId,
-        date = this.date,
-        matches = this.matches,
-        links = links
-    )
 }
