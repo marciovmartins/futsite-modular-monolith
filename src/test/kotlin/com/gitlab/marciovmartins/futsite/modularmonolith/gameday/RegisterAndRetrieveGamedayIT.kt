@@ -51,24 +51,8 @@ internal class RegisterAndRetrieveGamedayIT {
             matches = listOf(
                 TestMatchDTO(
                     players = setOf(
-                        TestPlayerStatisticDTO(
-                            playerId = UUID.randomUUID().toString(),
-                            team = "A",
-                            goalsInFavor = 0,
-                            goalsAgainst = 0,
-                            yellowCards = 0,
-                            blueCards = 0,
-                            redCards = 0,
-                        ),
-                        TestPlayerStatisticDTO(
-                            playerId = UUID.randomUUID().toString(),
-                            team = "B",
-                            goalsInFavor = 0,
-                            goalsAgainst = 0,
-                            yellowCards = 0,
-                            blueCards = 0,
-                            redCards = 0,
-                        ),
+                        playerStatisticDTO(team = "A"),
+                        playerStatisticDTO(team = "B"),
                     ),
                 ),
             ),
@@ -109,25 +93,53 @@ internal class RegisterAndRetrieveGamedayIT {
 
     @Test
     fun `register and retrieve maximum gameday`() {
-        TODO("need to be implemented")
-//        // given
-//        val gamedayToRegisterDTO = RankingDtoFixture.gamedayDTO(
-//            matches = (1..99).map {
-//                RankingDtoFixture.matchDTO(
-//                    players = (
-//                        (1..12).map { RankingDtoFixture.playerDTO(team = GamedayDTO.MatchDTO.Team.A) }
-//                            + (1..12).map { RankingDtoFixture.playerDTO(team = GamedayDTO.MatchDTO.Team.B) }
-//                        ).toSet()
-//                )
-//            }
-//        )
-//
-//        // when
-//        registerGameday.with(gamedayToRegisterDTO)
-//        val gamedayDTO = retrieveGameday.by(gamedayToRegisterDTO.id)
-//
-//        // then
-//        assertThat(gamedayDTO).isEqualTo(gamedayToRegisterDTO)
+        // given
+        val gamedayId = UUID.randomUUID()
+        val gamedayToRegisterDTO = TestPostGameDayDTO(
+            gamedayId = gamedayId.toString(),
+            amateurSoccerGroupId = UUID.randomUUID().toString(),
+            date = Instant.now().truncatedTo(ChronoUnit.SECONDS).toString(),
+            matches = listOf(
+                TestMatchDTO(
+                    players = (
+                        (1..24).map { playerStatisticDTO(team = "A") }
+                            + (1..24).map { playerStatisticDTO(team = "B") }
+                        ).toSet()
+                ),
+            ),
+        )
+        val expectedResponseGamedayDTO = gamedayToRegisterDTO.toTestRetrieveGameDayDTO(
+            links = mapOf(
+                "self" to LinkDTO(repositoryEntityLinks.linkToItemResource(Gameday::class.java, gamedayId).href),
+                "gameday" to LinkDTO(repositoryEntityLinks.linkToItemResource(Gameday::class.java, gamedayId).href),
+            )
+        )
+
+        // when
+        val request = webTestClient
+            .post().uri("/api/gameDays")
+            .bodyValue(gamedayToRegisterDTO)
+            .header("Content-Type", "application/json")
+            .exchange()
+
+        val response = webTestClient
+            .get().uri("/api/gameDays/${gamedayToRegisterDTO.gamedayId}")
+            .header("Content-Type", "application/json")
+            .exchange()
+
+        // then
+        request
+            .expectStatus().isCreated
+
+        response
+            .expectStatus().isOk
+            .expectHeader().valueEquals("Content-Type", "application/hal+json")
+            .expectBody()
+            .consumeWith {
+                val expectedJsonBody = objectMapper.writeValueAsString(expectedResponseGamedayDTO)
+                val actualJsonBody = it.responseBody!!.decodeToString()
+                assertEquals(expectedJsonBody, actualJsonBody, false)
+            }
     }
 
     @ParameterizedTest(name = "{0}")
@@ -145,6 +157,16 @@ internal class RegisterAndRetrieveGamedayIT {
 //        assertThat(exception).isInstanceOf(expectedException.javaObjectType)
 //        properties.forEach { assertThat(exception).hasFieldOrPropertyWithValue(it.key, it.value) }
     }
+
+    private fun playerStatisticDTO(team: Any?) = TestPlayerStatisticDTO(
+        playerId = UUID.randomUUID().toString(),
+        team = team,
+        goalsInFavor = 0,
+        goalsAgainst = 0,
+        yellowCards = 0,
+        blueCards = 0,
+        redCards = 0,
+    )
 
     data class TestPostGameDayDTO(
         val gamedayId: Any?,
