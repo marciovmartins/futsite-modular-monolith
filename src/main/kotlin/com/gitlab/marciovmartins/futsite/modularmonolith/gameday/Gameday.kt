@@ -2,7 +2,7 @@ package com.gitlab.marciovmartins.futsite.modularmonolith.gameday
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.gitlab.marciovmartins.futsite.modularmonolith.shared.exception.infrastructure.PastOrPresent
+import com.gitlab.marciovmartins.futsite.modularmonolith.shared.exception.infrastructure.IsAfter
 import com.gitlab.marciovmartins.futsite.modularmonolith.shared.exception.infrastructure.Property
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
@@ -16,7 +16,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToMany
 import jakarta.validation.constraints.NotEmpty
-import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.PastOrPresent
 import jakarta.validation.constraints.Size
 import org.springframework.data.rest.core.annotation.RestResource
 import java.time.Instant
@@ -29,28 +29,27 @@ import java.util.UUID
 @RestResource(path = "gameDays")
 class Gameday(
     @Id
-    @NotNull
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(unique = true, nullable = false, insertable = true, updatable = false)
     var gamedayId: UUID? = null,
 
-    @NotNull
     @Column(insertable = true, updatable = false)
     var amateurSoccerGroupId: UUID,
 
-    @NotNull
-    @PastOrPresent(
-        from = "2020-01-01T00:00:00Z",
-        title = "Invalid Date",
-        message = "The game day date should not be before {from}",
+    @field:IsAfter(
+        instant = "2020-01-01T00:00:00Z",
+        message = "The game day date should not be before {instant}",
         properties = [
             Property("minimumAllowedDate", "2020-01-01T00:00:00Z")
         ]
     )
+    @field:PastOrPresent(
+        message = "The game day date should not be in the future"
+    )
     @Column(name = "gameday_date", insertable = true, updatable = false)
     var date: Instant,
 
-    @NotEmpty
+    @field:NotEmpty
     @JoinColumn(name = "gameday_id", nullable = false)
     @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var matches: List<Match>,
@@ -60,13 +59,13 @@ class Gameday(
         @Id
         @JsonIgnore
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val matchId: Long,
+        var matchId: Long? = null,
 
-        @NotEmpty
-        @Size(min = 2, max = 44)
+        @field:NotEmpty
+        @field:Size(min = 2, max = 44)
         @OneToMany(cascade = [CascadeType.ALL])
         @JoinColumn(name = "match_id", nullable = false)
-        val players: Set<PlayerStatistic>,
+        var players: Set<PlayerStatistic>,
     ) {
         /**
          * Individual player statistic for a match
@@ -76,22 +75,22 @@ class Gameday(
             @Id
             @JsonIgnore
             @GeneratedValue(strategy = GenerationType.IDENTITY)
-            val playerStatisticId: Long,
+            var playerStatisticId: Long? = null,
 
-            val playerId: UUID,
+            var playerId: UUID,
 
             @Enumerated(EnumType.STRING)
-            val team: Team,
+            var team: Team,
 
-            val goalsInFavor: UByte,
+            var goalsInFavor: UByte,
 
-            val goalsAgainst: UByte,
+            var goalsAgainst: UByte,
 
-            val yellowCards: UByte,
+            var yellowCards: UByte,
 
-            val blueCards: UByte,
+            var blueCards: UByte,
 
-            val redCards: UByte,
+            var redCards: UByte,
         )
 
         enum class Team {

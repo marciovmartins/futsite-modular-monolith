@@ -24,42 +24,60 @@ class ControllerExceptionHandler {
     @ExceptionHandler(MissingParameterException::class)
     fun handleMissingPropertyException(ex: MissingParameterException): ProblemDetail {
         return ProblemDetail.forStatus(400).apply {
-            this.type = typeUrl("missing-parameter")
-            this.title = "Missing Parameter"
-            this.setProperty("propertyName", ex.propertyName)
+            this.type = typeUrl("illegal-parameters")
+            this.title = "Your request parameters didn't validate"
+            this.setProperty(
+                "problems", listOf(
+                    mapOf(
+                        "reason" to "Missing Parameter",
+                        "propertyName" to ex.propertyName,
+                    )
+                )
+            )
         }
     }
 
     @ExceptionHandler(ConstraintViolationException::class)
     fun handleConstraintViolationException(ex: ConstraintViolationException): ProblemDetail {
         return ProblemDetail.forStatus(400).apply {
-            this.type = typeUrl("illegal-property")
+            this.type = typeUrl("illegal-parameters")
+            this.title = "Your request parameters didn't validate"
 
-            val constraintViolation = ex.constraintViolations.first()
-            this.detail = constraintViolation.message
-            this.setProperty("propertyName", constraintViolation.propertyPath.toString())
-            this.setProperty("propertyValue", constraintViolation.invalidValue)
+            this.setProperty("problems", ex.constraintViolations.map {
+                mutableMapOf<String, Any>(
+                    "propertyName" to it.propertyPath.toString(),
+                    "propertyValue" to it.invalidValue
+                ).apply {
+                    val attributes = it.constraintDescriptor.attributes
 
-            val attributes = constraintViolation.constraintDescriptor.attributes
+                    this["reason"] = it.message
 
-            val title = attributes["title"]
-            if (title != null && title != "") this.title = title.toString()
-
-            val properties = attributes["properties"]
-            if (properties != null && properties is Array<*> && properties.isNotEmpty()) properties.forEach {
-                if (it is Property) this.setProperty(it.key, it.value)
-            }
+                    val properties = attributes["properties"]
+                    if (properties != null && properties is Array<*> && properties.isNotEmpty()) {
+                        properties.forEach { property ->
+                            if (property is Property) this[property.key] = property.value
+                        }
+                    }
+                }.toMap()
+            })
         }
     }
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
     fun handleHttpMessageNotReadableException(ex: HttpMessageNotReadableException): ProblemDetail {
         return ProblemDetail.forStatus(400).apply {
-            when(ex.cause) {
+            this.type = typeUrl("illegal-parameters")
+            this.title = "Your request parameters didn't validate"
+            when (ex.cause) {
                 is MissingKotlinParameterException -> {
-                    this.type = typeUrl("missing-parameter")
-                    this.title = "Missing Parameter"
-                    this.setProperty("propertyName", (ex.cause as MissingKotlinParameterException).parameter.name)
+                    this.setProperty(
+                        "problems", listOf(
+                            mapOf(
+                                "reason" to "Missing Parameter",
+                                "propertyName" to (ex.cause as MissingKotlinParameterException).parameter.name,
+                            )
+                        )
+                    )
                 }
             }
         }

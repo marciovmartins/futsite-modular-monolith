@@ -2,6 +2,7 @@ package com.gitlab.marciovmartins.futsite.modularmonolith.gameday.argumentsprovi
 
 import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.TestMatchDTO
 import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.TestPostGameDayDTO
+import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.TestProblemDetailsDTO
 import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.testMatchDTO
 import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.testPlayerStatisticDTO
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -19,10 +20,13 @@ object InvalidGameDay : ArgumentsProvider {
             gameday = defaultGameday().copy(
                 gamedayId = null
             ),
-            expectedType = "missing-parameter",
-            expectedTitle = "Missing Parameter",
-            properties = mapOf(
-                "propertyName" to "gamedayId"
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "Missing Parameter",
+                    properties = mapOf(
+                        "propertyName" to "gamedayId"
+                    ),
+                ),
             ),
         ),
         argument(
@@ -30,10 +34,13 @@ object InvalidGameDay : ArgumentsProvider {
             gameday = defaultGameday().copy(
                 amateurSoccerGroupId = null
             ),
-            expectedType = "missing-parameter",
-            expectedTitle = "Missing Parameter",
-            properties = mapOf(
-                "propertyName" to "amateurSoccerGroupId"
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "Missing Parameter",
+                    properties = mapOf(
+                        "propertyName" to "amateurSoccerGroupId"
+                    ),
+                ),
             ),
         ),
         argument(
@@ -41,10 +48,13 @@ object InvalidGameDay : ArgumentsProvider {
             gameday = defaultGameday().copy(
                 date = null
             ),
-            expectedType = "missing-parameter",
-            expectedTitle = "Missing Parameter",
-            properties = mapOf(
-                "propertyName" to "date"
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "Missing Parameter",
+                    properties = mapOf(
+                        "propertyName" to "date"
+                    ),
+                ),
             ),
         ),
         argument(
@@ -52,26 +62,30 @@ object InvalidGameDay : ArgumentsProvider {
             gameday = defaultGameday().copy(
                 date = Instant.parse("2019-12-31T23:59:59.999999Z")
             ),
-            expectedType = "illegal-property",
-            expectedTitle = "Invalid Date",
-            expectedDetail = "The game day date should not be before 2020-01-01T00:00:00Z",
-            properties = mapOf(
-                "propertyName" to "date",
-                "propertyValue" to Instant.parse("2019-12-31T23:59:59.999999Z").toString(),
-                "minimumAllowedDate" to Instant.parse("2020-01-01T00:00:00.000000Z").toString(),
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "The game day date should not be before 2020-01-01T00:00:00Z",
+                    properties = mapOf(
+                        "propertyName" to "date",
+                        "propertyValue" to Instant.parse("2019-12-31T23:59:59.999999Z").toString(),
+                        "minimumAllowedDate" to Instant.parse("2020-01-01T00:00:00.000000Z").toString(),
+                    ),
+                ),
             ),
         ),
         argument(
             testDescription = "Date in the future",
             gameday = defaultGameday().copy(
-                date = Instant.parse("2030-01-01T00:00:00.000000Z")
+                date = Instant.now().truncatedTo(ChronoUnit.DAYS).plus(1, ChronoUnit.DAYS)
             ),
-            expectedType = "illegal-property",
-            expectedTitle = "Invalid Date",
-            expectedDetail = "The game day date should not be in the future",
-            properties = mapOf(
-                "propertyName" to "date",
-                "propertyValue" to Instant.parse("2030-01-01T00:00:00.000000Z"),
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "The game day date should not be in the future",
+                    properties = mapOf(
+                        "propertyName" to "date",
+                        "propertyValue" to Instant.now().truncatedTo(ChronoUnit.DAYS).plus(1, ChronoUnit.DAYS).toString(),
+                    ),
+                ),
             ),
         ),
         argument(
@@ -79,10 +93,13 @@ object InvalidGameDay : ArgumentsProvider {
             gameday = defaultGameday().copy(
                 matches = null
             ),
-            expectedType = "missing-parameter",
-            expectedTitle = "Missing Parameter",
-            properties = mapOf(
-                "propertyName" to "matches"
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "Missing Parameter",
+                    properties = mapOf(
+                        "propertyName" to "matches"
+                    ),
+                ),
             ),
         ),
         argument(
@@ -90,11 +107,14 @@ object InvalidGameDay : ArgumentsProvider {
             gameday = defaultGameday().copy(
                 matches = emptyList<Any>(),
             ),
-            expectedType = "illegal-property",
-            expectedTitle = "Empty Matches",
-            properties = mapOf(
-                "propertyName" to "matches",
-                "minimumNumberOfMatches" to 1,
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "Empty Matches",
+                    properties = mapOf(
+                        "propertyName" to "matches",
+                        "minimumNumberOfMatches" to 1,
+                    ),
+                ),
             ),
         ),
         argument(
@@ -102,13 +122,15 @@ object InvalidGameDay : ArgumentsProvider {
             gameday = defaultGameday().copy(
                 matches = (1 until 100).map { testMatchDTO() }
             ),
-            expectedType = "illegal-property",
-            expectedTitle = "Too many matches",
-            expectedDetail = "The maximum allowed matches are 99",
-            properties = mapOf(
-                "propertyName" to "matches",
-                "propertyValue" to 100,
-                "allowedNumberOfMatches" to 99,
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "The maximum allowed matches are 99",
+                    properties = mapOf(
+                        "propertyName" to "matches",
+                        "propertyValue" to 100,
+                        "allowedNumberOfMatches" to 99,
+                    ),
+                ),
             ),
         ),
         argument(
@@ -118,10 +140,13 @@ object InvalidGameDay : ArgumentsProvider {
                     testMatchDTO(players = null)
                 )
             ),
-            expectedType = "missing-parameter",
-            expectedTitle = "Missing Parameter",
-            properties = mapOf(
-                "propertyName" to "matches.players"
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "Missing Parameter",
+                    properties = mapOf(
+                        "propertyName" to "matches.players"
+                    ),
+                ),
             ),
         ),
         argument(
@@ -133,12 +158,15 @@ object InvalidGameDay : ArgumentsProvider {
                     ),
                 ),
             ),
-            expectedType = "illegal-property",
-            expectedTitle = "Insufficient Number Players",
-            properties = mapOf(
-                "propertyName" to "matches.players",
-                "numberOfPlayers" to 0,
-                "minimumNumberOfPlayers" to 2,
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "Insufficient Number Players",
+                    properties = mapOf(
+                        "propertyName" to "matches.players",
+                        "numberOfPlayers" to 0,
+                        "minimumNumberOfPlayers" to 2,
+                    ),
+                ),
             ),
         ),
         argument(
@@ -150,12 +178,15 @@ object InvalidGameDay : ArgumentsProvider {
                     ),
                 ),
             ),
-            expectedType = "illegal-property",
-            expectedTitle = "Insufficient Number Players",
-            properties = mapOf(
-                "propertyName" to "matches.players",
-                "numberOfPlayers" to 1,
-                "minimumNumberOfPlayers" to 2,
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "Insufficient Number Players",
+                    properties = mapOf(
+                        "propertyName" to "matches.players",
+                        "numberOfPlayers" to 1,
+                        "minimumNumberOfPlayers" to 2,
+                    ),
+                ),
             ),
         ),
         argument(
@@ -171,13 +202,15 @@ object InvalidGameDay : ArgumentsProvider {
                     ),
                 ),
             ),
-            expectedType = "illegal-property",
-            expectedTitle = "Too Many Players",
-            expectedDetail = "Maximum number of players is 44",
-            properties = mapOf(
-                "propertyName" to "matches.players",
-                "propertyValue" to 45,
-                "maximumNumberOfPlayers" to 44,
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "Maximum number of players is 44",
+                    properties = mapOf(
+                        "propertyName" to "matches.players",
+                        "propertyValue" to 45,
+                        "maximumNumberOfPlayers" to 44,
+                    ),
+                ),
             ),
         ),
         argument(
@@ -189,12 +222,14 @@ object InvalidGameDay : ArgumentsProvider {
                     ),
                 ),
             ),
-            expectedType = "illegal-property",
-            expectedTitle = "Missing Team Players",
-            expectedDetail = "must have at least one player statistic for team B",
-            properties = mapOf(
-                "propertyName" to "matches.players",
-                "missingTeam" to "B",
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "must have at least one player statistic for team B",
+                    properties = mapOf(
+                        "propertyName" to "matches.players",
+                        "missingTeam" to "B",
+                    ),
+                ),
             ),
         ),
         argument(
@@ -206,12 +241,14 @@ object InvalidGameDay : ArgumentsProvider {
                     ),
                 ),
             ),
-            expectedType = "illegal-property",
-            expectedTitle = "Missing Team Players",
-            expectedDetail = "must have at least one player statistic for team A",
-            properties = mapOf(
-                "propertyName" to "matches.players",
-                "missingTeam" to "A",
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "must have at least one player statistic for team A",
+                    properties = mapOf(
+                        "propertyName" to "matches.players",
+                        "missingTeam" to "A",
+                    ),
+                ),
             ),
         ),
         argument(
@@ -226,10 +263,13 @@ object InvalidGameDay : ArgumentsProvider {
                     )
                 )
             ),
-            expectedType = "missing-parameter",
-            expectedTitle = "Missing Parameter",
-            properties = mapOf(
-                "propertyName" to "matches.players.playerId"
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "Missing Parameter",
+                    properties = mapOf(
+                        "propertyName" to "matches.players.playerId"
+                    ),
+                ),
             ),
         ),
         argument(
@@ -244,10 +284,13 @@ object InvalidGameDay : ArgumentsProvider {
                     )
                 )
             ),
-            expectedType = "missing-parameter",
-            expectedTitle = "Missing Parameter",
-            properties = mapOf(
-                "propertyName" to "matches.players.team"
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "Missing Parameter",
+                    properties = mapOf(
+                        "propertyName" to "matches.players.team"
+                    ),
+                ),
             ),
         ),
         argument(
@@ -262,10 +305,13 @@ object InvalidGameDay : ArgumentsProvider {
                     )
                 )
             ),
-            expectedType = "missing-parameter",
-            expectedTitle = "Missing Parameter",
-            properties = mapOf(
-                "propertyName" to "matches.players.goalsInFavor"
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "Missing Parameter",
+                    properties = mapOf(
+                        "propertyName" to "matches.players.goalsInFavor"
+                    ),
+                ),
             ),
         ),
         argument(
@@ -280,10 +326,13 @@ object InvalidGameDay : ArgumentsProvider {
                     )
                 )
             ),
-            expectedType = "missing-parameter",
-            expectedTitle = "Missing Parameter",
-            properties = mapOf(
-                "propertyName" to "matches.players.goalsAgainst"
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "Missing Parameter",
+                    properties = mapOf(
+                        "propertyName" to "matches.players.goalsAgainst"
+                    ),
+                ),
             ),
         ),
         argument(
@@ -298,10 +347,13 @@ object InvalidGameDay : ArgumentsProvider {
                     )
                 )
             ),
-            expectedType = "missing-parameter",
-            expectedTitle = "Missing Parameter",
-            properties = mapOf(
-                "propertyName" to "matches.players.yellowCards"
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "Missing Parameter",
+                    properties = mapOf(
+                        "propertyName" to "matches.players.yellowCards"
+                    ),
+                ),
             ),
         ),
         argument(
@@ -316,10 +368,13 @@ object InvalidGameDay : ArgumentsProvider {
                     )
                 )
             ),
-            expectedType = "missing-parameter",
-            expectedTitle = "Missing Parameter",
-            properties = mapOf(
-                "propertyName" to "matches.players.blueCards"
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "Missing Parameter",
+                    properties = mapOf(
+                        "propertyName" to "matches.players.blueCards"
+                    ),
+                ),
             ),
         ),
         argument(
@@ -334,10 +389,13 @@ object InvalidGameDay : ArgumentsProvider {
                     )
                 )
             ),
-            expectedType = "missing-parameter",
-            expectedTitle = "Missing Parameter",
-            properties = mapOf(
-                "propertyName" to "matches.players.redCards"
+            problems = listOf(
+                TestProblemDetailsDTO(
+                    reason = "Missing Parameter",
+                    properties = mapOf(
+                        "propertyName" to "matches.players.redCards"
+                    ),
+                ),
             ),
         ),
     )
@@ -345,12 +403,9 @@ object InvalidGameDay : ArgumentsProvider {
     private fun argument(
         testDescription: String,
         gameday: TestPostGameDayDTO,
-        expectedType: String,
-        expectedTitle: String,
-        expectedDetail: String? = null,
-        properties: Map<String, Any> = emptyMap(),
+        problems: List<TestProblemDetailsDTO>,
     ) = Arguments.of(
-        testDescription, gameday, expectedType, expectedTitle, expectedDetail, properties
+        testDescription, gameday, problems
     )
 
     private fun defaultGameday() = TestPostGameDayDTO(

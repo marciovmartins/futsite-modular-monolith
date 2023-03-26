@@ -103,8 +103,8 @@ internal class RegisterAndRetrieveGamedayIT {
             matches = listOf(
                 TestMatchDTO(
                     players = (
-                        (1..24).map { testPlayerStatisticDTO(team = "A") }
-                            + (1..24).map { testPlayerStatisticDTO(team = "B") }
+                        (1..22).map { testPlayerStatisticDTO(team = "A") }
+                            + (1..22).map { testPlayerStatisticDTO(team = "B") }
                         ).toSet()
                 ),
             ),
@@ -148,10 +148,7 @@ internal class RegisterAndRetrieveGamedayIT {
     fun `register game day with invalid information`(
         testDescription: String,
         gamedayToRegisterDTO: TestPostGameDayDTO,
-        expectedType: String,
-        expectedTitle: String,
-        expectedDetail: String?,
-        properties: Map<String, Any>
+        problems: List<TestProblemDetailsDTO>
     ) {
         // when
         val response = webTestClient
@@ -166,13 +163,17 @@ internal class RegisterAndRetrieveGamedayIT {
             .expectHeader().valueEquals("Content-Type", "application/problem+json")
 
         val expectedBody = response.expectBody()
-            .jsonPath("$.type").value(endsWith("/api/exception/$expectedType"))
-            .jsonPath("$.title").isEqualTo(expectedTitle)
+            .jsonPath("$.type").value(endsWith("/api/exception/illegal-parameters"))
+            .jsonPath("$.title").isEqualTo("Your request parameters didn't validate")
             .jsonPath("$.status").isEqualTo(400)
             .jsonPath("$.instance").isEqualTo("/api/gameDays")
 
-        expectedDetail?.let { expectedBody.jsonPath("$.detail").isEqualTo(expectedDetail) }
-
-        properties.forEach { expectedBody.jsonPath("$.${it.key}").isEqualTo(it.value.toString()) }
+        problems.forEachIndexed { index, problem ->
+            val key = "$.problems[$index]"
+            expectedBody.jsonPath("$key.reason").isEqualTo(problem.reason)
+            problem.properties.forEach { (propertyKey, propertyValue) ->
+                expectedBody.jsonPath("$key.$propertyKey").isEqualTo(propertyValue)
+            }
+        }
     }
 }

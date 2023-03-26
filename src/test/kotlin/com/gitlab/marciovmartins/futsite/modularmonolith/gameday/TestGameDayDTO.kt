@@ -32,6 +32,11 @@ data class TestPlayerStatisticDTO(
     val redCards: Any?,
 )
 
+data class TestProblemDetailsDTO(
+    val reason: String,
+    val properties: Map<String, Any> = emptyMap()
+)
+
 data class LinkDTO(
     val href: String,
 )

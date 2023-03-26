@@ -10,28 +10,23 @@ import kotlin.reflect.KClass
 annotation class Property(val key: String, val value: String)
 
 @Target(AnnotationTarget.FIELD)
-@Constraint(validatedBy = [PastOrPresent.PastOrPresentConstraintValidator::class])
-annotation class PastOrPresent(
-    val from: String,
-    val title: String = "",
-    val message: String = "{com.gitlab.marciovmartins.futsite.modularmonolith.exception.PastOrPresent.message}",
+@Constraint(validatedBy = [IsAfter.IsAfterConstraintValidator::class])
+annotation class IsAfter(
+    val instant: String,
+    val message: String = "{com.gitlab.marciovmartins.futsite.modularmonolith.exception.IsAfter.message}",
     val properties: Array<Property> = [],
     val groups: Array<KClass<*>> = [],
     val payload: Array<KClass<Payload>> = []
 ) {
-    class PastOrPresentConstraintValidator : ConstraintValidator<PastOrPresent, Instant> {
-        private lateinit var begin: Instant
+    class IsAfterConstraintValidator : ConstraintValidator<IsAfter, Instant> {
+        private lateinit var thisInstant: Instant
         override fun isValid(value: Instant?, context: ConstraintValidatorContext?): Boolean {
             if (value == null) return true
-
-            //TODO: get the clock system
-            return value.isBefore(Instant.now())
-                && value.isAfter(begin)
+            return value.isAfter(thisInstant)
         }
 
-        override fun initialize(constraintAnnotation: PastOrPresent) {
-            begin = Instant.parse(constraintAnnotation.from)
+        override fun initialize(constraintAnnotation: IsAfter) {
+            thisInstant = Instant.parse(constraintAnnotation.instant)
         }
     }
-
 }
