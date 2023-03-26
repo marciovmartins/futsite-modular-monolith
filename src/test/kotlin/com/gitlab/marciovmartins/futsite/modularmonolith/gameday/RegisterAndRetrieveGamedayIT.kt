@@ -148,7 +148,7 @@ internal class RegisterAndRetrieveGamedayIT {
         testDescription: String,
         gamedayToRegisterDTO: TestPostGameDayDTO,
         expectedTitle: String,
-        expectedDetail: String,
+        expectedDetail: String?,
         properties: Map<String, Any>
     ) {
         // when
@@ -167,9 +167,10 @@ internal class RegisterAndRetrieveGamedayIT {
             .jsonPath("$.type").isEqualTo("about:blank")
             .jsonPath("$.title").isEqualTo(expectedTitle)
             .jsonPath("$.status").isEqualTo(400)
-            .jsonPath("$.detail").isEqualTo(expectedDetail)
             .jsonPath("$.instance").isEqualTo("/api/gameDays")
 
-        properties.forEach { expectedBody.jsonPath("$.${it.key}").isEqualTo(it.value) }
+        expectedDetail?.let { expectedBody.jsonPath("$.detail").isEqualTo(expectedDetail) }
+
+        properties.forEach { expectedBody.jsonPath("$.${it.key}").isEqualTo(it.value.toString()) }
     }
 }

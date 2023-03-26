@@ -36,21 +36,23 @@ data class LinkDTO(
     val href: String,
 )
 
-fun testMatchDTO() = TestMatchDTO(
-    players = setOf(
+fun testMatchDTO(
+    players: Any? = setOf(
         testPlayerStatisticDTO(team = "A"),
         testPlayerStatisticDTO(team = "B"),
     )
-)
+) = TestMatchDTO(players)
 
-fun testPlayerStatisticDTO(team: Any?) = TestPlayerStatisticDTO(
-    playerId = UUID.randomUUID().toString(),
-    team = team,
-    goalsInFavor = 0,
-    goalsAgainst = 0,
-    yellowCards = 0,
-    blueCards = 0,
-    redCards = 0,
+fun testPlayerStatisticDTO(
+    team: Any?,
+    playerId: Any? = UUID.randomUUID().toString(),
+    goalsInFavor: Any? = 0,
+    goalsAgainst: Any? = 0,
+    yellowCards: Any? = 0,
+    blueCards: Any? = 0,
+    redCards: Any? = 0
+) = TestPlayerStatisticDTO(
+    playerId, team, goalsInFavor, goalsAgainst, yellowCards, blueCards, redCards,
 )
 
 fun TestPostGameDayDTO.toTestRetrieveGameDayDTO(
