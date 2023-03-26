@@ -1,8 +1,10 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.shared.exception.infrastructure
 
+import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.gitlab.marciovmartins.futsite.modularmonolith.shared.exception.domain.IllegalPropertyException
 import jakarta.validation.ConstraintViolationException
 import org.springframework.http.ProblemDetail
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
@@ -46,6 +48,19 @@ class ControllerExceptionHandler {
             val properties = attributes["properties"]
             if (properties != null && properties is Array<*> && properties.isNotEmpty()) properties.forEach {
                 if (it is Property) this.setProperty(it.key, it.value)
+            }
+        }
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    fun handleHttpMessageNotReadableException(ex: HttpMessageNotReadableException): ProblemDetail {
+        return ProblemDetail.forStatus(400).apply {
+            when(ex.cause) {
+                is MissingKotlinParameterException -> {
+                    this.type = typeUrl("missing-parameter")
+                    this.title = "Missing Parameter"
+                    this.setProperty("propertyName", (ex.cause as MissingKotlinParameterException).parameter.name)
+                }
             }
         }
     }
