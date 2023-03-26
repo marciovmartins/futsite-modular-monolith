@@ -17,8 +17,9 @@ object InvalidGameDay : ArgumentsProvider {
         argument(
             testDescription = "Gameday id not provided",
             gameday = defaultGameday().copy(
-                amateurSoccerGroupId = null
+                gamedayId = null
             ),
+            expectedType = "missing-parameter",
             expectedTitle = "Missing Parameter",
             properties = mapOf(
                 "propertyName" to "gamedayId"
@@ -29,6 +30,7 @@ object InvalidGameDay : ArgumentsProvider {
             gameday = defaultGameday().copy(
                 amateurSoccerGroupId = null
             ),
+            expectedType = "missing-parameter",
             expectedTitle = "Missing Parameter",
             properties = mapOf(
                 "propertyName" to "amateurSoccerGroupId"
@@ -39,6 +41,7 @@ object InvalidGameDay : ArgumentsProvider {
             gameday = defaultGameday().copy(
                 date = null
             ),
+            expectedType = "missing-parameter",
             expectedTitle = "Missing Parameter",
             properties = mapOf(
                 "propertyName" to "date"
@@ -49,6 +52,7 @@ object InvalidGameDay : ArgumentsProvider {
             gameday = defaultGameday().copy(
                 date = Instant.parse("2019-12-31T23:59:59.999999Z")
             ),
+            expectedType = "illegal-property",
             expectedTitle = "Invalid Date",
             expectedDetail = "The game day date should not be before 2020-01-01T00:00:00Z",
             properties = mapOf(
@@ -62,6 +66,7 @@ object InvalidGameDay : ArgumentsProvider {
             gameday = defaultGameday().copy(
                 date = Instant.parse("2030-01-01T00:00:00.000000Z")
             ),
+            expectedType = "illegal-property",
             expectedTitle = "Invalid Date",
             expectedDetail = "The game day date should not be in the future",
             properties = mapOf(
@@ -74,6 +79,7 @@ object InvalidGameDay : ArgumentsProvider {
             gameday = defaultGameday().copy(
                 matches = null
             ),
+            expectedType = "missing-parameter",
             expectedTitle = "Missing Parameter",
             properties = mapOf(
                 "propertyName" to "matches"
@@ -84,6 +90,7 @@ object InvalidGameDay : ArgumentsProvider {
             gameday = defaultGameday().copy(
                 matches = emptyList<Any>(),
             ),
+            expectedType = "illegal-property",
             expectedTitle = "Empty Matches",
             properties = mapOf(
                 "propertyName" to "matches",
@@ -95,6 +102,7 @@ object InvalidGameDay : ArgumentsProvider {
             gameday = defaultGameday().copy(
                 matches = (1 until 100).map { testMatchDTO() }
             ),
+            expectedType = "illegal-property",
             expectedTitle = "Too many matches",
             expectedDetail = "The maximum allowed matches are 99",
             properties = mapOf(
@@ -110,6 +118,7 @@ object InvalidGameDay : ArgumentsProvider {
                     testMatchDTO(players = null)
                 )
             ),
+            expectedType = "missing-parameter",
             expectedTitle = "Missing Parameter",
             properties = mapOf(
                 "propertyName" to "matches.players"
@@ -124,6 +133,7 @@ object InvalidGameDay : ArgumentsProvider {
                     ),
                 ),
             ),
+            expectedType = "illegal-property",
             expectedTitle = "Insufficient Number Players",
             properties = mapOf(
                 "propertyName" to "matches.players",
@@ -140,6 +150,7 @@ object InvalidGameDay : ArgumentsProvider {
                     ),
                 ),
             ),
+            expectedType = "illegal-property",
             expectedTitle = "Insufficient Number Players",
             properties = mapOf(
                 "propertyName" to "matches.players",
@@ -160,6 +171,7 @@ object InvalidGameDay : ArgumentsProvider {
                     ),
                 ),
             ),
+            expectedType = "illegal-property",
             expectedTitle = "Too Many Players",
             expectedDetail = "Maximum number of players is 44",
             properties = mapOf(
@@ -177,6 +189,7 @@ object InvalidGameDay : ArgumentsProvider {
                     ),
                 ),
             ),
+            expectedType = "illegal-property",
             expectedTitle = "Missing Team Players",
             expectedDetail = "must have at least one player statistic for team B",
             properties = mapOf(
@@ -193,6 +206,7 @@ object InvalidGameDay : ArgumentsProvider {
                     ),
                 ),
             ),
+            expectedType = "illegal-property",
             expectedTitle = "Missing Team Players",
             expectedDetail = "must have at least one player statistic for team A",
             properties = mapOf(
@@ -204,12 +218,15 @@ object InvalidGameDay : ArgumentsProvider {
             testDescription = "Match player id not provided",
             gameday = defaultGameday().copy(
                 matches = listOf(
-                    testMatchDTO(players = setOf(
-                        testPlayerStatisticDTO(team = "A", playerId = null),
-                        testPlayerStatisticDTO(team = "B")
-                    ))
+                    testMatchDTO(
+                        players = setOf(
+                            testPlayerStatisticDTO(team = "A", playerId = null),
+                            testPlayerStatisticDTO(team = "B")
+                        )
+                    )
                 )
             ),
+            expectedType = "missing-parameter",
             expectedTitle = "Missing Parameter",
             properties = mapOf(
                 "propertyName" to "matches.players.playerId"
@@ -219,12 +236,15 @@ object InvalidGameDay : ArgumentsProvider {
             testDescription = "Match player team not provided",
             gameday = defaultGameday().copy(
                 matches = listOf(
-                    testMatchDTO(players = setOf(
-                        testPlayerStatisticDTO( team = null),
-                        testPlayerStatisticDTO(team = "B")
-                    ))
+                    testMatchDTO(
+                        players = setOf(
+                            testPlayerStatisticDTO(team = null),
+                            testPlayerStatisticDTO(team = "B")
+                        )
+                    )
                 )
             ),
+            expectedType = "missing-parameter",
             expectedTitle = "Missing Parameter",
             properties = mapOf(
                 "propertyName" to "matches.players.team"
@@ -234,12 +254,15 @@ object InvalidGameDay : ArgumentsProvider {
             testDescription = "Match player goals in favor not provided",
             gameday = defaultGameday().copy(
                 matches = listOf(
-                    testMatchDTO(players = setOf(
-                        testPlayerStatisticDTO(team = "A", goalsInFavor = null),
-                        testPlayerStatisticDTO(team = "B")
-                    ))
+                    testMatchDTO(
+                        players = setOf(
+                            testPlayerStatisticDTO(team = "A", goalsInFavor = null),
+                            testPlayerStatisticDTO(team = "B")
+                        )
+                    )
                 )
             ),
+            expectedType = "missing-parameter",
             expectedTitle = "Missing Parameter",
             properties = mapOf(
                 "propertyName" to "matches.players.goalsInFavor"
@@ -249,12 +272,15 @@ object InvalidGameDay : ArgumentsProvider {
             testDescription = "Match player goals against not provided",
             gameday = defaultGameday().copy(
                 matches = listOf(
-                    testMatchDTO(players = setOf(
-                        testPlayerStatisticDTO(team = "A", goalsAgainst = null),
-                        testPlayerStatisticDTO(team = "B")
-                    ))
+                    testMatchDTO(
+                        players = setOf(
+                            testPlayerStatisticDTO(team = "A", goalsAgainst = null),
+                            testPlayerStatisticDTO(team = "B")
+                        )
+                    )
                 )
             ),
+            expectedType = "missing-parameter",
             expectedTitle = "Missing Parameter",
             properties = mapOf(
                 "propertyName" to "matches.players.goalsAgainst"
@@ -264,12 +290,15 @@ object InvalidGameDay : ArgumentsProvider {
             testDescription = "Match player yellow cards not provided",
             gameday = defaultGameday().copy(
                 matches = listOf(
-                    testMatchDTO(players = setOf(
-                        testPlayerStatisticDTO(team = "A", yellowCards = null),
-                        testPlayerStatisticDTO(team = "B")
-                    ))
+                    testMatchDTO(
+                        players = setOf(
+                            testPlayerStatisticDTO(team = "A", yellowCards = null),
+                            testPlayerStatisticDTO(team = "B")
+                        )
+                    )
                 )
             ),
+            expectedType = "missing-parameter",
             expectedTitle = "Missing Parameter",
             properties = mapOf(
                 "propertyName" to "matches.players.yellowCards"
@@ -279,12 +308,15 @@ object InvalidGameDay : ArgumentsProvider {
             testDescription = "Match player blue cards not provided",
             gameday = defaultGameday().copy(
                 matches = listOf(
-                    testMatchDTO(players = setOf(
-                        testPlayerStatisticDTO(team = "A", blueCards = null),
-                        testPlayerStatisticDTO(team = "B")
-                    ))
+                    testMatchDTO(
+                        players = setOf(
+                            testPlayerStatisticDTO(team = "A", blueCards = null),
+                            testPlayerStatisticDTO(team = "B")
+                        )
+                    )
                 )
             ),
+            expectedType = "missing-parameter",
             expectedTitle = "Missing Parameter",
             properties = mapOf(
                 "propertyName" to "matches.players.blueCards"
@@ -294,12 +326,15 @@ object InvalidGameDay : ArgumentsProvider {
             testDescription = "Match player red cards not provided",
             gameday = defaultGameday().copy(
                 matches = listOf(
-                    testMatchDTO(players = setOf(
-                        testPlayerStatisticDTO(team = "A", redCards = null),
-                        testPlayerStatisticDTO(team = "B")
-                    ))
+                    testMatchDTO(
+                        players = setOf(
+                            testPlayerStatisticDTO(team = "A", redCards = null),
+                            testPlayerStatisticDTO(team = "B")
+                        )
+                    )
                 )
             ),
+            expectedType = "missing-parameter",
             expectedTitle = "Missing Parameter",
             properties = mapOf(
                 "propertyName" to "matches.players.redCards"
@@ -310,11 +345,12 @@ object InvalidGameDay : ArgumentsProvider {
     private fun argument(
         testDescription: String,
         gameday: TestPostGameDayDTO,
+        expectedType: String,
         expectedTitle: String,
         expectedDetail: String? = null,
         properties: Map<String, Any> = emptyMap(),
     ) = Arguments.of(
-        testDescription, gameday, expectedTitle, expectedDetail, properties
+        testDescription, gameday, expectedType, expectedTitle, expectedDetail, properties
     )
 
     private fun defaultGameday() = TestPostGameDayDTO(

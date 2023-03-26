@@ -6,29 +6,34 @@ import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
-import java.net.URI
 
 @ControllerAdvice
 class ControllerExceptionHandler {
     @ExceptionHandler(IllegalPropertyException::class)
     fun handleIllegalArgumentException(ex: IllegalPropertyException): ProblemDetail {
-        val typeUrl = ServletUriComponentsBuilder
-            .fromCurrentContextPath()
-            .replacePath("/api/exception/illegal-property")
-            .build().toUri()
-
         return ProblemDetail.forStatus(400).apply {
-            this.type = typeUrl
-            this.detail = ex::class.simpleName?.removeSuffix("Exception")
+            this.type = typeUrl("illegal-property")
+            this.title = ex::class.simpleName?.removeSuffix("Exception")
+            this.detail = ex.message
             ex.properties.forEach { this.setProperty(it.key, it.value) }
+        }
+    }
+
+    @ExceptionHandler(MissingParameterException::class)
+    fun handleMissingPropertyException(ex: MissingParameterException): ProblemDetail {
+        return ProblemDetail.forStatus(400).apply {
+            this.type = typeUrl("missing-parameter")
+            this.title = "Missing Parameter"
+            this.setProperty("propertyName", ex.propertyName)
         }
     }
 
     @ExceptionHandler(ConstraintViolationException::class)
     fun handleConstraintViolationException(ex: ConstraintViolationException): ProblemDetail {
         return ProblemDetail.forStatus(400).apply {
+            this.type = typeUrl("illegal-property")
+
             val constraintViolation = ex.constraintViolations.first()
-            this.type = URI.create("about:blank") //FIXME: add proper human-readable documentation
             this.detail = constraintViolation.message
             this.setProperty("propertyName", constraintViolation.propertyPath.toString())
             this.setProperty("propertyValue", constraintViolation.invalidValue)
@@ -44,4 +49,9 @@ class ControllerExceptionHandler {
             }
         }
     }
+
+    private fun typeUrl(exceptionType: String) = ServletUriComponentsBuilder
+        .fromCurrentContextPath()
+        .replacePath("/api/exception/$exceptionType")
+        .build().toUri()
 }

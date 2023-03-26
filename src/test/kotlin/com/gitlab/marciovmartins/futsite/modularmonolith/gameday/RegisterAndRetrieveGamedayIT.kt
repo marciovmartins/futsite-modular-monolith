@@ -2,6 +2,7 @@ package com.gitlab.marciovmartins.futsite.modularmonolith.gameday
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.argumentsprovider.InvalidGameDay
+import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -147,6 +148,7 @@ internal class RegisterAndRetrieveGamedayIT {
     fun `register game day with invalid information`(
         testDescription: String,
         gamedayToRegisterDTO: TestPostGameDayDTO,
+        expectedType: String,
         expectedTitle: String,
         expectedDetail: String?,
         properties: Map<String, Any>
@@ -164,7 +166,7 @@ internal class RegisterAndRetrieveGamedayIT {
             .expectHeader().valueEquals("Content-Type", "application/problem+json")
 
         val expectedBody = response.expectBody()
-            .jsonPath("$.type").isEqualTo("about:blank")
+            .jsonPath("$.type").value(endsWith("/api/exception/$expectedType"))
             .jsonPath("$.title").isEqualTo(expectedTitle)
             .jsonPath("$.status").isEqualTo(400)
             .jsonPath("$.instance").isEqualTo("/api/gameDays")
