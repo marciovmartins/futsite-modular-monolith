@@ -49,7 +49,13 @@ class Gameday(
     @Column(name = "gameday_date", insertable = true, updatable = false)
     var date: Instant,
 
-    @field:NotEmpty
+    @field:NotEmpty(
+        message = "The game day matches cannot be empty"
+    )
+    @field:Size(
+        message = "The maximum allowed matches are 99",
+        max = 99,
+    )
     @JoinColumn(name = "gameday_id", nullable = false)
     @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var matches: List<Match>,

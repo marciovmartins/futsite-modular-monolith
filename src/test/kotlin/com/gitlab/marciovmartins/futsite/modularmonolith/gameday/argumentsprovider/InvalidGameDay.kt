@@ -83,7 +83,8 @@ object InvalidGameDay : ArgumentsProvider {
                     reason = "The game day date should not be in the future",
                     properties = mapOf(
                         "propertyName" to "date",
-                        "propertyValue" to Instant.now().truncatedTo(ChronoUnit.DAYS).plus(1, ChronoUnit.DAYS).toString(),
+                        "propertyValue" to Instant.now().truncatedTo(ChronoUnit.DAYS).plus(1, ChronoUnit.DAYS)
+                            .toString(),
                     ),
                 ),
             ),
@@ -109,10 +110,9 @@ object InvalidGameDay : ArgumentsProvider {
             ),
             problems = listOf(
                 TestProblemDetailsDTO(
-                    reason = "Empty Matches",
+                    reason = "The game day matches cannot be empty",
                     properties = mapOf(
                         "propertyName" to "matches",
-                        "minimumNumberOfMatches" to 1,
                     ),
                 ),
             ),
@@ -120,7 +120,7 @@ object InvalidGameDay : ArgumentsProvider {
         argument(
             testDescription = "Gameday with more than 99 matches",
             gameday = defaultGameday().copy(
-                matches = (1 until 100).map { testMatchDTO() }
+                matches = (1..100).map { testMatchDTO() }
             ),
             problems = listOf(
                 TestProblemDetailsDTO(
@@ -128,7 +128,6 @@ object InvalidGameDay : ArgumentsProvider {
                     properties = mapOf(
                         "propertyName" to "matches",
                         "propertyValue" to 100,
-                        "allowedNumberOfMatches" to 99,
                     ),
                 ),
             ),

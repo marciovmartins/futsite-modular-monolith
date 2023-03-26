@@ -46,8 +46,14 @@ class ControllerExceptionHandler {
             this.setProperty("problems", ex.constraintViolations.map {
                 mutableMapOf<String, Any>(
                     "propertyName" to it.propertyPath.toString(),
-                    "propertyValue" to it.invalidValue
                 ).apply {
+                    this["propertyValue"] = when (it.invalidValue) {
+                        is Map<*, *> -> (it.invalidValue as Map<*, *>).size
+                        is List<*> -> (it.invalidValue as List<*>).size
+                        is Array<*> -> (it.invalidValue as Array<*>).size
+                        else -> it.invalidValue
+                    }
+
                     val attributes = it.constraintDescriptor.attributes
 
                     this["reason"] = it.message
