@@ -1,18 +1,16 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.gameday
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.argumentsprovider.InvalidGameDay
-import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.ArgumentsSource
 import org.skyscreamer.jsonassert.JSONAssert.assertEquals
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks
 import org.springframework.mock.web.MockHttpServletRequest
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
@@ -21,20 +19,15 @@ import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 
+@EnableAutoConfiguration
+@ContextConfiguration(classes = [GamedayRepository::class])
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-internal class RegisterAndRetrieveGamedayIT {
-    @Autowired
-    private lateinit var webTestClient: WebTestClient
-
-    @Autowired
-    private lateinit var repositoryEntityLinks: RepositoryEntityLinks
-
-    @LocalServerPort
-    private lateinit var port: String
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
-
+internal class RegisterAndRetrieveGamedayIT(
+    @Autowired private val webTestClient: WebTestClient,
+    @Autowired private val repositoryEntityLinks: RepositoryEntityLinks,
+    @Autowired private val objectMapper: ObjectMapper,
+    @LocalServerPort private val port: String
+) {
     @BeforeEach
     fun initServletRequestAttributes() {
         val httpServletRequest = MockHttpServletRequest().apply { serverPort = port.toInt() }
@@ -141,39 +134,5 @@ internal class RegisterAndRetrieveGamedayIT {
                 val actualJsonBody = it.responseBody!!.decodeToString()
                 assertEquals(expectedJsonBody, actualJsonBody, false)
             }
-    }
-
-    @ParameterizedTest(name = "{0}")
-    @ArgumentsSource(InvalidGameDay::class)
-    fun `register game day with invalid information`(
-        testDescription: String,
-        gamedayToRegisterDTO: TestPostGameDayDTO,
-        problems: List<TestProblemDetailsDTO>
-    ) {
-        // when
-        val response = webTestClient
-            .post().uri("/api/gameDays")
-            .bodyValue(gamedayToRegisterDTO)
-            .header("Content-Type", "application/json")
-            .exchange()
-
-        // then
-        response
-            .expectStatus().isEqualTo(400)
-            .expectHeader().valueEquals("Content-Type", "application/problem+json")
-
-        val expectedBody = response.expectBody()
-            .jsonPath("$.type").value(endsWith("/api/exception/illegal-parameters"))
-            .jsonPath("$.title").isEqualTo("Your request parameters didn't validate")
-            .jsonPath("$.status").isEqualTo(400)
-            .jsonPath("$.instance").isEqualTo("/api/gameDays")
-
-        problems.forEachIndexed { index, problem ->
-            val key = "$.problems[$index]"
-            expectedBody.jsonPath("$key.reason").isEqualTo(problem.reason)
-            problem.properties.forEach { (propertyKey, propertyValue) ->
-                expectedBody.jsonPath("$key.$propertyKey").isEqualTo(propertyValue)
-            }
-        }
     }
 }

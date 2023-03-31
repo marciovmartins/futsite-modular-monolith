@@ -32,21 +32,9 @@ data class TestPlayerStatisticDTO(
     val redCards: Any?,
 )
 
-data class TestProblemDetailsDTO(
-    val reason: String,
-    val properties: Map<String, Any> = emptyMap()
-)
-
 data class LinkDTO(
     val href: String,
 )
-
-fun testMatchDTO(
-    players: Any? = setOf(
-        testPlayerStatisticDTO(team = "A"),
-        testPlayerStatisticDTO(team = "B"),
-    )
-) = TestMatchDTO(players)
 
 fun testPlayerStatisticDTO(
     team: Any?,
