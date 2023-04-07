@@ -6,6 +6,7 @@ import java.util.UUID
 data class RankingDTO(
     val amateurSoccerGroupId: UUID,
     val period: Period,
+    val matches: UShort,
     val playerStatistics: Set<PlayerStatistic>,
 ) {
     data class Period(
@@ -13,15 +14,16 @@ data class RankingDTO(
         val to: Instant,
     )
 
+    /**
+     * TODO: classification and points need to be implemented
+     */
     data class PlayerStatistic(
         val playerId: UUID,
         val matches: UShort,
-        val classification: String?,
-        val points: Long,
         val victories: UShort,
         val draws: UShort,
         val defeats: UShort,
         val goalsInFavor: UShort,
-        val goalsAgainst: UShort,
+        val ownGoals: UShort,
     )
 }

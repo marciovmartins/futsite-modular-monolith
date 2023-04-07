@@ -2,8 +2,12 @@ package com.gitlab.marciovmartins.futsite.modularmonolith.gameday
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.PlayerId
+import jakarta.persistence.AttributeOverride
+import jakarta.persistence.AttributeOverrides
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
+import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -24,10 +28,10 @@ class Gameday(
     @Id
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(unique = true, nullable = false, insertable = true, updatable = false)
-    var gamedayId: UUID? = null,
+    var gamedayId: UUID? = null, //TODO: change to GamedayId value object
 
     @Column(insertable = true, updatable = false)
-    var amateurSoccerGroupId: UUID,
+    var amateurSoccerGroupId: UUID, //TODO: change to AmateurSoccerGroupId value object
 
     @Column(name = "gameday_date", insertable = true, updatable = false)
     var date: Instant,
@@ -57,14 +61,18 @@ class Gameday(
             @GeneratedValue(strategy = GenerationType.IDENTITY)
             var playerStatisticId: Long? = null,
 
-            var playerId: UUID,
+            @Embedded
+            @AttributeOverrides(
+                AttributeOverride(name = "value", column = Column(name = "player_id"))
+            )
+            var playerId: PlayerId,
 
             @Enumerated(EnumType.STRING)
             var team: Team,
 
             var goalsInFavor: UByte,
 
-            var goalsAgainst: UByte,
+            var goalsAgainst: UByte, //FIXME: correct name is OwnGoals
 
             var yellowCards: UByte,
 
