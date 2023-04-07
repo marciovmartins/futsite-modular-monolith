@@ -3,6 +3,7 @@ package com.gitlab.marciovmartins.futsite.modularmonolith.ranking.infrastructure
 import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday
 import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.GamedayRepository
 import java.time.Instant
+import java.util.Optional
 import java.util.UUID
 
 class FakeGamedayRepository(
@@ -12,6 +13,8 @@ class FakeGamedayRepository(
         rows[entity.gamedayId!!] = entity
         return entity
     }
+
+    override fun findById(id: UUID): Optional<Gameday> = Optional.ofNullable(rows[id])
 
     override fun findByAmateurSoccerGroupIdAndDateAfterAndDateBefore(
         amateurSoccerGroupId: UUID,

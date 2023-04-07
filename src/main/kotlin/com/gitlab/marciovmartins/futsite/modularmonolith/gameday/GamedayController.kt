@@ -1,6 +1,5 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.gameday
 
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.hateoas.RepresentationModel
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
@@ -40,7 +39,7 @@ class GamedayController(
         produces = ["application/hal+json"],
     )
     fun byId(@PathVariable gamedayId: UUID): ResponseEntity<RepresentationModel<*>> {
-        val gameday = gamedayRepository.findByIdOrNull(gamedayId)
+        val gameday = gamedayRepository.findById(gamedayId).orElse(null)
             ?: return ResponseEntity.notFound().build()
 
         val selfLink = linkTo(methodOn(GamedayController::class.java).byId(gamedayId))
