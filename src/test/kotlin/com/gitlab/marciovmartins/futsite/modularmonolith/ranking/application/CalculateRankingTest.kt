@@ -75,24 +75,8 @@ internal class CalculateRankingTest {
             period = period,
             matches = 1u,
             playerStatistics = setOf(
-                RankingDTO.PlayerStatistic(
-                    playerId = playerId1.value,
-                    matches = 1u,
-                    victories = 1u,
-                    draws = 0u,
-                    defeats = 0u,
-                    goalsInFavor = 1u,
-                    ownGoals = 0u,
-                ),
-                RankingDTO.PlayerStatistic(
-                    playerId = playerId2.value,
-                    matches = 1u,
-                    victories = 0u,
-                    draws = 0u,
-                    defeats = 1u,
-                    goalsInFavor = 0u,
-                    ownGoals = 0u,
-                ),
+                expectedPlayerStatistic(playerId1, victories = 1u, goalsInFavor = 1u),
+                expectedPlayerStatistic(playerId2, defeats = 1u),
             ),
         )
 
@@ -161,24 +145,8 @@ internal class CalculateRankingTest {
             period = period,
             matches = 4u,
             playerStatistics = setOf(
-                RankingDTO.PlayerStatistic(
-                    playerId = playerId1.value,
-                    matches = 4u,
-                    victories = 2u,
-                    draws = 1u,
-                    defeats = 1u,
-                    goalsInFavor = 3u,
-                    ownGoals = 0u,
-                ),
-                RankingDTO.PlayerStatistic(
-                    playerId = playerId2.value,
-                    matches = 4u,
-                    victories = 1u,
-                    draws = 1u,
-                    defeats = 2u,
-                    goalsInFavor = 1u,
-                    ownGoals = 0u,
-                ),
+                expectedPlayerStatistic(playerId1, 4u, 2u, 1u, 1u, 3u, 0u),
+                expectedPlayerStatistic(playerId2, 4u, 1u, 1u, 2u, 1u, 0u),
             ),
         )
 
@@ -230,24 +198,8 @@ internal class CalculateRankingTest {
             period = period,
             matches = 2u,
             playerStatistics = setOf(
-                RankingDTO.PlayerStatistic(
-                    playerId = playerId1.value,
-                    matches = 2u,
-                    victories = 1u,
-                    draws = 1u,
-                    defeats = 0u,
-                    goalsInFavor = 1u,
-                    ownGoals = 0u,
-                ),
-                RankingDTO.PlayerStatistic(
-                    playerId = playerId2.value,
-                    matches = 2u,
-                    victories = 0u,
-                    draws = 1u,
-                    defeats = 1u,
-                    goalsInFavor = 0u,
-                    ownGoals = 0u,
-                ),
+                expectedPlayerStatistic(playerId1, 2u, 1u, 1u, 0u, 1u, 0u),
+                expectedPlayerStatistic(playerId2, 2u, 0u, 1u, 1u, 0u, 0u),
             ),
         )
 
@@ -276,5 +228,17 @@ internal class CalculateRankingTest {
         redCards: UByte = 0u,
     ) = Gameday.Match.PlayerStatistic(
         Random.nextLong(), playerId, team, goalsInFavor, ownGoals, yellowCards, blueCards, redCards,
+    )
+
+    private fun expectedPlayerStatistic(
+        playerId: PlayerId,
+        matches: UShort = 1u,
+        victories: UShort = 0u,
+        draws: UShort = 0u,
+        defeats: UShort = 0u,
+        goalsInFavor: UShort = 0u,
+        ownGoals: UShort = 0u,
+    ) = RankingDTO.PlayerStatistic(
+        playerId.value, matches, victories, draws, defeats, goalsInFavor, ownGoals,
     )
 }
