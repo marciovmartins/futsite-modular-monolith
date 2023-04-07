@@ -57,12 +57,9 @@ internal class CalculateRankingTest {
             amateurSoccerGroupId = amateurSoccerGroupId,
             date = Instant.now().minus(1, ChronoUnit.DAYS),
             matches = listOf(
-                Gameday.Match(
-                    matchId = 1,
-                    players = setOf(
-                        playerStatistic(playerId1, Gameday.Match.Team.A, goalsInFavor = 1u),
-                        playerStatistic(playerId2, Gameday.Match.Team.B),
-                    ),
+                match(
+                    playerStatistic(playerId1, Gameday.Match.Team.A, goalsInFavor = 1u),
+                    playerStatistic(playerId2, Gameday.Match.Team.B),
                 ),
             ),
         )
@@ -125,19 +122,13 @@ internal class CalculateRankingTest {
             amateurSoccerGroupId = amateurSoccerGroupId,
             date = Instant.now().minus(2, ChronoUnit.DAYS),
             matches = listOf(
-                Gameday.Match(
-                    matchId = 1,
-                    players = setOf(
-                        playerStatistic(playerId1, Gameday.Match.Team.A, goalsInFavor = 1u),
-                        playerStatistic(playerId2, Gameday.Match.Team.B),
-                    ),
+                match(
+                    playerStatistic(playerId1, Gameday.Match.Team.A, goalsInFavor = 1u),
+                    playerStatistic(playerId2, Gameday.Match.Team.B),
                 ),
-                Gameday.Match(
-                    matchId = 4,
-                    players = setOf(
-                        playerStatistic(playerId1, Gameday.Match.Team.A, goalsInFavor = 2u),
-                        playerStatistic(playerId2, Gameday.Match.Team.B),
-                    ),
+                match(
+                    playerStatistic(playerId1, Gameday.Match.Team.A, goalsInFavor = 2u),
+                    playerStatistic(playerId2, Gameday.Match.Team.B),
                 ),
             ),
         )
@@ -147,19 +138,13 @@ internal class CalculateRankingTest {
             amateurSoccerGroupId = amateurSoccerGroupId,
             date = Instant.now().minus(1, ChronoUnit.DAYS),
             matches = listOf(
-                Gameday.Match(
-                    matchId = 7,
-                    players = setOf(
-                        playerStatistic(playerId1, Gameday.Match.Team.A),
-                        playerStatistic(playerId2, Gameday.Match.Team.B),
-                    ),
+                match(
+                    playerStatistic(playerId1, Gameday.Match.Team.A),
+                    playerStatistic(playerId2, Gameday.Match.Team.B),
                 ),
-                Gameday.Match(
-                    matchId = 10,
-                    players = setOf(
-                        playerStatistic(playerId1, Gameday.Match.Team.A),
-                        playerStatistic(playerId2, Gameday.Match.Team.B, goalsInFavor = 1u),
-                    ),
+                match(
+                    playerStatistic(playerId1, Gameday.Match.Team.A),
+                    playerStatistic(playerId2, Gameday.Match.Team.B, goalsInFavor = 1u),
                 ),
             ),
         )
@@ -223,19 +208,13 @@ internal class CalculateRankingTest {
             amateurSoccerGroupId = amateurSoccerGroupId,
             date = Instant.now().minus(1, ChronoUnit.DAYS),
             matches = listOf(
-                Gameday.Match(
-                    matchId = 1,
-                    players = setOf(
-                        playerStatistic(playerId1, Gameday.Match.Team.A, goalsInFavor = 1u),
-                        playerStatistic(playerId2, Gameday.Match.Team.B),
-                    ),
+                match(
+                    playerStatistic(playerId1, Gameday.Match.Team.A, goalsInFavor = 1u),
+                    playerStatistic(playerId2, Gameday.Match.Team.B),
                 ),
-                Gameday.Match(
-                    matchId = 4,
-                    players = setOf(
-                        playerStatistic(playerId1, Gameday.Match.Team.A),
-                        playerStatistic(playerId2, Gameday.Match.Team.B),
-                    ),
+                match(
+                    playerStatistic(playerId1, Gameday.Match.Team.A),
+                    playerStatistic(playerId2, Gameday.Match.Team.B),
                 ),
             ),
         )
@@ -280,6 +259,12 @@ internal class CalculateRankingTest {
         // then
         assertThat(actualRanking).isEqualTo(expectedRanking)
     }
+
+    private fun match(
+        vararg players: Gameday.Match.PlayerStatistic,
+    ) = Gameday.Match(
+        Random.nextLong(), players.toSet(),
+    )
 
     private fun playerStatistic(
         playerId: PlayerId,

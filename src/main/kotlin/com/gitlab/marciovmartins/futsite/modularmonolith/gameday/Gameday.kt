@@ -72,7 +72,7 @@ class Gameday(
 
             var goalsInFavor: UByte,
 
-            var ownGoals: UByte, //FIXME: correct name is OwnGoals
+            var ownGoals: UByte,
 
             var yellowCards: UByte,
 
