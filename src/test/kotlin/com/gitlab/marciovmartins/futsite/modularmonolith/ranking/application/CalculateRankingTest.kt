@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.UUID
+import kotlin.random.Random
 
 
 /**
@@ -59,28 +60,10 @@ internal class CalculateRankingTest {
                 Gameday.Match(
                     matchId = 1,
                     players = setOf(
-                        Gameday.Match.PlayerStatistic(
-                            playerStatisticId = 2,
-                            playerId = playerId1,
-                            team = Gameday.Match.Team.A,
-                            goalsInFavor = 1u,
-                            goalsAgainst = 0u,
-                            yellowCards = 0u,
-                            blueCards = 0u,
-                            redCards = 0u,
-                        ),
-                        Gameday.Match.PlayerStatistic(
-                            playerStatisticId = 3,
-                            playerId = playerId2,
-                            team = Gameday.Match.Team.B,
-                            goalsInFavor = 0u,
-                            goalsAgainst = 0u,
-                            yellowCards = 0u,
-                            blueCards = 0u,
-                            redCards = 0u,
-                        ),
+                        playerStatistic(playerId1, Gameday.Match.Team.A, goalsInFavor = 1u),
+                        playerStatistic(playerId2, Gameday.Match.Team.B),
                     ),
-                )
+                ),
             ),
         )
 
@@ -145,51 +128,15 @@ internal class CalculateRankingTest {
                 Gameday.Match(
                     matchId = 1,
                     players = setOf(
-                        Gameday.Match.PlayerStatistic(
-                            playerStatisticId = 2,
-                            playerId = playerId1,
-                            team = Gameday.Match.Team.A,
-                            goalsInFavor = 1u,
-                            goalsAgainst = 0u,
-                            yellowCards = 0u,
-                            blueCards = 0u,
-                            redCards = 0u,
-                        ),
-                        Gameday.Match.PlayerStatistic(
-                            playerStatisticId = 3,
-                            playerId = playerId2,
-                            team = Gameday.Match.Team.B,
-                            goalsInFavor = 0u,
-                            goalsAgainst = 0u,
-                            yellowCards = 0u,
-                            blueCards = 0u,
-                            redCards = 0u,
-                        ),
+                        playerStatistic(playerId1, Gameday.Match.Team.A, goalsInFavor = 1u),
+                        playerStatistic(playerId2, Gameday.Match.Team.B),
                     ),
                 ),
                 Gameday.Match(
                     matchId = 4,
                     players = setOf(
-                        Gameday.Match.PlayerStatistic(
-                            playerStatisticId = 5,
-                            playerId = playerId1,
-                            team = Gameday.Match.Team.A,
-                            goalsInFavor = 2u,
-                            goalsAgainst = 0u,
-                            yellowCards = 0u,
-                            blueCards = 0u,
-                            redCards = 0u,
-                        ),
-                        Gameday.Match.PlayerStatistic(
-                            playerStatisticId = 6,
-                            playerId = playerId2,
-                            team = Gameday.Match.Team.B,
-                            goalsInFavor = 0u,
-                            goalsAgainst = 0u,
-                            yellowCards = 0u,
-                            blueCards = 0u,
-                            redCards = 0u,
-                        ),
+                        playerStatistic(playerId1, Gameday.Match.Team.A, goalsInFavor = 2u),
+                        playerStatistic(playerId2, Gameday.Match.Team.B),
                     ),
                 ),
             ),
@@ -203,51 +150,15 @@ internal class CalculateRankingTest {
                 Gameday.Match(
                     matchId = 7,
                     players = setOf(
-                        Gameday.Match.PlayerStatistic(
-                            playerStatisticId = 8,
-                            playerId = playerId1,
-                            team = Gameday.Match.Team.A,
-                            goalsInFavor = 0u,
-                            goalsAgainst = 0u,
-                            yellowCards = 0u,
-                            blueCards = 0u,
-                            redCards = 0u,
-                        ),
-                        Gameday.Match.PlayerStatistic(
-                            playerStatisticId = 9,
-                            playerId = playerId2,
-                            team = Gameday.Match.Team.B,
-                            goalsInFavor = 0u,
-                            goalsAgainst = 0u,
-                            yellowCards = 0u,
-                            blueCards = 0u,
-                            redCards = 0u,
-                        ),
+                        playerStatistic(playerId1, Gameday.Match.Team.A),
+                        playerStatistic(playerId2, Gameday.Match.Team.B),
                     ),
                 ),
                 Gameday.Match(
                     matchId = 10,
                     players = setOf(
-                        Gameday.Match.PlayerStatistic(
-                            playerStatisticId = 11,
-                            playerId = playerId1,
-                            team = Gameday.Match.Team.A,
-                            goalsInFavor = 0u,
-                            goalsAgainst = 0u,
-                            yellowCards = 0u,
-                            blueCards = 0u,
-                            redCards = 0u,
-                        ),
-                        Gameday.Match.PlayerStatistic(
-                            playerStatisticId = 12,
-                            playerId = playerId2,
-                            team = Gameday.Match.Team.B,
-                            goalsInFavor = 1u,
-                            goalsAgainst = 0u,
-                            yellowCards = 0u,
-                            blueCards = 0u,
-                            redCards = 0u,
-                        ),
+                        playerStatistic(playerId1, Gameday.Match.Team.A),
+                        playerStatistic(playerId2, Gameday.Match.Team.B, goalsInFavor = 1u),
                     ),
                 ),
             ),
@@ -315,51 +226,15 @@ internal class CalculateRankingTest {
                 Gameday.Match(
                     matchId = 1,
                     players = setOf(
-                        Gameday.Match.PlayerStatistic(
-                            playerStatisticId = 2,
-                            playerId = playerId1,
-                            team = Gameday.Match.Team.A,
-                            goalsInFavor = 1u,
-                            goalsAgainst = 0u,
-                            yellowCards = 0u,
-                            blueCards = 0u,
-                            redCards = 0u,
-                        ),
-                        Gameday.Match.PlayerStatistic(
-                            playerStatisticId = 3,
-                            playerId = playerId2,
-                            team = Gameday.Match.Team.B,
-                            goalsInFavor = 0u,
-                            goalsAgainst = 0u,
-                            yellowCards = 0u,
-                            blueCards = 0u,
-                            redCards = 0u,
-                        ),
+                        playerStatistic(playerId1, Gameday.Match.Team.A, goalsInFavor = 1u),
+                        playerStatistic(playerId2, Gameday.Match.Team.B),
                     ),
                 ),
                 Gameday.Match(
                     matchId = 4,
                     players = setOf(
-                        Gameday.Match.PlayerStatistic(
-                            playerStatisticId = 5,
-                            playerId = playerId1,
-                            team = Gameday.Match.Team.A,
-                            goalsInFavor = 0u,
-                            goalsAgainst = 0u,
-                            yellowCards = 0u,
-                            blueCards = 0u,
-                            redCards = 0u,
-                        ),
-                        Gameday.Match.PlayerStatistic(
-                            playerStatisticId = 6,
-                            playerId = playerId2,
-                            team = Gameday.Match.Team.B,
-                            goalsInFavor = 0u,
-                            goalsAgainst = 0u,
-                            yellowCards = 0u,
-                            blueCards = 0u,
-                            redCards = 0u,
-                        ),
+                        playerStatistic(playerId1, Gameday.Match.Team.A),
+                        playerStatistic(playerId2, Gameday.Match.Team.B),
                     ),
                 ),
             ),
@@ -405,4 +280,16 @@ internal class CalculateRankingTest {
         // then
         assertThat(actualRanking).isEqualTo(expectedRanking)
     }
+
+    private fun playerStatistic(
+        playerId: PlayerId,
+        team: Gameday.Match.Team,
+        goalsInFavor: UByte = 0u,
+        ownGoals: UByte = 0u,
+        yellowCards: UByte = 0u,
+        blueCards: UByte = 0u,
+        redCards: UByte = 0u,
+    ) = Gameday.Match.PlayerStatistic(
+        Random.nextLong(), playerId, team, goalsInFavor, ownGoals, yellowCards, blueCards, redCards,
+    )
 }

@@ -21,7 +21,7 @@ create table gamedays_player_statistic
     player_id           binary(16)       not null,
     team                enum ('A', 'B')  not null,
     goals_in_favor      tinyint unsigned not null,
-    goals_against       tinyint unsigned not null,
+    own_goals           tinyint unsigned not null,
     yellow_cards        tinyint unsigned not null,
     blue_cards          tinyint unsigned not null,
     red_cards           tinyint unsigned not null,

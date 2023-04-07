@@ -79,7 +79,7 @@ class Ranking private constructor(
             draws = Draws(this.draws.value.inc()),
             defeats = this.defeats,
             goalsInFavor = GoalsInFavor(this.goalsInFavor.value.plus(playerStatistic.goalsInFavor).toUShort()),
-            ownGoals = OwnGoals(this.ownGoals.value.plus(playerStatistic.goalsAgainst).toUShort()),
+            ownGoals = OwnGoals(this.ownGoals.value.plus(playerStatistic.ownGoals).toUShort()),
         )
 
         fun victory(playerStatistic: Gameday.Match.PlayerStatistic) = PlayerStatistic(
@@ -89,7 +89,7 @@ class Ranking private constructor(
             draws = this.draws,
             defeats = this.defeats,
             goalsInFavor = GoalsInFavor(this.goalsInFavor.value.plus(playerStatistic.goalsInFavor).toUShort()),
-            ownGoals = OwnGoals(this.ownGoals.value.plus(playerStatistic.goalsAgainst).toUShort()),
+            ownGoals = OwnGoals(this.ownGoals.value.plus(playerStatistic.ownGoals).toUShort()),
         )
 
         fun defeat(playerStatistic: Gameday.Match.PlayerStatistic) = PlayerStatistic(
@@ -99,7 +99,7 @@ class Ranking private constructor(
             draws = this.draws,
             defeats = Defeats(this.defeats.value.inc()),
             goalsInFavor = GoalsInFavor(this.goalsInFavor.value.plus(playerStatistic.goalsInFavor).toUShort()),
-            ownGoals = OwnGoals(this.ownGoals.value.plus(playerStatistic.goalsAgainst).toUShort()),
+            ownGoals = OwnGoals(this.ownGoals.value.plus(playerStatistic.ownGoals).toUShort()),
         )
 
         companion object {
@@ -122,7 +122,7 @@ class Ranking private constructor(
     ) {
         fun add(playerStatistic: Gameday.Match.PlayerStatistic) = TeamStatistic(
             goalsInFavor = GoalsInFavor(this.goalsInFavor.value.plus(playerStatistic.goalsInFavor).toUShort()),
-            ownGoals = OwnGoals(this.ownGoals.value.plus(playerStatistic.goalsAgainst).toUShort())
+            ownGoals = OwnGoals(this.ownGoals.value.plus(playerStatistic.ownGoals).toUShort())
         )
 
         companion object {
