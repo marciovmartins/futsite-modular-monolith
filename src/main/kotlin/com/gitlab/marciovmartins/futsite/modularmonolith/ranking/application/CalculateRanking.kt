@@ -6,7 +6,7 @@ import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.Ranking
 import java.util.UUID
 
 class CalculateRanking(
-    private val gamedayRepository: GamedayRepository
+    private val gamedayRepository: GamedayRepository,
 ) {
     fun with(amateurSoccerGroupId: UUID, period: RankingDTO.Period): RankingDTO {
         val gamedays = gamedayRepository.findByAmateurSoccerGroupIdAndDateAfterAndDateBefore(

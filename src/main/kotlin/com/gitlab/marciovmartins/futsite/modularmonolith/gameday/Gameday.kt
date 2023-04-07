@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.PlayerId
 import jakarta.persistence.AttributeOverride
-import jakarta.persistence.AttributeOverrides
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Embedded
@@ -17,6 +16,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToMany
+import org.hibernate.annotations.FetchMode
 import java.time.Instant
 import java.util.UUID
 
@@ -38,6 +38,7 @@ class Gameday(
 
     @JoinColumn(name = "gameday_id", nullable = false)
     @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    @org.hibernate.annotations.Fetch(FetchMode.SELECT)
     var matches: List<Match>,
 ) {
     @Entity(name = "gamedays_matches")
@@ -47,8 +48,9 @@ class Gameday(
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         var matchId: Long? = null,
 
-        @OneToMany(cascade = [CascadeType.ALL])
+        @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
         @JoinColumn(name = "match_id", nullable = false)
+        @org.hibernate.annotations.Fetch(FetchMode.SELECT)
         var players: Set<PlayerStatistic>,
     ) {
         /**
@@ -62,9 +64,7 @@ class Gameday(
             var playerStatisticId: Long? = null,
 
             @Embedded
-            @AttributeOverrides(
-                AttributeOverride(name = "value", column = Column(name = "player_id"))
-            )
+            @AttributeOverride(name = "value", column = Column(name = "player_id"))
             var playerId: PlayerId,
 
             @Enumerated(EnumType.STRING)

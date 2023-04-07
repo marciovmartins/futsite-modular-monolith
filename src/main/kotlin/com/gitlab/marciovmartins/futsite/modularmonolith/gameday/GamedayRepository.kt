@@ -1,17 +1,14 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.gameday
 
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.rest.core.annotation.RepositoryRestResource
-import org.springframework.data.rest.webmvc.RepositoryRestController
+import org.springframework.stereotype.Repository
 import java.time.Instant
 import java.util.UUID
 
-@RepositoryRestController
-@RepositoryRestResource(path = "gameDays")
-interface JpaGamedayRepository : JpaRepository<Gameday, UUID>, GamedayRepository {
-}
+@Repository
+interface GamedayRepository : JpaRepository<Gameday, UUID>, GamedayRepositoryCustomized
 
-interface GamedayRepository {
+interface GamedayRepositoryCustomized {
     fun save(entity: Gameday): Gameday
     fun findByAmateurSoccerGroupIdAndDateAfterAndDateBefore(
         amateurSoccerGroupId: UUID,

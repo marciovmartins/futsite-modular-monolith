@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.skyscreamer.jsonassert.JSONAssert.assertEquals
+import org.skyscreamer.jsonassert.JSONCompareMode
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.reactive.server.WebTestClient
@@ -20,11 +22,10 @@ import java.util.UUID
 
 
 @EnableAutoConfiguration
-@ContextConfiguration(classes = [GamedayRepository::class])
+@ContextConfiguration(classes = [GamedayController::class])
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 internal class RegisterAndRetrieveGamedayIT(
     @Autowired private val webTestClient: WebTestClient,
-    @Autowired private val repositoryEntityLinks: RepositoryEntityLinks,
     @Autowired private val objectMapper: ObjectMapper,
     @LocalServerPort private val port: String
 ) {
@@ -53,20 +54,20 @@ internal class RegisterAndRetrieveGamedayIT(
         )
         val expectedResponseGamedayDTO = gamedayToRegisterDTO.toTestRetrieveGameDayDTO(
             links = mapOf(
-                "self" to LinkDTO(repositoryEntityLinks.linkToItemResource(Gameday::class.java, gamedayId).href),
-                "gameday" to LinkDTO(repositoryEntityLinks.linkToItemResource(Gameday::class.java, gamedayId).href),
+                "self" to LinkDTO(linkTo(methodOn(GamedayController::class.java).byId(gamedayId)).toString()),
+                "gameday" to LinkDTO(linkTo(methodOn(GamedayController::class.java).byId(gamedayId)).toString()),
             )
         )
 
         // when
         val request = webTestClient
-            .post().uri("/api/gameDays")
+            .post().uri("/api/v1/gameDays")
             .bodyValue(gamedayToRegisterDTO)
             .header("Content-Type", "application/json")
             .exchange()
 
         val response = webTestClient
-            .get().uri("/api/gameDays/${gamedayToRegisterDTO.gamedayId}")
+            .get().uri("/api/v1/gameDays/${gamedayToRegisterDTO.gamedayId}")
             .header("Content-Type", "application/json")
             .exchange()
 
@@ -81,7 +82,7 @@ internal class RegisterAndRetrieveGamedayIT(
             .consumeWith {
                 val expectedJsonBody = objectMapper.writeValueAsString(expectedResponseGamedayDTO)
                 val actualJsonBody = it.responseBody!!.decodeToString()
-                assertEquals(expectedJsonBody, actualJsonBody, false)
+                assertEquals(expectedJsonBody, actualJsonBody, JSONCompareMode.LENIENT)
             }
     }
 
@@ -104,20 +105,20 @@ internal class RegisterAndRetrieveGamedayIT(
         )
         val expectedResponseGamedayDTO = gamedayToRegisterDTO.toTestRetrieveGameDayDTO(
             links = mapOf(
-                "self" to LinkDTO(repositoryEntityLinks.linkToItemResource(Gameday::class.java, gamedayId).href),
-                "gameday" to LinkDTO(repositoryEntityLinks.linkToItemResource(Gameday::class.java, gamedayId).href),
+                "self" to LinkDTO(linkTo(methodOn(GamedayController::class.java).byId(gamedayId)).toString()),
+                "gameday" to LinkDTO(linkTo(methodOn(GamedayController::class.java).byId(gamedayId)).toString()),
             )
         )
 
         // when
         val request = webTestClient
-            .post().uri("/api/gameDays")
+            .post().uri("/api/v1/gameDays")
             .bodyValue(gamedayToRegisterDTO)
             .header("Content-Type", "application/json")
             .exchange()
 
         val response = webTestClient
-            .get().uri("/api/gameDays/${gamedayToRegisterDTO.gamedayId}")
+            .get().uri("/api/v1/gameDays/${gamedayToRegisterDTO.gamedayId}")
             .header("Content-Type", "application/json")
             .exchange()
 
@@ -132,7 +133,7 @@ internal class RegisterAndRetrieveGamedayIT(
             .consumeWith {
                 val expectedJsonBody = objectMapper.writeValueAsString(expectedResponseGamedayDTO)
                 val actualJsonBody = it.responseBody!!.decodeToString()
-                assertEquals(expectedJsonBody, actualJsonBody, false)
+                assertEquals(expectedJsonBody, actualJsonBody, JSONCompareMode.LENIENT)
             }
     }
 }

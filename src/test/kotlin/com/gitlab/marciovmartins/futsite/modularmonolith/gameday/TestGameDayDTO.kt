@@ -26,7 +26,7 @@ data class TestPlayerStatisticDTO(
     val playerId: Any?,
     val team: Any?,
     val goalsInFavor: Any?,
-    val goalsAgainst: Any?,
+    val ownGoals: Any?,
     val yellowCards: Any?,
     val blueCards: Any?,
     val redCards: Any?,
@@ -40,12 +40,12 @@ fun testPlayerStatisticDTO(
     team: Any?,
     playerId: Any? = UUID.randomUUID().toString(),
     goalsInFavor: Any? = 0,
-    goalsAgainst: Any? = 0,
+    ownGoals: Any? = 0,
     yellowCards: Any? = 0,
     blueCards: Any? = 0,
     redCards: Any? = 0
 ) = TestPlayerStatisticDTO(
-    playerId, team, goalsInFavor, goalsAgainst, yellowCards, blueCards, redCards,
+    playerId, team, goalsInFavor, ownGoals, yellowCards, blueCards, redCards,
 )
 
 fun TestPostGameDayDTO.toTestRetrieveGameDayDTO(
