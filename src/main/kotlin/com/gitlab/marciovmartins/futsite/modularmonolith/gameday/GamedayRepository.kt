@@ -7,9 +7,9 @@ import java.util.Optional
 import java.util.UUID
 
 @Repository
-interface JpaGamedayRepository : JpaRepository<Gameday, UUID>, GamedayRepository
+interface GamedayRepository : JpaRepository<Gameday, UUID>, CustomizedGamedayRepository
 
-interface GamedayRepository {
+interface CustomizedGamedayRepository {
     fun save(entity: Gameday): Gameday
     fun findById(id: UUID): Optional<Gameday>
     fun findByAmateurSoccerGroupIdAndDateAfterAndDateBefore(

@@ -89,7 +89,6 @@ object GamedaySuccessfullyArgumentsProvider : ArgumentsProvider {
                         expectedPlayerStatistic(playerId2, 2u, 0u, 0u, 2u, 0u, 0u),
                     ),
                 )
-
             )
         },
         argument(
