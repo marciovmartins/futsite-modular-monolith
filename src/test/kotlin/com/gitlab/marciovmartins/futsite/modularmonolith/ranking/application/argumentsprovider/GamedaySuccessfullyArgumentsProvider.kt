@@ -1,7 +1,9 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.ranking.application.argumentsprovider
 
-import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.PlayerId
+import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.AmateurSoccerGroup.AmateurSoccerGroupId
+import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.Player.PlayerId
 import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday
+import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.GamedayId
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.application.RankingDTO
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.provider.Arguments
@@ -28,14 +30,14 @@ object GamedaySuccessfullyArgumentsProvider : ArgumentsProvider {
         argument(
             testDescription = "with one gameday with one match registered",
         ) { amateurSoccerGroupId: UUID, period: RankingDTO.Period ->
-            val gamedayId = UUID.randomUUID()
+            val gamedayId = GamedayId(UUID.randomUUID())
             val playerId1 = PlayerId(UUID.randomUUID())
             val playerId2 = PlayerId(UUID.randomUUID())
             result(
                 gamedays = mutableMapOf(
-                    gamedayId to Gameday(
+                    gamedayId.value to Gameday(
                         gamedayId = gamedayId,
-                        amateurSoccerGroupId = amateurSoccerGroupId,
+                        amateurSoccerGroupId = AmateurSoccerGroupId(amateurSoccerGroupId),
                         date = Instant.now().minus(1, ChronoUnit.DAYS),
                         matches = listOf(
                             match(
@@ -59,14 +61,14 @@ object GamedaySuccessfullyArgumentsProvider : ArgumentsProvider {
         argument(
             testDescription = "with one gameday with many matches registered",
         ) { amateurSoccerGroupId: UUID, period: RankingDTO.Period ->
-            val gamedayId = UUID.randomUUID()
+            val gamedayId = GamedayId(UUID.randomUUID())
             val playerId1 = PlayerId(UUID.randomUUID())
             val playerId2 = PlayerId(UUID.randomUUID())
             result(
                 gamedays = mutableMapOf(
-                    gamedayId to Gameday(
+                    gamedayId.value to Gameday(
                         gamedayId = gamedayId,
-                        amateurSoccerGroupId = amateurSoccerGroupId,
+                        amateurSoccerGroupId = AmateurSoccerGroupId(amateurSoccerGroupId),
                         date = Instant.now().minus(2, ChronoUnit.DAYS),
                         matches = listOf(
                             match(
@@ -94,15 +96,15 @@ object GamedaySuccessfullyArgumentsProvider : ArgumentsProvider {
         argument(
             testDescription = "with many gameday with many matches registered",
         ) { amateurSoccerGroupId: UUID, period: RankingDTO.Period ->
-            val gamedayId1 = UUID.randomUUID()
-            val gamedayId2 = UUID.randomUUID()
+            val gamedayId1 = GamedayId(UUID.randomUUID())
+            val gamedayId2 = GamedayId(UUID.randomUUID())
             val playerId1 = PlayerId(UUID.randomUUID())
             val playerId2 = PlayerId(UUID.randomUUID())
             result(
                 gamedays = mutableMapOf(
-                    gamedayId1 to Gameday(
+                    gamedayId1.value to Gameday(
                         gamedayId = gamedayId1,
-                        amateurSoccerGroupId = amateurSoccerGroupId,
+                        amateurSoccerGroupId = AmateurSoccerGroupId(amateurSoccerGroupId),
                         date = Instant.now().minus(2, ChronoUnit.DAYS),
                         matches = listOf(
                             match(
@@ -115,9 +117,9 @@ object GamedaySuccessfullyArgumentsProvider : ArgumentsProvider {
                             ),
                         ),
                     ),
-                    gamedayId2 to Gameday(
+                    gamedayId2.value to Gameday(
                         gamedayId = gamedayId2,
-                        amateurSoccerGroupId = amateurSoccerGroupId,
+                        amateurSoccerGroupId = AmateurSoccerGroupId(amateurSoccerGroupId),
                         date = Instant.now().minus(1, ChronoUnit.DAYS),
                         matches = listOf(
                             match(

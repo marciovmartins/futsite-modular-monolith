@@ -1,7 +1,11 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup
 
+import jakarta.persistence.Embeddable
 import java.util.UUID
 
 class AmateurSoccerGroup {
-    data class AmateurSoccerGroupId(val value: UUID)
+    @Embeddable
+    class AmateurSoccerGroupId(
+        var value: UUID,
+    )
 }
