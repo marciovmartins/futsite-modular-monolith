@@ -37,10 +37,6 @@ class Gameday(
     @org.hibernate.annotations.Fetch(FetchMode.SELECT)
     var matches: List<Match>,
 ) {
-    class GamedayId(
-        var value: UUID,
-    )
-
     @Entity(name = "gamedays_matches")
     data class Match(
         @Id

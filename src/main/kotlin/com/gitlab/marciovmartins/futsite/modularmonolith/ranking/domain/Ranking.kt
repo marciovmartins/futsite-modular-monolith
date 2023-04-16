@@ -1,7 +1,6 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain
 
 import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.AmateurSoccerGroup
-import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.Player.PlayerId
 import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday
 import java.time.Instant
 
