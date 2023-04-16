@@ -1,7 +1,6 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup
 
 import jakarta.persistence.Column
-import jakarta.persistence.Embeddable
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import java.util.UUID
@@ -15,8 +14,7 @@ class AmateurSoccerGroup(
     @Column(nullable = false, insertable = true, updatable = true)
     var name: String,
 ) {
-    @Embeddable
-    class AmateurSoccerGroupId(
+    data class AmateurSoccerGroupId(
         var value: UUID,
     )
 }
