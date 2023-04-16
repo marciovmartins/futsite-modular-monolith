@@ -20,7 +20,7 @@ internal class CalculateRankingTest(
         testDescription: String,
         amateurSoccerGroupId: UUID,
         period: RankingDTO.Period,
-        gamedays: MutableMap<UUID, Gameday>,
+        gamedays: Set<Gameday>,
         expectedRanking: RankingDTO,
     ) {
         //given

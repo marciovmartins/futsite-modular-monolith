@@ -3,7 +3,6 @@ package com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain
 import java.time.Instant
 
 class Gameday(
-    val gamedayId: GamedayId,
     val amateurSoccerGroupId: AmateurSoccerGroupId,
     val date: Date,
     val matches: List<Match>,

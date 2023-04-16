@@ -4,12 +4,11 @@ import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.AmateurS
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.Gameday
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.GamedayRepository
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.Ranking
-import java.util.UUID
 
 class FakeGamedayRepository(
-    private val rows: MutableMap<UUID, Gameday>
+    private val rows: Set<Gameday>
 ) : GamedayRepository {
     override fun findBy(amateurSoccerGroupId: AmateurSoccerGroupId, period: Ranking.Period): Set<Gameday> = rows
-        .filter { it.value.date.value.isAfter(period.from) && it.value.date.value.isBefore(period.to) }
-        .values.toSet()
+        .filter { it.date.value.isAfter(period.from) && it.date.value.isBefore(period.to) }
+        .toSet()
 }
