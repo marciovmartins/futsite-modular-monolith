@@ -42,7 +42,7 @@ class Ranking private constructor(
                 }
 
                 match.players.forEach { playerStatistic ->
-                    val playerId = playerStatistic.playerId
+                    val playerId = PlayerId(playerStatistic.playerId)
                     val statistic = playerStatistics.getOrDefault(playerId, PlayerStatistic.zero(playerId))
                     val newStatistic: PlayerStatistic = when (teamWinner) {
                         null -> statistic.draw(playerStatistic)

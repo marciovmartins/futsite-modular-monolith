@@ -9,9 +9,18 @@ import java.util.UUID
 interface GamedayRepository : JpaRepository<Gameday, UUID>, CustomizedGamedayRepository
 
 interface CustomizedGamedayRepository {
+    fun findByAmateurSoccerGroupId(
+        amateurSoccerGroupId: UUID,
+    ): Set<Gameday>
+
     fun findByAmateurSoccerGroupIdAndDateAfterAndDateBefore(
         amateurSoccerGroupId: UUID,
         from: Instant,
         to: Instant
     ): Set<Gameday>
+
+    fun findByAmateurSoccerGroupIdAndGamedayId(
+        amateurSoccerGroupId: UUID,
+        gamedayId: UUID,
+    ): Gameday?
 }

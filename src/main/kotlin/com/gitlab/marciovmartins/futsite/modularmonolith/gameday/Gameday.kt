@@ -1,14 +1,8 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.gameday
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.AmateurSoccerGroup.AmateurSoccerGroupId
-import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.Player.PlayerId
-import jakarta.persistence.AttributeOverride
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
-import jakarta.persistence.Embeddable
-import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -28,21 +22,12 @@ import java.util.UUID
 @Entity(name = "gamedays")
 class Gameday(
     @Id
-    @JsonIgnore
-    @Column(name = "gameday_id", unique = true, nullable = false, insertable = true, updatable = false)
-    protected var id: UUID? = null,
+    @Column(unique = true, nullable = false, insertable = true, updatable = false)
+    var gamedayId: UUID? = null,
 
-    @Embedded
-    @AttributeOverride(name = "value", column = Column(name = "gameday_id", insertable = false, updatable = false))
-    var gamedayId: GamedayId,
-
-    @Embedded
     @JsonIgnore
-    @AttributeOverride(
-        name = "value",
-        column = Column(name = "amateur_soccer_group_id", insertable = true, updatable = false)
-    )
-    var amateurSoccerGroupId: AmateurSoccerGroupId,
+    @Column(nullable = false, insertable = true, updatable = false)
+    var amateurSoccerGroupId: UUID? = null,
 
     @Column(name = "gameday_date", insertable = true, updatable = false)
     var date: Instant,
@@ -52,15 +37,6 @@ class Gameday(
     @org.hibernate.annotations.Fetch(FetchMode.SELECT)
     var matches: List<Match>,
 ) {
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    fun setGamedayId(value: UUID) {
-        this.id = value
-    }
-
-    @JsonProperty("amateurSoccerGroupId")
-    fun getAmateurSoccerGroupId(): UUID = amateurSoccerGroupId.value
-
-    @Embeddable
     class GamedayId(
         var value: UUID,
     )
@@ -87,10 +63,7 @@ class Gameday(
             @GeneratedValue(strategy = GenerationType.IDENTITY)
             var playerStatisticId: Long? = null,
 
-            @Embedded
-            @JsonIgnore
-            @AttributeOverride(name = "value", column = Column(name = "player_id"))
-            var playerId: PlayerId,
+            var playerId: UUID,
 
             @Enumerated(EnumType.STRING)
             var team: Team,
@@ -104,10 +77,7 @@ class Gameday(
             var blueCards: UByte,
 
             var redCards: UByte,
-        ) {
-            @JsonProperty("playerId")
-            fun getPlayerId(): UUID = playerId.value
-        }
+        )
 
         enum class Team {
             A, B

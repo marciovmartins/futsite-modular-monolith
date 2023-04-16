@@ -1,15 +1,20 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup
 
-import org.springframework.data.repository.findByIdOrNull
+import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.GamedayController
 import org.springframework.hateoas.CollectionModel
+import org.springframework.hateoas.EntityModel
+import org.springframework.hateoas.IanaLinkRelations
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.afford
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.net.URI
 import java.util.UUID
 
 @RestController
@@ -18,48 +23,49 @@ class AmateurSoccerGroupController(
     private val amateurSoccerGroupRepository: AmateurSoccerGroupRepository,
 ) {
     @GetMapping
-    fun showAll(): CollectionModel<AmateurSoccerGroupModel> {
-        val allAmateurSoccerGroup = amateurSoccerGroupRepository.findAll()
+    fun showAll(): CollectionModel<EntityModel<*>> {
+        val allAmateurSoccerGroupModel = amateurSoccerGroupRepository.findAll().map {
+            EntityModel.of(
+                it,
+                linkTo(methodOn(AmateurSoccerGroupController::class.java).show(it.amateurSoccerGroupId!!)!!)
+                    .withSelfRel(),
+            )
+        }
 
-        val allAmateurSoccerGroupModel = allAmateurSoccerGroup.map { createAmateurSoccerGroupModel(it) }
-
-        val selfLink = linkTo(methodOn(AmateurSoccerGroupController::class.java).showAll()).withSelfRel()
-
-        return CollectionModel.of(allAmateurSoccerGroupModel, selfLink)
+        return CollectionModel.of(
+            allAmateurSoccerGroupModel,
+            linkTo(methodOn(AmateurSoccerGroupController::class.java).showAll()).withSelfRel()
+                .andAffordance(afford(methodOn(AmateurSoccerGroupController::class.java).create(null))),
+        )
     }
 
     @PostMapping
-    fun create(@RequestBody amateurSoccerGroup: AmateurSoccerGroup): AmateurSoccerGroupModel {
+    fun create(@RequestBody amateurSoccerGroup: AmateurSoccerGroup?): ResponseEntity<*> {
+        if (amateurSoccerGroup == null) return ResponseEntity.badRequest().body("Unable to create")
+
         amateurSoccerGroupRepository.save(amateurSoccerGroup)
-        return createAmateurSoccerGroupModel(amateurSoccerGroup)
+        return EntityModel.of(
+            amateurSoccerGroup,
+            linkTo(methodOn(AmateurSoccerGroupController::class.java).show(amateurSoccerGroup.amateurSoccerGroupId!!)!!).withSelfRel()
+        ).getLink(IanaLinkRelations.SELF)
+            .map { ResponseEntity.noContent().location(URI.create(it.href)).build<Any>() }
+            .orElseGet { ResponseEntity.badRequest().body("Unable to create $amateurSoccerGroup") }
     }
 
     @GetMapping
     @RequestMapping("/{amateurSoccerGroupId}")
-    fun show(@PathVariable amateurSoccerGroupId: UUID): AmateurSoccerGroupModel? {
-        val amateurSoccerGroup = amateurSoccerGroupRepository.findByIdOrNull(amateurSoccerGroupId)
-            ?: return null
-
-        return createAmateurSoccerGroupModel(amateurSoccerGroup, showCollection = true)
-    }
-
-    private fun createAmateurSoccerGroupModel(
-        amateurSoccerGroup: AmateurSoccerGroup,
-        showCollection: Boolean = false
-    ): AmateurSoccerGroupModel {
-        val model = AmateurSoccerGroupModel(amateurSoccerGroup)
-
-        val selfLink = linkTo(
-            methodOn(AmateurSoccerGroupController::class.java).show(amateurSoccerGroup.amateurSoccerGroupId!!)!!
-        ).withSelfRel()
-        model.add(selfLink)
-
-        if (showCollection) {
-            val collectionLink = linkTo(methodOn(AmateurSoccerGroupController::class.java).showAll())
-                .withRel("allAmateurSoccerGroups")
-            model.add(collectionLink)
-        }
-
-        return model
+    fun show(@PathVariable amateurSoccerGroupId: UUID): EntityModel<*>? {
+        return amateurSoccerGroupRepository.findById(amateurSoccerGroupId)
+            .map {
+                EntityModel.of(
+                    it,
+                    linkTo(methodOn(AmateurSoccerGroupController::class.java).showAll()).withRel("get-amateur-soccer-groups"),
+                    linkTo(methodOn(GamedayController::class.java).showAll(amateurSoccerGroupId)).withRel("get-gamedays"),
+                    linkTo(methodOn(GamedayController::class.java).showAll(amateurSoccerGroupId)).withRel("create-gameday")
+                        .andAffordance(
+                            afford(methodOn(GamedayController::class.java).create(amateurSoccerGroupId, null))
+                        ),
+                )
+            }.orElse(null)
     }
 }
