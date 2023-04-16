@@ -57,37 +57,11 @@ class GamedayRepositoryIT(
         val date = Instant.now().minus(1, ChronoUnit.DAYS)
         val playerId1 = UUID.randomUUID()
         val playerId2 = UUID.randomUUID()
-        val gameday = com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday(
-            gamedayId = UUID.randomUUID(),
-            amateurSoccerGroupId = amateurSoccerGroupId.value,
-            date = date,
-            matches = listOf(
-                com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match(
-                    matchId = Random.nextLong(1, 99999999),
-                    players = setOf(
-                        com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match.PlayerStatistic(
-                            playerStatisticId = Random.nextLong(1, 99999999),
-                            playerId = playerId1,
-                            team = com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match.Team.A,
-                            goalsInFavor = 5u,
-                            ownGoals = 4u,
-                            yellowCards = 3u,
-                            blueCards = 2u,
-                            redCards = 1u,
-                        ),
-                        com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match.PlayerStatistic(
-                            playerStatisticId = Random.nextLong(1, 99999999),
-                            playerId = playerId2,
-                            team = com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match.Team.B,
-                            goalsInFavor = 4u,
-                            ownGoals = 3u,
-                            yellowCards = 2u,
-                            blueCards = 1u,
-                            redCards = 0u,
-                        ),
-                    ),
-                )
-            )
+        val gameday = gameday(
+            amateurSoccerGroupId,
+            date,
+            TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 5u, ownGoals = 4u),
+            TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 4u, ownGoals = 3u),
         )
         jpaGamedayRepository.save(gameday)
 
@@ -146,107 +120,29 @@ class GamedayRepositoryIT(
         jpaAmateurSoccerGroup.save(amateurSoccerGroup)
 
         val date1 = Instant.now().minus(3, ChronoUnit.DAYS)
-        val gameday1 = com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday(
-            gamedayId = UUID.randomUUID(),
-            amateurSoccerGroupId = amateurSoccerGroupId.value,
-            date = date1,
-            matches = listOf(
-                com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match(
-                    matchId = Random.nextLong(1, 99999999),
-                    players = setOf(
-                        com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match.PlayerStatistic(
-                            playerStatisticId = Random.nextLong(1, 99999999),
-                            playerId = playerId1,
-                            team = com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match.Team.A,
-                            goalsInFavor = 5u,
-                            ownGoals = 4u,
-                            yellowCards = 3u,
-                            blueCards = 2u,
-                            redCards = 1u,
-                        ),
-                        com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match.PlayerStatistic(
-                            playerStatisticId = Random.nextLong(1, 99999999),
-                            playerId = playerId2,
-                            team = com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match.Team.B,
-                            goalsInFavor = 4u,
-                            ownGoals = 3u,
-                            yellowCards = 2u,
-                            blueCards = 1u,
-                            redCards = 0u,
-                        ),
-                    ),
-                )
-            )
+        val gameday1 = gameday(
+            amateurSoccerGroupId,
+            date1,
+            TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 5u, ownGoals = 4u),
+            TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 4u, ownGoals = 3u),
         )
         jpaGamedayRepository.save(gameday1)
 
         val date2 = Instant.now().minus(2, ChronoUnit.DAYS)
-        val gameday2 = com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday(
-            gamedayId = UUID.randomUUID(),
-            amateurSoccerGroupId = amateurSoccerGroupId.value,
-            date = date2,
-            matches = listOf(
-                com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match(
-                    matchId = Random.nextLong(1, 99999999),
-                    players = setOf(
-                        com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match.PlayerStatistic(
-                            playerStatisticId = Random.nextLong(1, 99999999),
-                            playerId = playerId1,
-                            team = com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match.Team.A,
-                            goalsInFavor = 6u,
-                            ownGoals = 5u,
-                            yellowCards = 2u,
-                            blueCards = 1u,
-                            redCards = 0u,
-                        ),
-                        com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match.PlayerStatistic(
-                            playerStatisticId = Random.nextLong(1, 99999999),
-                            playerId = playerId2,
-                            team = com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match.Team.B,
-                            goalsInFavor = 5u,
-                            ownGoals = 4u,
-                            yellowCards = 2u,
-                            blueCards = 1u,
-                            redCards = 0u,
-                        ),
-                    ),
-                )
-            )
+        val gameday2 = gameday(
+            amateurSoccerGroupId,
+            date2,
+            TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 6u, ownGoals = 5u),
+            TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 5u, ownGoals = 4u),
         )
         jpaGamedayRepository.save(gameday2)
 
         val date3 = Instant.now().minus(1, ChronoUnit.DAYS)
-        val gameday3 = com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday(
-            gamedayId = UUID.randomUUID(),
-            amateurSoccerGroupId = amateurSoccerGroupId.value,
-            date = date3,
-            matches = listOf(
-                com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match(
-                    matchId = Random.nextLong(1, 99999999),
-                    players = setOf(
-                        com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match.PlayerStatistic(
-                            playerStatisticId = Random.nextLong(1, 99999999),
-                            playerId = playerId1,
-                            team = com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match.Team.A,
-                            goalsInFavor = 7u,
-                            ownGoals = 6u,
-                            yellowCards = 2u,
-                            blueCards = 1u,
-                            redCards = 0u,
-                        ),
-                        com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match.PlayerStatistic(
-                            playerStatisticId = Random.nextLong(1, 99999999),
-                            playerId = playerId2,
-                            team = com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match.Team.B,
-                            goalsInFavor = 6u,
-                            ownGoals = 5u,
-                            yellowCards = 2u,
-                            blueCards = 1u,
-                            redCards = 0u,
-                        ),
-                    ),
-                )
-            )
+        val gameday3 = gameday(
+            amateurSoccerGroupId,
+            date3,
+            TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 7u, ownGoals = 6u),
+            TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 6u, ownGoals = 5u),
         )
         jpaGamedayRepository.save(gameday3)
 
@@ -330,4 +226,38 @@ class GamedayRepositoryIT(
             .ignoringCollectionOrder()
             .isEqualTo(expectedGamedays)
     }
+
+    private fun gameday(
+        amateurSoccerGroupId: AmateurSoccerGroupId,
+        date: Instant,
+        vararg players: TestPlayerStatistic,
+    ) = com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday(
+        gamedayId = UUID.randomUUID(),
+        amateurSoccerGroupId = amateurSoccerGroupId.value,
+        date = date,
+        matches = listOf(
+            com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match(
+                matchId = Random.nextLong(1, 99999999),
+                players = players.map {
+                    com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match.PlayerStatistic(
+                        playerStatisticId = Random.nextLong(1, 99999999),
+                        playerId = it.playerId,
+                        team = com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match.Team.valueOf(it.team),
+                        goalsInFavor = it.goalsInFavor,
+                        ownGoals = it.ownGoals,
+                        yellowCards = 0u,
+                        blueCards = 0u,
+                        redCards = 0u,
+                    )
+                }.toSet()
+            )
+        )
+    )
+
+    private data class TestPlayerStatistic(
+        val playerId: UUID,
+        val team: String,
+        val goalsInFavor: UByte,
+        val ownGoals: UByte,
+    )
 }
