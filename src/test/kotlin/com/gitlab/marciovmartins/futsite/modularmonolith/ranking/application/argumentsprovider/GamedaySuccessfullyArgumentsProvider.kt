@@ -1,7 +1,10 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.ranking.application.argumentsprovider
 
-import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.application.RankingDTO
+import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.AmateurSoccerGroupId
+import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.Gameday
+import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.GamedayId
+import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.PlayerId
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
@@ -10,7 +13,6 @@ import java.time.temporal.ChronoUnit
 import java.util.UUID
 import java.util.function.BiFunction
 import java.util.stream.Stream
-import kotlin.random.Random
 
 object GamedaySuccessfullyArgumentsProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> = Stream.of(
@@ -27,15 +29,15 @@ object GamedaySuccessfullyArgumentsProvider : ArgumentsProvider {
         argument(
             testDescription = "with one gameday with one match registered",
         ) { amateurSoccerGroupId: UUID, period: RankingDTO.Period ->
-            val gamedayId = UUID.randomUUID()
-            val playerId1 = UUID.randomUUID()
-            val playerId2 = UUID.randomUUID()
+            val gamedayId = GamedayId(UUID.randomUUID())
+            val playerId1 = PlayerId(UUID.randomUUID())
+            val playerId2 = PlayerId(UUID.randomUUID())
             result(
                 gamedays = mutableMapOf(
-                    gamedayId to Gameday(
+                    gamedayId.value to Gameday(
                         gamedayId = gamedayId,
-                        amateurSoccerGroupId = amateurSoccerGroupId,
-                        date = Instant.now().minus(1, ChronoUnit.DAYS),
+                        amateurSoccerGroupId = AmateurSoccerGroupId(amateurSoccerGroupId),
+                        date = Gameday.Date(Instant.now().minus(1, ChronoUnit.DAYS)),
                         matches = listOf(
                             match(
                                 playerStatistic(playerId1, Gameday.Match.Team.A, goalsInFavor = 1u),
@@ -58,15 +60,15 @@ object GamedaySuccessfullyArgumentsProvider : ArgumentsProvider {
         argument(
             testDescription = "with one gameday with many matches registered",
         ) { amateurSoccerGroupId: UUID, period: RankingDTO.Period ->
-            val gamedayId = UUID.randomUUID()
-            val playerId1 = UUID.randomUUID()
-            val playerId2 = UUID.randomUUID()
+            val gamedayId = GamedayId(UUID.randomUUID())
+            val playerId1 = PlayerId(UUID.randomUUID())
+            val playerId2 = PlayerId(UUID.randomUUID())
             result(
                 gamedays = mutableMapOf(
-                    gamedayId to Gameday(
+                    gamedayId.value to Gameday(
                         gamedayId = gamedayId,
-                        amateurSoccerGroupId = amateurSoccerGroupId,
-                        date = Instant.now().minus(2, ChronoUnit.DAYS),
+                        amateurSoccerGroupId = AmateurSoccerGroupId(amateurSoccerGroupId),
+                        date = Gameday.Date(Instant.now().minus(2, ChronoUnit.DAYS)),
                         matches = listOf(
                             match(
                                 playerStatistic(playerId1, Gameday.Match.Team.A, goalsInFavor = 1u),
@@ -93,16 +95,16 @@ object GamedaySuccessfullyArgumentsProvider : ArgumentsProvider {
         argument(
             testDescription = "with many gameday with many matches registered",
         ) { amateurSoccerGroupId: UUID, period: RankingDTO.Period ->
-            val gamedayId1 = UUID.randomUUID()
-            val gamedayId2 = UUID.randomUUID()
-            val playerId1 = UUID.randomUUID()
-            val playerId2 = UUID.randomUUID()
+            val gamedayId1 = GamedayId(UUID.randomUUID())
+            val gamedayId2 = GamedayId(UUID.randomUUID())
+            val playerId1 = PlayerId(UUID.randomUUID())
+            val playerId2 = PlayerId(UUID.randomUUID())
             result(
                 gamedays = mutableMapOf(
-                    gamedayId1 to Gameday(
+                    gamedayId1.value to Gameday(
                         gamedayId = gamedayId1,
-                        amateurSoccerGroupId = amateurSoccerGroupId,
-                        date = Instant.now().minus(2, ChronoUnit.DAYS),
+                        amateurSoccerGroupId = AmateurSoccerGroupId(amateurSoccerGroupId),
+                        date = Gameday.Date(Instant.now().minus(2, ChronoUnit.DAYS)),
                         matches = listOf(
                             match(
                                 playerStatistic(playerId1, Gameday.Match.Team.A, goalsInFavor = 1u),
@@ -114,10 +116,10 @@ object GamedaySuccessfullyArgumentsProvider : ArgumentsProvider {
                             ),
                         ),
                     ),
-                    gamedayId2 to Gameday(
+                    gamedayId2.value to Gameday(
                         gamedayId = gamedayId2,
-                        amateurSoccerGroupId = amateurSoccerGroupId,
-                        date = Instant.now().minus(1, ChronoUnit.DAYS),
+                        amateurSoccerGroupId = AmateurSoccerGroupId(amateurSoccerGroupId),
+                        date = Gameday.Date(Instant.now().minus(1, ChronoUnit.DAYS)),
                         matches = listOf(
                             match(
                                 playerStatistic(playerId1, Gameday.Match.Team.A),
@@ -163,24 +165,19 @@ object GamedaySuccessfullyArgumentsProvider : ArgumentsProvider {
 
     private fun match(
         vararg players: Gameday.Match.PlayerStatistic,
-    ) = Gameday.Match(
-        Random.nextLong(), players.toSet(),
-    )
+    ) = Gameday.Match(players.toSet())
 
     private fun playerStatistic(
-        playerId: UUID,
+        playerId: PlayerId,
         team: Gameday.Match.Team,
         goalsInFavor: UByte = 0u,
         ownGoals: UByte = 0u,
-        yellowCards: UByte = 0u,
-        blueCards: UByte = 0u,
-        redCards: UByte = 0u,
     ) = Gameday.Match.PlayerStatistic(
-        Random.nextLong(), playerId, team, goalsInFavor, ownGoals, yellowCards, blueCards, redCards,
+        playerId, team, goalsInFavor, ownGoals,
     )
 
     private fun expectedPlayerStatistic(
-        playerId: UUID,
+        playerId: PlayerId,
         matches: UShort = 1u,
         victories: UShort = 0u,
         draws: UShort = 0u,
@@ -188,6 +185,6 @@ object GamedaySuccessfullyArgumentsProvider : ArgumentsProvider {
         goalsInFavor: UShort = 0u,
         ownGoals: UShort = 0u,
     ) = RankingDTO.PlayerStatistic(
-        playerId, matches, victories, draws, defeats, goalsInFavor, ownGoals,
+        playerId.value, matches, victories, draws, defeats, goalsInFavor, ownGoals,
     )
 }

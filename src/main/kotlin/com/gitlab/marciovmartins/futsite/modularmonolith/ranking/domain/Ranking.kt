@@ -1,18 +1,16 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain
 
-import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.AmateurSoccerGroup
-import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday
 import java.time.Instant
 
 class Ranking private constructor(
-    val amateurSoccerGroupId: AmateurSoccerGroup.AmateurSoccerGroupId,
+    val amateurSoccerGroupId: AmateurSoccerGroupId,
     val period: Period,
     val matches: Matches,
     val playerStatistics: Set<PlayerStatistic>
 ) {
     companion object {
         fun calculatePlayerStatistics(
-            amateurSoccerGroupId: AmateurSoccerGroup.AmateurSoccerGroupId,
+            amateurSoccerGroupId: AmateurSoccerGroupId,
             period: Period,
             gamedays: Set<Gameday>,
         ): Ranking {
@@ -41,7 +39,7 @@ class Ranking private constructor(
                 }
 
                 match.players.forEach { playerStatistic ->
-                    val playerId = PlayerId(playerStatistic.playerId)
+                    val playerId = playerStatistic.playerId
                     val statistic = playerStatistics.getOrDefault(playerId, PlayerStatistic.zero(playerId))
                     val newStatistic: PlayerStatistic = when (teamWinner) {
                         null -> statistic.draw(playerStatistic)
