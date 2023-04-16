@@ -68,27 +68,11 @@ class GamedayRepositoryIT(
         val gamedayRepository = GamedayBoundedContextGamedayRepository(jpaGamedayRepository)
 
         val expectedGamedays = setOf(
-            Gameday(
-                amateurSoccerGroupId = amateurSoccerGroupId,
-                date = Gameday.Date(date),
-                matches = listOf(
-                    Gameday.Match(
-                        players = setOf(
-                            Gameday.Match.PlayerStatistic(
-                                playerId = PlayerId(playerId1),
-                                team = Gameday.Match.Team.A,
-                                goalsInFavor = 5u,
-                                ownGoals = 4u,
-                            ),
-                            Gameday.Match.PlayerStatistic(
-                                playerId = PlayerId(playerId2),
-                                team = Gameday.Match.Team.B,
-                                goalsInFavor = 4u,
-                                ownGoals = 3u,
-                            ),
-                        )
-                    )
-                ),
+            expectedGameday(
+                amateurSoccerGroupId,
+                date,
+                TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 5u, ownGoals = 4u),
+                TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 4u, ownGoals = 3u),
             )
         )
 
@@ -149,71 +133,23 @@ class GamedayRepositoryIT(
         val gamedayRepository = GamedayBoundedContextGamedayRepository(jpaGamedayRepository)
 
         val expectedGamedays = setOf(
-            Gameday(
-                amateurSoccerGroupId = amateurSoccerGroupId,
-                date = Gameday.Date(date1),
-                matches = listOf(
-                    Gameday.Match(
-                        players = setOf(
-                            Gameday.Match.PlayerStatistic(
-                                playerId = PlayerId(playerId1),
-                                team = Gameday.Match.Team.A,
-                                goalsInFavor = 5u,
-                                ownGoals = 4u,
-                            ),
-                            Gameday.Match.PlayerStatistic(
-                                playerId = PlayerId(playerId2),
-                                team = Gameday.Match.Team.B,
-                                goalsInFavor = 4u,
-                                ownGoals = 3u,
-                            ),
-                        )
-                    )
-                ),
+            expectedGameday(
+                amateurSoccerGroupId,
+                date1,
+                TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 5u, ownGoals = 4u),
+                TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 4u, ownGoals = 3u),
             ),
-            Gameday(
-                amateurSoccerGroupId = amateurSoccerGroupId,
-                date = Gameday.Date(date2),
-                matches = listOf(
-                    Gameday.Match(
-                        players = setOf(
-                            Gameday.Match.PlayerStatistic(
-                                playerId = PlayerId(playerId1),
-                                team = Gameday.Match.Team.A,
-                                goalsInFavor = 6u,
-                                ownGoals = 5u,
-                            ),
-                            Gameday.Match.PlayerStatistic(
-                                playerId = PlayerId(playerId2),
-                                team = Gameday.Match.Team.B,
-                                goalsInFavor = 5u,
-                                ownGoals = 4u,
-                            ),
-                        )
-                    )
-                ),
+            expectedGameday(
+                amateurSoccerGroupId,
+                date2,
+                TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 6u, ownGoals = 5u),
+                TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 5u, ownGoals = 4u),
             ),
-            Gameday(
-                amateurSoccerGroupId = amateurSoccerGroupId,
-                date = Gameday.Date(date3),
-                matches = listOf(
-                    Gameday.Match(
-                        players = setOf(
-                            Gameday.Match.PlayerStatistic(
-                                playerId = PlayerId(playerId1),
-                                team = Gameday.Match.Team.A,
-                                goalsInFavor = 7u,
-                                ownGoals = 6u,
-                            ),
-                            Gameday.Match.PlayerStatistic(
-                                playerId = PlayerId(playerId2),
-                                team = Gameday.Match.Team.B,
-                                goalsInFavor = 6u,
-                                ownGoals = 5u,
-                            ),
-                        )
-                    )
-                ),
+            expectedGameday(
+                amateurSoccerGroupId,
+                date3,
+                TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 7u, ownGoals = 6u),
+                TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 6u, ownGoals = 5u),
             ),
         )
 
@@ -252,6 +188,27 @@ class GamedayRepositoryIT(
                 }.toSet()
             )
         )
+    )
+
+    private fun expectedGameday(
+        amateurSoccerGroupId: AmateurSoccerGroupId,
+        date: Instant,
+        vararg players: TestPlayerStatistic,
+    ) = Gameday(
+        amateurSoccerGroupId = amateurSoccerGroupId,
+        date = Gameday.Date(date),
+        matches = listOf(
+            Gameday.Match(
+                players = players.map {
+                    Gameday.Match.PlayerStatistic(
+                        playerId = PlayerId(it.playerId),
+                        team = Gameday.Match.Team.valueOf(it.team),
+                        goalsInFavor = it.goalsInFavor,
+                        ownGoals = it.ownGoals,
+                    )
+                }.toSet()
+            )
+        ),
     )
 
     private data class TestPlayerStatistic(
