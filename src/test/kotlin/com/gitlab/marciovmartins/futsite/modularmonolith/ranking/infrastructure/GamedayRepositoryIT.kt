@@ -27,8 +27,34 @@ class GamedayRepositoryIT(
         val amateurSoccerGroupId = AmateurSoccerGroupId(UUID.randomUUID())
         val period = Ranking.Period(
             from = Instant.now().minus(7, ChronoUnit.DAYS),
-            to = Instant.now(),
+            to = Instant.now().minus(1, ChronoUnit.DAYS),
         )
+        val playerId1 = UUID.randomUUID()
+        val playerId2 = UUID.randomUUID()
+
+        val amateurSoccerGroup = AmateurSoccerGroup(
+            amateurSoccerGroupId = amateurSoccerGroupId.value,
+            name = "amateur-soccer-group-id ${Random.nextLong()}"
+        )
+        jpaAmateurSoccerGroup.save(amateurSoccerGroup)
+
+        val date1 = Instant.now().minus(8, ChronoUnit.DAYS)
+        val date2 = Instant.now().minus(0, ChronoUnit.DAYS)
+        val gamedaysToPersist = listOf(
+            gameday(
+                amateurSoccerGroupId,
+                date1,
+                TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 0u, ownGoals = 0u),
+                TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 0u, ownGoals = 0u),
+            ),
+            gameday(
+                amateurSoccerGroupId,
+                date2,
+                TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 0u, ownGoals = 0u),
+                TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 0u, ownGoals = 0u),
+            ),
+        )
+        jpaGamedayRepository.saveAll(gamedaysToPersist)
 
         val gamedayRepository = GamedayBoundedContextGamedayRepository(jpaGamedayRepository)
 
@@ -45,8 +71,10 @@ class GamedayRepositoryIT(
         val amateurSoccerGroupId = AmateurSoccerGroupId(UUID.randomUUID())
         val period = Ranking.Period(
             from = Instant.now().minus(7, ChronoUnit.DAYS),
-            to = Instant.now(),
+            to = Instant.now().minus(1, ChronoUnit.DAYS),
         )
+        val playerId1 = UUID.randomUUID()
+        val playerId2 = UUID.randomUUID()
 
         val amateurSoccerGroup = AmateurSoccerGroup(
             amateurSoccerGroupId = amateurSoccerGroupId.value,
@@ -54,23 +82,37 @@ class GamedayRepositoryIT(
         )
         jpaAmateurSoccerGroup.save(amateurSoccerGroup)
 
-        val date = Instant.now().minus(1, ChronoUnit.DAYS)
-        val playerId1 = UUID.randomUUID()
-        val playerId2 = UUID.randomUUID()
-        val gameday = gameday(
-            amateurSoccerGroupId,
-            date,
-            TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 5u, ownGoals = 4u),
-            TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 4u, ownGoals = 3u),
+        val date0 = Instant.now().minus(8, ChronoUnit.DAYS)
+        val date1 = Instant.now().minus(2, ChronoUnit.DAYS)
+        val date2 = Instant.now().minus(0, ChronoUnit.DAYS)
+        val gamedaysToPersist = listOf(
+            gameday(
+                amateurSoccerGroupId,
+                date0,
+                TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 0u, ownGoals = 0u),
+                TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 0u, ownGoals = 0u),
+            ),
+            gameday(
+                amateurSoccerGroupId,
+                date1,
+                TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 5u, ownGoals = 4u),
+                TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 4u, ownGoals = 3u),
+            ),
+            gameday(
+                amateurSoccerGroupId,
+                date2,
+                TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 0u, ownGoals = 0u),
+                TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 0u, ownGoals = 0u),
+            ),
         )
-        jpaGamedayRepository.save(gameday)
+        jpaGamedayRepository.saveAll(gamedaysToPersist)
 
         val gamedayRepository = GamedayBoundedContextGamedayRepository(jpaGamedayRepository)
 
         val expectedGamedays = setOf(
             expectedGameday(
                 amateurSoccerGroupId,
-                date,
+                date1,
                 TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 5u, ownGoals = 4u),
                 TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 4u, ownGoals = 3u),
             )
@@ -92,7 +134,7 @@ class GamedayRepositoryIT(
         val amateurSoccerGroupId = AmateurSoccerGroupId(UUID.randomUUID())
         val period = Ranking.Period(
             from = Instant.now().minus(7, ChronoUnit.DAYS),
-            to = Instant.now(),
+            to = Instant.now().minus(1, ChronoUnit.DAYS),
         )
         val playerId1 = UUID.randomUUID()
         val playerId2 = UUID.randomUUID()
@@ -103,32 +145,44 @@ class GamedayRepositoryIT(
         )
         jpaAmateurSoccerGroup.save(amateurSoccerGroup)
 
-        val date1 = Instant.now().minus(3, ChronoUnit.DAYS)
-        val gameday1 = gameday(
-            amateurSoccerGroupId,
-            date1,
-            TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 5u, ownGoals = 4u),
-            TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 4u, ownGoals = 3u),
+        val date0 = Instant.now().minus(8, ChronoUnit.DAYS)
+        val date1 = Instant.now().minus(4, ChronoUnit.DAYS)
+        val date2 = Instant.now().minus(3, ChronoUnit.DAYS)
+        val date3 = Instant.now().minus(2, ChronoUnit.DAYS)
+        val date4 = Instant.now().minus(1, ChronoUnit.DAYS)
+        val gamedaysToPersist = listOf(
+            gameday(
+                amateurSoccerGroupId,
+                date0,
+                TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 0u, ownGoals = 0u),
+                TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 0u, ownGoals = 0u),
+            ),
+            gameday(
+                amateurSoccerGroupId,
+                date1,
+                TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 5u, ownGoals = 4u),
+                TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 4u, ownGoals = 3u),
+            ),
+            gameday(
+                amateurSoccerGroupId,
+                date2,
+                TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 6u, ownGoals = 5u),
+                TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 5u, ownGoals = 4u),
+            ),
+            gameday(
+                amateurSoccerGroupId,
+                date3,
+                TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 7u, ownGoals = 6u),
+                TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 6u, ownGoals = 5u),
+            ),
+            gameday(
+                amateurSoccerGroupId,
+                date4,
+                TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 0u, ownGoals = 0u),
+                TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 0u, ownGoals = 0u),
+            ),
         )
-        jpaGamedayRepository.save(gameday1)
-
-        val date2 = Instant.now().minus(2, ChronoUnit.DAYS)
-        val gameday2 = gameday(
-            amateurSoccerGroupId,
-            date2,
-            TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 6u, ownGoals = 5u),
-            TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 5u, ownGoals = 4u),
-        )
-        jpaGamedayRepository.save(gameday2)
-
-        val date3 = Instant.now().minus(1, ChronoUnit.DAYS)
-        val gameday3 = gameday(
-            amateurSoccerGroupId,
-            date3,
-            TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 7u, ownGoals = 6u),
-            TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 6u, ownGoals = 5u),
-        )
-        jpaGamedayRepository.save(gameday3)
+        jpaGamedayRepository.saveAll(gamedaysToPersist)
 
         val gamedayRepository = GamedayBoundedContextGamedayRepository(jpaGamedayRepository)
 
