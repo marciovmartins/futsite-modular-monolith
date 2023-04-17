@@ -5,7 +5,9 @@ import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.Gameday
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.GamedayRepository
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.PlayerId
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.Ranking
+import org.springframework.stereotype.Repository
 
+@Repository
 class GamedayBoundedContextGamedayRepository(
     private val gamedayRepository: com.gitlab.marciovmartins.futsite.modularmonolith.gameday.GamedayRepository
 ) : GamedayRepository {

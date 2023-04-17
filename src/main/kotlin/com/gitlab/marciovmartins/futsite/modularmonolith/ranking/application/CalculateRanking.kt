@@ -3,8 +3,10 @@ package com.gitlab.marciovmartins.futsite.modularmonolith.ranking.application
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.AmateurSoccerGroupId
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.GamedayRepository
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.Ranking
+import org.springframework.stereotype.Service
 import java.util.UUID
 
+@Service
 class CalculateRanking(
     private val gamedayRepository: GamedayRepository,
 ) {

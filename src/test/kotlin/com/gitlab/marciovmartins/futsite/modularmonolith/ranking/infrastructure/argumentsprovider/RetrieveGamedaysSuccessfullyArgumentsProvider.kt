@@ -4,6 +4,10 @@ import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.AmateurS
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.Gameday
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.PlayerId
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.Ranking
+import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.infrastructure.GamedayFixture.TestPlayerStatistic
+import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.infrastructure.GamedayFixture.gameday
+import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.infrastructure.GamedayFixture.gamedayAfterPeriod
+import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.infrastructure.GamedayFixture.gamedayBeforePeriod
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
@@ -12,7 +16,6 @@ import java.time.temporal.ChronoUnit
 import java.util.UUID
 import java.util.function.Function
 import java.util.stream.Stream
-import kotlin.random.Random
 import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday as ExternalGameday
 
 object RetrieveGamedaysSuccessfullyArgumentsProvider : ArgumentsProvider {
@@ -131,55 +134,6 @@ object RetrieveGamedaysSuccessfullyArgumentsProvider : ArgumentsProvider {
         expectedGamedays: Set<Gameday>,
     ) = Pair(gamedaysToPersist, expectedGamedays)
 
-    private fun gameday(
-        amateurSoccerGroupId: AmateurSoccerGroupId,
-        date: Instant,
-        vararg players: TestPlayerStatistic,
-    ) = ExternalGameday(
-        gamedayId = UUID.randomUUID(),
-        amateurSoccerGroupId = amateurSoccerGroupId.value,
-        date = date,
-        matches = listOf(
-            ExternalGameday.Match(
-                matchId = Random.nextLong(1, 99999999),
-                players = players.map {
-                    ExternalGameday.Match.PlayerStatistic(
-                        playerStatisticId = Random.nextLong(1, 99999999),
-                        playerId = it.playerId,
-                        team = ExternalGameday.Match.Team.valueOf(it.team),
-                        goalsInFavor = it.goalsInFavor,
-                        ownGoals = it.ownGoals,
-                        yellowCards = 0u,
-                        blueCards = 0u,
-                        redCards = 0u,
-                    )
-                }.toSet()
-            )
-        )
-    )
-
-    private fun gamedayBeforePeriod(
-        amateurSoccerGroupId: AmateurSoccerGroupId,
-        playerId1: UUID,
-        playerId2: UUID,
-    ) = gameday(
-        amateurSoccerGroupId,
-        Instant.now().minus(8, ChronoUnit.DAYS),
-        TestPlayerStatistic(playerId1, team = "A"),
-        TestPlayerStatistic(playerId2, team = "B"),
-    )
-
-    private fun gamedayAfterPeriod(
-        amateurSoccerGroupId: AmateurSoccerGroupId,
-        playerId1: UUID,
-        playerId2: UUID,
-    ) = gameday(
-        amateurSoccerGroupId,
-        Instant.now().minus(0, ChronoUnit.DAYS),
-        TestPlayerStatistic(playerId1, team = "A"),
-        TestPlayerStatistic(playerId2, team = "B"),
-    )
-
     private fun expectedGameday(
         amateurSoccerGroupId: AmateurSoccerGroupId,
         date: Instant,
@@ -199,12 +153,5 @@ object RetrieveGamedaysSuccessfullyArgumentsProvider : ArgumentsProvider {
                 }.toSet()
             )
         ),
-    )
-
-    private data class TestPlayerStatistic(
-        val playerId: UUID,
-        val team: String,
-        val goalsInFavor: UByte = 0u,
-        val ownGoals: UByte = 0u,
     )
 }
