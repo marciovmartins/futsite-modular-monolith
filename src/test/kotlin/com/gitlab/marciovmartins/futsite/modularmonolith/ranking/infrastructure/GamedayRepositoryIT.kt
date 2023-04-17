@@ -31,7 +31,7 @@ class GamedayRepositoryIT(
         // given
         val amateurSoccerGroup = AmateurSoccerGroup(
             amateurSoccerGroupId = amateurSoccerGroupId.value,
-            name = "amateur-soccer-group-id ${Random.nextLong()}"
+            name = "${GamedayRepositoryIT::class.simpleName} ${Random.nextLong(1, 99999999)}"
         )
         jpaAmateurSoccerGroup.save(amateurSoccerGroup)
 

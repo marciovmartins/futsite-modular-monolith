@@ -3,16 +3,26 @@ package com.gitlab.marciovmartins.futsite.modularmonolith.ranking.infrastructure
 import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.AmateurSoccerGroup
 import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.AmateurSoccerGroupRepository
 import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.GamedayRepository
+import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.application.CalculateRanking
+import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.application.RankingDTO
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.AmateurSoccerGroupId
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.infrastructure.GamedayFixture.gameday
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.infrastructure.GamedayFixture.gamedayAfterPeriod
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.infrastructure.GamedayFixture.gamedayBeforePeriod
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import org.hamcrest.Matchers.containsInAnyOrder
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.mock.web.MockHttpServletRequest
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.web.context.request.RequestContextHolder
+import org.springframework.web.context.request.ServletRequestAttributes
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.UUID
@@ -23,7 +33,6 @@ internal class CalculateRankingControllerIT(
     @Autowired private val webTestClient: WebTestClient,
     @Autowired private val amateurSoccerGroupRepository: AmateurSoccerGroupRepository,
     @Autowired private val gamedayRepository: GamedayRepository,
-    @LocalServerPort private val port: String,
 ) {
     @Test
     fun `happy path`() {
@@ -33,27 +42,69 @@ internal class CalculateRankingControllerIT(
             from = Instant.now().minus(3, ChronoUnit.DAYS),
             to = Instant.now().minus(1, ChronoUnit.DAYS),
         )
-        val playerId1 = UUID.randomUUID()
-        val playerId2 = UUID.randomUUID()
 
         amateurSoccerGroupRepository.save(
             AmateurSoccerGroup(
-                amateurSoccerGroupId.value, "CalculateRankingControllerIT ${Random.nextLong(1, 99999999)}",
+                amateurSoccerGroupId = amateurSoccerGroupId.value,
+                name = "${CalculateRankingControllerIT::class.simpleName} ${Random.nextLong(1, 99999999)}",
             )
         )
 
         gamedayRepository.saveAll(
             setOf(
-                gamedayBeforePeriod(amateurSoccerGroupId, playerId1, playerId2),
-                gameday(
-                    amateurSoccerGroupId,
-                    Instant.now().minus(2, ChronoUnit.DAYS),
-                    GamedayFixture.TestPlayerStatistic(playerId1, team = "A", goalsInFavor = 1u, ownGoals = 0u),
-                    GamedayFixture.TestPlayerStatistic(playerId2, team = "B", goalsInFavor = 0u, ownGoals = 0u),
-                ),
-                gamedayAfterPeriod(amateurSoccerGroupId, playerId1, playerId2),
+                gamedayBeforePeriod(amateurSoccerGroupId),
+                gameday(amateurSoccerGroupId, Instant.now().minus(2, ChronoUnit.DAYS)),
+                gamedayAfterPeriod(amateurSoccerGroupId),
             )
         )
+
+        // when
+        val actual = webTestClient.post()
+            .uri("/api/v1/amateurSoccerGroups/${amateurSoccerGroupId.value}/ranking")
+            .bodyValue(period)
+            .exchange()
+
+        // then
+        actual
+            .expectStatus().is2xxSuccessful
+            .expectBody()
+            .jsonPath("$.period.from").isEqualTo(period.from.toString())
+            .jsonPath("$.period.to").isEqualTo(period.to.toString())
+            .jsonPath("$.matches").isEqualTo(1)
+    }
+
+    private data class TestPeriodDTO(
+        val from: Instant,
+        val to: Instant,
+    )
+}
+
+@EnableAutoConfiguration
+@ContextConfiguration(classes = [CalculateRankingController::class])
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+internal class CalculateRankingControllerTest(
+    @Autowired private val webTestClient: WebTestClient,
+    @LocalServerPort private val port: String,
+) {
+    @MockkBean
+    private lateinit var calculateRanking: CalculateRanking
+
+    @BeforeEach
+    fun initServletRequestAttributes() {
+        val httpServletRequest = MockHttpServletRequest().apply { serverPort = port.toInt() }
+        RequestContextHolder.setRequestAttributes(ServletRequestAttributes(httpServletRequest))
+    }
+
+    @Test
+    fun `with 200 Ok`() {
+        // given
+        val amateurSoccerGroupId = AmateurSoccerGroupId(UUID.randomUUID())
+        val period = RankingDTO.Period(
+            from = Instant.now().minus(3, ChronoUnit.DAYS),
+            to = Instant.now().minus(1, ChronoUnit.DAYS),
+        )
+        val playerId1 = UUID.randomUUID()
+        val playerId2 = UUID.randomUUID()
 
         val expectedPlayerStatistic1 = mapOf(
             "playerId" to playerId1.toString(),
@@ -72,6 +123,16 @@ internal class CalculateRankingControllerIT(
             "defeats" to 1,
             "goalsInFavor" to 0,
             "ownGoals" to 0,
+        )
+
+        every { calculateRanking.with(any(), any()) } returns RankingDTO(
+            amateurSoccerGroupId = amateurSoccerGroupId.value,
+            period = period,
+            matches = 1u,
+            playerStatistics = setOf(
+                RankingDTO.PlayerStatistic(playerId1, 1u, 1u, 0u, 0u, 1u, 0u),
+                RankingDTO.PlayerStatistic(playerId2, 1u, 0u, 0u, 1u, 0u, 0u),
+            ),
         )
 
         // when
@@ -94,22 +155,6 @@ internal class CalculateRankingControllerIT(
             .jsonPath("$._links.get-amateur-soccer-group.href").isEqualTo(url(amateurSoccerGroupId))
     }
 
-    private fun url(amateurSoccerGroupId: AmateurSoccerGroupId, version: String = "", path: String = ""): String {
-        return "http://localhost:${port}/api$version/amateurSoccerGroups/${amateurSoccerGroupId.value}${path}"
-    }
-
-    private data class TestPeriodDTO(
-        val from: Instant,
-        val to: Instant,
-    )
-}
-
-internal class CalculateRankingControllerTest {
-    @Test
-    fun `with 200 Ok`() {
-        TODO("need to be implemented")
-    }
-
     @Test
     fun `with 400 Bad Request`() {
         TODO("need to be implemented")
@@ -123,5 +168,9 @@ internal class CalculateRankingControllerTest {
     @Test
     fun `with 500 Internal Error`() {
         TODO("need to be implemented")
+    }
+
+    private fun url(amateurSoccerGroupId: AmateurSoccerGroupId, version: String = "", path: String = ""): String {
+        return "http://localhost:${port}/api$version/amateurSoccerGroups/${amateurSoccerGroupId.value}${path}"
     }
 }

@@ -11,7 +11,10 @@ object GamedayFixture {
     fun gameday(
         amateurSoccerGroupId: AmateurSoccerGroupId,
         date: Instant,
-        vararg players: TestPlayerStatistic,
+        vararg players: TestPlayerStatistic = arrayOf(
+            TestPlayerStatistic.empty(team = "A"),
+            TestPlayerStatistic.empty(team = "B"),
+        ),
     ) = Gameday(
         gamedayId = UUID.randomUUID(),
         amateurSoccerGroupId = amateurSoccerGroupId.value,
@@ -37,8 +40,8 @@ object GamedayFixture {
 
     fun gamedayBeforePeriod(
         amateurSoccerGroupId: AmateurSoccerGroupId,
-        playerId1: UUID,
-        playerId2: UUID,
+        playerId1: UUID = UUID.randomUUID(),
+        playerId2: UUID = UUID.randomUUID(),
     ) = gameday(
         amateurSoccerGroupId,
         Instant.now().minus(8, ChronoUnit.DAYS),
@@ -48,8 +51,8 @@ object GamedayFixture {
 
     fun gamedayAfterPeriod(
         amateurSoccerGroupId: AmateurSoccerGroupId,
-        playerId1: UUID,
-        playerId2: UUID,
+        playerId1: UUID = UUID.randomUUID(),
+        playerId2: UUID = UUID.randomUUID(),
     ) = gameday(
         amateurSoccerGroupId,
         Instant.now().minus(0, ChronoUnit.DAYS),
@@ -62,5 +65,9 @@ object GamedayFixture {
         val team: String,
         val goalsInFavor: UByte = 0u,
         val ownGoals: UByte = 0u,
-    )
+    ) {
+        companion object {
+            fun empty(team: String) = TestPlayerStatistic(UUID.randomUUID(), team)
+        }
+    }
 }
