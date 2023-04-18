@@ -61,7 +61,12 @@ class GamedayController(
             .withSelfRel()
 
         return ResponseEntity.created(selfLink.toUri()).body(
-            EntityModel.of(gameday, selfLink)
+            EntityModel.of(
+                gameday,
+                selfLink,
+                linkTo(methodOn(AmateurSoccerGroupController::class.java).show(amateurSoccerGroupId)!!)
+                    .withRel("get-amateur-soccer-group")
+            )
         )
     }
 
