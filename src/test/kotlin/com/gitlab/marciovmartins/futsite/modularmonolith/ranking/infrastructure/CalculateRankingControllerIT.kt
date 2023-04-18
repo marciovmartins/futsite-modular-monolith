@@ -155,21 +155,6 @@ internal class CalculateRankingControllerTest(
             .jsonPath("$._links.get-amateur-soccer-group.href").isEqualTo(url(amateurSoccerGroupId))
     }
 
-    @Test
-    fun `with 400 Bad Request`() {
-        TODO("need to be implemented")
-    }
-
-    @Test
-    fun `with 404 Not Found`() {
-        TODO("need to be implemented")
-    }
-
-    @Test
-    fun `with 500 Internal Error`() {
-        TODO("need to be implemented")
-    }
-
     private fun url(amateurSoccerGroupId: AmateurSoccerGroupId, version: String = "", path: String = ""): String {
         return "http://localhost:${port}/api$version/amateurSoccerGroups/${amateurSoccerGroupId.value}${path}"
     }
