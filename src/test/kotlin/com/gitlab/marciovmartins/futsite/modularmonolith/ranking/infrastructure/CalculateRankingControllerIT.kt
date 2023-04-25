@@ -44,10 +44,10 @@ internal class CalculateRankingControllerIT(
         )
 
         amateurSoccerGroupRepository.save(
-            AmateurSoccerGroup(
-                amateurSoccerGroupId = amateurSoccerGroupId.value,
-                name = "${CalculateRankingControllerIT::class.simpleName} ${Random.nextLong(1, 99999999)}",
-            )
+            AmateurSoccerGroup().apply {
+                this.amateurSoccerGroupId = amateurSoccerGroupId.value
+                this.name = "${CalculateRankingControllerIT::class.simpleName} ${Random.nextLong(1, 99999999)}"
+            }
         )
 
         gamedayRepository.saveAll(

@@ -20,60 +20,60 @@ import java.util.UUID
  * It is an aggregate that registers the information about matches and the players statistics
  */
 @Entity(name = "gamedays")
-class Gameday(
+class Gameday {
     @Id
     @Column(unique = true, nullable = false, insertable = true, updatable = false)
-    var gamedayId: UUID? = null,
+    var gamedayId: UUID? = null
 
     @JsonIgnore
     @Column(nullable = false, insertable = true, updatable = false)
-    var amateurSoccerGroupId: UUID? = null,
+    var amateurSoccerGroupId: UUID? = null
 
     @Column(name = "gameday_date", insertable = true, updatable = false)
-    var date: Instant,
+    lateinit var date: Instant
 
     @JoinColumn(name = "gameday_id", nullable = false)
     @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     @org.hibernate.annotations.Fetch(FetchMode.SELECT)
-    var matches: List<Match>,
-) {
+    lateinit var matches: List<Match>
+
     @Entity(name = "gamedays_matches")
-    data class Match(
+    class Match {
         @Id
         @JsonIgnore
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        var matchId: Long? = null,
+        var matchId: Long? = null
 
         @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
         @JoinColumn(name = "match_id", nullable = false)
         @org.hibernate.annotations.Fetch(FetchMode.SELECT)
-        var players: Set<PlayerStatistic>,
-    ) {
+        lateinit var players: Set<PlayerStatistic>
+
         /**
          * Individual player statistic for a match
          */
         @Entity(name = "gamedays_player_statistic")
-        data class PlayerStatistic(
+        class PlayerStatistic {
             @Id
             @JsonIgnore
             @GeneratedValue(strategy = GenerationType.IDENTITY)
-            var playerStatisticId: Long? = null,
+            var playerStatisticId: Long? = null
 
-            var playerId: UUID,
+            lateinit var playerId: UUID
 
             @Enumerated(EnumType.STRING)
-            var team: Team,
+            lateinit var team: Team
 
-            var goalsInFavor: UByte,
+            var goalsInFavor: UByte = 0u
 
-            var ownGoals: UByte,
+            var ownGoals: UByte = 0u
 
-            var yellowCards: UByte,
+            var yellowCards: UByte = 0u
 
-            var blueCards: UByte,
+            var blueCards: UByte = 0u
 
-            var redCards: UByte,
-        )
+            var redCards: UByte = 0u
+        }
 
         enum class Team {
             A, B

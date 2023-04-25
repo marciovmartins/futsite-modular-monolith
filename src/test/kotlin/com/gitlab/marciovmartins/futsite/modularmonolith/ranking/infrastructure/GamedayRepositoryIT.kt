@@ -29,10 +29,10 @@ class GamedayRepositoryIT(
         expectedGamedays: Set<Gameday>,
     ) {
         // given
-        val amateurSoccerGroup = AmateurSoccerGroup(
-            amateurSoccerGroupId = amateurSoccerGroupId.value,
-            name = "${GamedayRepositoryIT::class.simpleName} ${Random.nextLong(1, 99999999)}"
-        )
+        val amateurSoccerGroup = AmateurSoccerGroup().apply {
+            this.amateurSoccerGroupId = amateurSoccerGroupId.value
+            this.name = "${GamedayRepositoryIT::class.simpleName} ${Random.nextLong(1, 99999999)}"
+        }
         jpaAmateurSoccerGroup.save(amateurSoccerGroup)
 
         jpaGamedayRepository.saveAll(gamedaysToPersist)

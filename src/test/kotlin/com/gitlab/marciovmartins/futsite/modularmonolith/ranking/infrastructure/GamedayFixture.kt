@@ -15,28 +15,28 @@ object GamedayFixture {
             TestPlayerStatistic.empty(team = "A"),
             TestPlayerStatistic.empty(team = "B"),
         ),
-    ) = Gameday(
-        gamedayId = UUID.randomUUID(),
-        amateurSoccerGroupId = amateurSoccerGroupId.value,
-        date = date,
+    ) = Gameday().apply {
+        this.gamedayId = UUID.randomUUID()
+        this.amateurSoccerGroupId = amateurSoccerGroupId.value
+        this.date = date
         matches = listOf(
-            Gameday.Match(
-                matchId = Random.nextLong(1, 99999999),
-                players = players.map {
-                    Gameday.Match.PlayerStatistic(
-                        playerStatisticId = Random.nextLong(1, 99999999),
-                        playerId = it.playerId,
-                        team = Gameday.Match.Team.valueOf(it.team),
-                        goalsInFavor = it.goalsInFavor,
-                        ownGoals = it.ownGoals,
-                        yellowCards = 0u,
-                        blueCards = 0u,
-                        redCards = 0u,
-                    )
+            Gameday.Match().apply {
+                this.matchId = Random.nextLong(1, 99999999)
+                this.players = players.map {
+                    Gameday.Match.PlayerStatistic().apply {
+                        this.playerStatisticId = Random.nextLong(1, 99999999)
+                        this.playerId = it.playerId
+                        this.team = Gameday.Match.Team.valueOf(it.team)
+                        this.goalsInFavor = it.goalsInFavor
+                        this.ownGoals = it.ownGoals
+                        this.yellowCards = 0u
+                        this.blueCards = 0u
+                        this.redCards = 0u
+                    }
                 }.toSet()
-            )
+            }
         )
-    )
+    }
 
     fun gamedayBeforePeriod(
         amateurSoccerGroupId: AmateurSoccerGroupId,

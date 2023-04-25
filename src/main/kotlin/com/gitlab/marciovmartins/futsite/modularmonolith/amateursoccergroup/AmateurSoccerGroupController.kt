@@ -47,34 +47,37 @@ class AmateurSoccerGroupController(
         if (amateurSoccerGroup == null) return ResponseEntity.badRequest().body("Unable to create")
 
         amateurSoccerGroupRepository.save(amateurSoccerGroup)
-        return EntityModel.of(
-            amateurSoccerGroup,
-            linkTo(methodOn(AmateurSoccerGroupController::class.java).show(amateurSoccerGroup.amateurSoccerGroupId!!)!!).withSelfRel()
-        ).getLink(IanaLinkRelations.SELF)
-            .map { ResponseEntity.noContent().location(URI.create(it.href)).build<Any>() }
-            .orElseGet { ResponseEntity.badRequest().body("Unable to create $amateurSoccerGroup") }
+
+        return amateurSoccerGroupEntityModel(amateurSoccerGroup).let {
+            it.getLink(IanaLinkRelations.SELF)
+                .map { link -> ResponseEntity.created(URI.create(link.href)).body(it) }
+                .orElseThrow()
+        }
     }
 
     @GetMapping
     @RequestMapping("/{amateurSoccerGroupId}")
     fun show(@PathVariable amateurSoccerGroupId: UUID): EntityModel<*>? {
-        val period = RankingDTO.Period(Instant.now(), Instant.now())
         return amateurSoccerGroupRepository.findById(amateurSoccerGroupId).map {
-            EntityModel.of(
-                it,
-                linkTo(methodOn(AmateurSoccerGroupController::class.java).show(amateurSoccerGroupId)!!)
-                    .withSelfRel(),
-                linkTo(methodOn(AmateurSoccerGroupController::class.java).showAll())
-                    .withRel("get-amateur-soccer-groups"),
-                linkTo(methodOn(GamedayController::class.java).showAll(amateurSoccerGroupId))
-                    .withRel("get-gamedays"),
-                linkTo(methodOn(GamedayController::class.java).create(amateurSoccerGroupId, null))
-                    .withRel("create-gameday"),
-                linkTo(
-                    methodOn(CalculateRankingController::class.java).calculateRanking(amateurSoccerGroupId, period)
-                )
-                    .withRel("calculate-ranking")
-            )
+            amateurSoccerGroupEntityModel(it)
         }.orElse(null)
+    }
+
+    private fun amateurSoccerGroupEntityModel(amateurSoccerGroup: AmateurSoccerGroup): EntityModel<AmateurSoccerGroup> {
+        val amateurSoccerGroupId = amateurSoccerGroup.amateurSoccerGroupId!!
+        val period = RankingDTO.Period(Instant.now(), Instant.now())
+        return EntityModel.of(
+            amateurSoccerGroup,
+            linkTo(methodOn(AmateurSoccerGroupController::class.java).show(amateurSoccerGroupId)!!)
+                .withSelfRel(),
+            linkTo(methodOn(AmateurSoccerGroupController::class.java).showAll())
+                .withRel("get-amateur-soccer-groups"),
+            linkTo(methodOn(GamedayController::class.java).showAll(amateurSoccerGroupId))
+                .withRel("get-gamedays"),
+            linkTo(methodOn(GamedayController::class.java).create(amateurSoccerGroupId, null))
+                .withRel("create-gameday"),
+            linkTo(methodOn(CalculateRankingController::class.java).calculateRanking(amateurSoccerGroupId, period))
+                .withRel("calculate-ranking")
+        )
     }
 }

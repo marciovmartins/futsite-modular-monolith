@@ -2,9 +2,9 @@ import {BrowserRouter, Link, Outlet, Route, Routes} from "react-router-dom";
 import Home from './components/Home'
 import {AmateurSoccerGroupPage} from "./components/amateurSoccerGroups/amateurSoccerGroupPage";
 import {AmateurSoccerGroupList} from "./components/amateurSoccerGroups/amateurSoccerGroupList";
+import {createRoot} from 'react-dom/client';
 
 const React = require('react');
-const ReactDOM = require('react-dom');
 
 export default function App() {
     return (
@@ -18,7 +18,10 @@ export default function App() {
     )
 }
 
-ReactDOM.render(
+const container = document.getElementById('react');
+const root = createRoot(container);
+
+root.render(
     <React.StrictMode>
         <BrowserRouter>
             <Routes>
@@ -31,5 +34,4 @@ ReactDOM.render(
             </Routes>
         </BrowserRouter>
     </React.StrictMode>,
-    document.getElementById('root')
 )
