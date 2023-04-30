@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from "react";
 
 export function AmateurSoccerGroupList(
-    {callbackViewLink, callbackCreationLink}
+    {setViewLink, setCreationLink}
 ) {
     const [amateurSoccerGroups, setAmateurSoccerGroups] = useState([]);
 
     useEffect(() => {
         fetchAmateurSoccerGroups().then((list) => {
             setAmateurSoccerGroups(list._embedded.amateurSoccerGroups)
-            callbackCreationLink(list._links?.create?.href)
+            setCreationLink(list._links?.create?.href)
         })
     }, [])
 
@@ -21,7 +21,7 @@ export function AmateurSoccerGroupList(
 
                 return <li key={selfLink}>
                     {name}{' '}
-                    <button onClick={() => callbackViewLink(selfLink)}>View</button>
+                    <button onClick={() => setViewLink(selfLink)}>View</button>
                 </li>
             })}
         </ul>
