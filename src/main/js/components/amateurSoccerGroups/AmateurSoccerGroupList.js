@@ -1,13 +1,16 @@
 import React, {useEffect, useState} from "react";
 
 export function AmateurSoccerGroupList(
-    {callbackViewAmateurSoccerGroup}
+    {callbackViewLink, callbackCreationLink}
 ) {
     const [amateurSoccerGroups, setAmateurSoccerGroups] = useState([]);
 
     useEffect(() => {
-        fetchAmateurSoccerGroups().then(setAmateurSoccerGroups)
-    }, []);
+        fetchAmateurSoccerGroups().then((list) => {
+            setAmateurSoccerGroups(list._embedded.amateurSoccerGroups)
+            callbackCreationLink(list._links?.create?.href)
+        })
+    }, [])
 
     return <div>
         <h1>Amateur Soccer Groups</h1>
@@ -15,9 +18,10 @@ export function AmateurSoccerGroupList(
             {amateurSoccerGroups.map(amateurSoccerGroup => {
                 const selfLink = amateurSoccerGroup._links.self.href
                 const name = amateurSoccerGroup.name
+
                 return <li key={selfLink}>
                     {name}{' '}
-                    <button onClick={() => callbackViewAmateurSoccerGroup(selfLink)}>View</button>
+                    <button onClick={() => callbackViewLink(selfLink)}>View</button>
                 </li>
             })}
         </ul>
@@ -29,7 +33,5 @@ function fetchAmateurSoccerGroups() {
         method: 'GET',
         headers: {"Accept": "application/hal+json"},
         mode: "cors"
-    })
-        .then(response => response.json())
-        .then(data => data._embedded.amateurSoccerGroups)
+    }).then(response => response.json())
 }
