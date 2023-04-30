@@ -1,9 +1,7 @@
 const path = require('path');
 
-const isDevelopment = process.env.NODE_ENV !== 'production';
-
 module.exports = {
-    entry: './src/main/js/app.js',
+    entry: './src/main/js/index.js',
     devtool: 'eval-cheap-module-source-map',
     devServer: {
         static: [
@@ -14,7 +12,7 @@ module.exports = {
         liveReload: true,
         hot: true,
     },
-    cache: true,
+    cache: false,
     mode: 'development',
     output: {
         path: __dirname,
@@ -29,7 +27,6 @@ module.exports = {
                     loader: 'babel-loader',
                     options: {
                         presets: ["@babel/preset-env", "@babel/preset-react"],
-                        plugins: [isDevelopment && require.resolve('react-refresh/babel')].filter(Boolean),
                     }
                 }]
             }
