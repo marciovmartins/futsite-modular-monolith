@@ -1,8 +1,10 @@
 import React, {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 export function AmateurSoccerGroupList(
     {setViewLink, setCreationLink}
 ) {
+    const navigate = useNavigate()
     const [amateurSoccerGroups, setAmateurSoccerGroups] = useState([]);
 
     useEffect(() => {
@@ -21,7 +23,10 @@ export function AmateurSoccerGroupList(
 
                 return <li key={selfLink}>
                     {name}{' '}
-                    <button onClick={() => setViewLink(selfLink)}>View</button>
+                    <button onClick={() => {
+                        setViewLink(selfLink)
+                        navigate("/amateurSoccerGroups/view")
+                    }}>View</button>
                 </li>
             })}
         </ul>

@@ -22,16 +22,24 @@ export function AmateurSoccerGroupPage() {
         <Outlet/>
         <Routes>
             <Route index element={
-                !viewLink && <AmateurSoccerGroupList
+                <AmateurSoccerGroupList
                     setViewLink={setViewLink}
-                    setCreationLink={setCreationLink}/>
-                || <AmateurSoccerGroupView
-                    uri={viewLink}/>
+                    setCreationLink={setCreationLink}
+                />
             }/>
-            <Route path="new" element={<AmateurSoccerGroupNew
-                creationLink={creationLink}
-                setViewLink={setViewLink}
-            />}/>
+
+            <Route path="view" element={
+                <AmateurSoccerGroupView
+                    uri={viewLink}
+                />
+            }/>
+
+            <Route path="new" element={
+                <AmateurSoccerGroupNew
+                    creationLink={creationLink}
+                    setViewLink={setViewLink}
+                />
+            }/>
         </Routes>
     </main>;
 }

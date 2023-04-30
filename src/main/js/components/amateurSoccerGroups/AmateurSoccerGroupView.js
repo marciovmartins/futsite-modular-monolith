@@ -3,6 +3,8 @@ import React, {useEffect, useState} from "react";
 export function AmateurSoccerGroupView(
     {uri}
 ) {
+    if (!uri) return
+
     const [amateurSoccerGroup, setAmateurSoccerGroup] = useState({
         name: ''
     })
