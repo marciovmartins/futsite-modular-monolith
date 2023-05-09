@@ -7,16 +7,18 @@ import {AmateurSoccerGroupNew} from "../../components/amateurSoccerGroups/Amateu
 export function AmateurSoccerGroupPage() {
     const [viewLink, setViewLink] = useState()
     const [creationLink, setCreationLink] = useState()
+    const [gamedaysLink, setGamedaysLink] = useState()
 
     return <main>
 
         <nav>
-            <Link to="/amateurSoccerGroups"
-                  onClick={() => setViewLink(undefined)}
-            >List</Link> |{" "}
+            <Link to="/amateurSoccerGroups">List</Link>
 
             {creationLink &&
-                <Link to="/amateurSoccerGroups/new">New</Link>}
+                <Link to="/amateurSoccerGroups/new"> | New</Link>}
+
+            {gamedaysLink &&
+                <Link to={"/gamedays"} state={{gamedaysLink}}> | Gamedays</Link>}
         </nav>
 
         <Outlet/>
@@ -31,6 +33,7 @@ export function AmateurSoccerGroupPage() {
             <Route path="view" element={
                 <AmateurSoccerGroupView
                     uri={viewLink}
+                    setGamedaysLink={setGamedaysLink}
                 />
             }/>
 

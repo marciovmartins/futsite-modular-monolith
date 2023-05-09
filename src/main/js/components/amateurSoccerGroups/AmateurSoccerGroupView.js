@@ -1,16 +1,18 @@
 import React, {useEffect, useState} from "react";
 
 export function AmateurSoccerGroupView(
-    {uri}
+    {uri, setGamedaysLink}
 ) {
-    if (!uri) return
-
     const [amateurSoccerGroup, setAmateurSoccerGroup] = useState({
         name: ''
     })
 
     useEffect(() => {
-        fetchAmateurSoccerGroup(uri).then(setAmateurSoccerGroup)
+        fetchAmateurSoccerGroup(uri)
+            .then(amateurSoccerGroup => {
+                setAmateurSoccerGroup(amateurSoccerGroup)
+                setGamedaysLink(amateurSoccerGroup._links?.["get-gamedays"]?.href)
+            })
     }, [])
 
     return <div>
