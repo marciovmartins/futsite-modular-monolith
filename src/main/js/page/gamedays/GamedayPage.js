@@ -1,13 +1,17 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Link, Outlet, Route, Routes, useLocation} from "react-router-dom";
 import {GamedayList} from "../../components/gamedays/GamedayList";
 import {GamedayNew} from "../../components/gamedays/GamedayNew";
+import {GamedayView} from "../../components/gamedays/GamedayView";
 
 export function GamedayPage() {
-    const location = useLocation()
-    const state = location.state
-    const gamedaysLink = state.gamedaysLink
+    const [viewLink, setViewLink] = useState()
     const [creationLink, setCreationLink] = useState()
+    const gamedaysLink = window.sessionStorage.getItem("gamedaysLink") || useLocation().state.gamedaysLink
+
+    useEffect(() => {
+        window.sessionStorage.setItem("gamedaysLink", gamedaysLink)
+    }, [gamedaysLink])
 
     return <div>
         <nav>
@@ -26,11 +30,20 @@ export function GamedayPage() {
                     uri={gamedaysLink}
                     setCreationLink={setCreationLink}
                     creationLink={creationLink}
+                    setViewLink={setViewLink}
                 />
             }/>
+
+            <Route path="view" element={
+                <GamedayView
+                    uri={viewLink}
+                />
+            }/>
+
             <Route path="new" element={
                 <GamedayNew
                     creationLink={creationLink}
+                    setViewLink={setViewLink}
                 />
             }/>
         </Routes>

@@ -1,9 +1,12 @@
 import React, {useState} from "react";
 import {v4 as uuidv4} from "uuid";
+import {useNavigate} from "react-router-dom";
 
 export function GamedayNew(
-    {creationLink}
+    {creationLink, setViewLink}
 ) {
+    const navigate = useNavigate()
+
     const [formData, setFormData] = useState({
         date: '',
         matches: [
@@ -49,6 +52,8 @@ export function GamedayNew(
     const handleSubmit = (event) => {
         event.preventDefault()
         submitGameday(creationLink, formData).then(data => {
+            setViewLink(data._links.self.href)
+            navigate("/gamedays/view")
         })
     }
 

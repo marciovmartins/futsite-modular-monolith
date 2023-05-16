@@ -1,16 +1,18 @@
 import React, {useEffect, useState} from "react";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 export function GamedayList(
-    {uri, setCreationLink, creationLink}
+    {uri, setCreationLink, creationLink, setViewLink}
 ) {
+    const navigate = useNavigate()
     const [gamedays, setGamedays] = useState([])
 
     useEffect(() => {
         fetchGamedays(uri).then(data => {
             setCreationLink(data._links?.["create-gameday"]?.href)
+            setGamedays(data._embedded.gamedays)
         })
-    }, [gamedays])
+    }, [])
 
     return <div>
         <h1>Gamedays</h1>
@@ -20,6 +22,30 @@ export function GamedayList(
             {creationLink
                 && <span> Click <Link to="/gamedays/new" state={{gamedaysLink: uri}}>here</Link> to register one</span>}
         </p>}
+        {gamedays.length > 0 && <table>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Date</th>
+                <th>Matches</th>
+            </tr>
+            </thead>
+            <tbody>
+            {gamedays.map((gameday, index) => {
+                const selfLink = gameday._links.self.href
+                return <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>
+                        <button onClick={() => {
+                            setViewLink(selfLink)
+                            navigate("/gamedays/view")
+                        }}>{gameday.date}</button>
+                    </td>
+                    <td align="right">{gameday.matches.length}</td>
+                </tr>
+            })}
+            </tbody>
+        </table>}
     </div>
 }
 

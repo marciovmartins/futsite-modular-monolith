@@ -19,10 +19,8 @@ export function AmateurSoccerGroupList(
         <ul>
             {amateurSoccerGroups.map(amateurSoccerGroup => {
                 const selfLink = amateurSoccerGroup._links.self.href
-                const name = amateurSoccerGroup.name
-
                 return <li key={selfLink}>
-                    {name}{' '}
+                    {amateurSoccerGroup.name}{' '}
                     <button onClick={() => {
                         setViewLink(selfLink)
                         navigate("/amateurSoccerGroups/view")
