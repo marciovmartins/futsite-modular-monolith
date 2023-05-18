@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Link, Outlet, Route, Routes, useLocation} from "react-router-dom";
 import {AmateurSoccerGroupList} from "../../components/amateurSoccerGroups/AmateurSoccerGroupList";
 import {AmateurSoccerGroupView} from "../../components/amateurSoccerGroups/AmateurSoccerGroupView";
@@ -13,12 +13,12 @@ export function AmateurSoccerGroupPage() {
     const [calculateRankingLink, setCalculateRankingLink] = useState()
 
     return <main>
-
         <nav>
-            <Link to="/amateurSoccerGroups">List</Link>
-
-            {creationLink &&
+            {creationLink && !viewLink &&
                 <Link to="/amateurSoccerGroups/new"> | New</Link>}
+
+            {viewLink &&
+                <Link to={"/amateurSoccerGroups/view"} state={{viewLink}}> | Amateur Soccer Group</Link>}
 
             {gamedaysLink &&
                 <Link to={"/gamedays"} state={{gamedaysLink}}> | Gamedays</Link>}
@@ -30,10 +30,17 @@ export function AmateurSoccerGroupPage() {
         <Outlet/>
         <Routes>
             <Route index element={
-                <AmateurSoccerGroupList
-                    setViewLink={setViewLink}
+                <ResetAmateurSoccerGroup
                     setCreationLink={setCreationLink}
-                />
+                    setViewLink={setViewLink}
+                    setGamedaysLink={setGamedaysLink}
+                    setCalculateRankingLink={setCalculateRankingLink}
+                >
+                    <AmateurSoccerGroupList
+                        setViewLink={setViewLink}
+                        setCreationLink={setCreationLink}
+                    />
+                </ResetAmateurSoccerGroup>
             }/>
 
             <Route path="view" element={
@@ -58,4 +65,14 @@ export function AmateurSoccerGroupPage() {
             }/>
         </Routes>
     </main>;
+}
+
+function ResetAmateurSoccerGroup(props) {
+    useEffect(() => {
+        props.setCreationLink(undefined)
+        props.setViewLink(undefined)
+        props.setGamedaysLink(undefined)
+        props.setCalculateRankingLink(undefined)
+    }, [])
+    return props.children;
 }

@@ -17,17 +17,18 @@ export function GamedayPage() {
 
     return <div>
         <nav>
-            <Link to="/gamedays" state={{gamedaysLink}}>List</Link>
+            {amateurSoccerGroupLink
+                && <Link to="/amateurSoccerGroups/view"
+                         state={{amateurSoccerGroupLink}}
+                > | Amateur Soccer Group</Link>}
+
+            {gamedaysLink &&
+                <Link to="/gamedays" state={{gamedaysLink}}>| List</Link>}
 
             {creationLink
                 && <Link to="/gamedays/new"
                          state={{gamedaysLink}}
                 > | New</Link>}
-
-            {amateurSoccerGroupLink
-                && <Link to="/amateurSoccerGroups/view"
-                         state={{amateurSoccerGroupLink}}
-                > | Amateur Soccer Group</Link>}
         </nav>
 
         <Outlet/>

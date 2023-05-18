@@ -24,7 +24,9 @@ export function AmateurSoccerGroupList(
                     <button onClick={() => {
                         setViewLink(selfLink)
                         navigate("/amateurSoccerGroups/view")
-                    }}>View</button>
+                    }}>
+                        View
+                    </button>
                 </li>
             })}
         </ul>
