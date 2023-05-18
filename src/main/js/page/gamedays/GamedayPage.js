@@ -7,7 +7,8 @@ import {GamedayView} from "../../components/gamedays/GamedayView";
 export function GamedayPage() {
     const [viewLink, setViewLink] = useState()
     const [creationLink, setCreationLink] = useState()
-    const gamedaysLink = window.sessionStorage.getItem("gamedaysLink") || useLocation().state.gamedaysLink
+    const state = useLocation().state;
+    const gamedaysLink = window.sessionStorage.getItem("gamedaysLink") || (state && state.gamedaysLink)
 
     useEffect(() => {
         window.sessionStorage.setItem("gamedaysLink", gamedaysLink)
