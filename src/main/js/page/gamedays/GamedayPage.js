@@ -7,6 +7,7 @@ import {GamedayView} from "../../components/gamedays/GamedayView";
 export function GamedayPage() {
     const [viewLink, setViewLink] = useState()
     const [creationLink, setCreationLink] = useState()
+    const [amateurSoccerGroupLink, setAmateurSoccerGroupLink] = useState()
     const state = useLocation().state;
     const gamedaysLink = window.sessionStorage.getItem("gamedaysLink") || (state && state.gamedaysLink)
 
@@ -22,6 +23,11 @@ export function GamedayPage() {
                 && <Link to="/gamedays/new"
                          state={{gamedaysLink}}
                 > | New</Link>}
+
+            {amateurSoccerGroupLink
+                && <Link to="/amateurSoccerGroups/view"
+                         state={{amateurSoccerGroupLink}}
+                > | Amateur Soccer Group</Link>}
         </nav>
 
         <Outlet/>
@@ -32,6 +38,7 @@ export function GamedayPage() {
                     setCreationLink={setCreationLink}
                     creationLink={creationLink}
                     setViewLink={setViewLink}
+                    setAmateurSoccerGroupLink={setAmateurSoccerGroupLink}
                 />
             }/>
 

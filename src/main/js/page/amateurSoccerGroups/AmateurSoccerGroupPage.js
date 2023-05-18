@@ -1,11 +1,12 @@
 import React, {useState} from "react";
-import {Link, Outlet, Route, Routes} from "react-router-dom";
+import {Link, Outlet, Route, Routes, useLocation} from "react-router-dom";
 import {AmateurSoccerGroupList} from "../../components/amateurSoccerGroups/AmateurSoccerGroupList";
 import {AmateurSoccerGroupView} from "../../components/amateurSoccerGroups/AmateurSoccerGroupView";
 import {AmateurSoccerGroupNew} from "../../components/amateurSoccerGroups/AmateurSoccerGroupNew";
 
 export function AmateurSoccerGroupPage() {
-    const [viewLink, setViewLink] = useState()
+    const state = useLocation().state
+    const [viewLink, setViewLink] = useState(state?.amateurSoccerGroupLink)
     const [creationLink, setCreationLink] = useState()
     const [gamedaysLink, setGamedaysLink] = useState()
 

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 
 export function GamedayList(
-    {uri, setCreationLink, creationLink, setViewLink}
+    {uri, setCreationLink, creationLink, setViewLink, setAmateurSoccerGroupLink}
 ) {
     const navigate = useNavigate()
     const [gamedays, setGamedays] = useState([])
@@ -10,6 +10,7 @@ export function GamedayList(
     useEffect(() => {
         fetchGamedays(uri).then(data => {
             setCreationLink(data._links?.["create-gameday"]?.href)
+            setAmateurSoccerGroupLink(data._links?.["get-amateur-soccer-group"]?.href)
             setGamedays(data._embedded.gamedays)
         })
     }, [])
