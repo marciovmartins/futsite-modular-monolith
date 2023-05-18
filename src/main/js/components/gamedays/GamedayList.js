@@ -11,7 +11,7 @@ export function GamedayList(
         fetchGamedays(uri).then(data => {
             setCreationLink(data._links?.["create-gameday"]?.href)
             setAmateurSoccerGroupLink(data._links?.["get-amateur-soccer-group"]?.href)
-            let sortedGamedays = data._embedded.gamedays.sort((a, b) => (a.date > b.date) - (a.date < b.date))
+            let sortedGamedays = data._embedded?.gamedays?.sort((a, b) => (a.date > b.date) - (a.date < b.date)) || []
             setGamedays(sortedGamedays)
         })
     }, [])

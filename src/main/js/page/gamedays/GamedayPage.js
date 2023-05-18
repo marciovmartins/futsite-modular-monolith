@@ -9,7 +9,7 @@ export function GamedayPage() {
     const [creationLink, setCreationLink] = useState()
     const [amateurSoccerGroupLink, setAmateurSoccerGroupLink] = useState()
     const state = useLocation().state;
-    const gamedaysLink = window.sessionStorage.getItem("gamedaysLink") || (state && state.gamedaysLink)
+    const gamedaysLink = (state && state.gamedaysLink) || window.sessionStorage.getItem("gamedaysLink")
 
     useEffect(() => {
         window.sessionStorage.setItem("gamedaysLink", gamedaysLink)
@@ -23,7 +23,7 @@ export function GamedayPage() {
                 > | Amateur Soccer Group</Link>}
 
             {gamedaysLink &&
-                <Link to="/gamedays" state={{gamedaysLink}}>| List</Link>}
+                <Link to="/gamedays" state={{gamedaysLink}}> | List</Link>}
 
             {creationLink
                 && <Link to="/gamedays/new"

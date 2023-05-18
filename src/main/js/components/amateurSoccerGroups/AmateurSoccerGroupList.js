@@ -17,12 +17,11 @@ export function AmateurSoccerGroupList(
     return <div>
         <h1>Amateur Soccer Groups</h1>
         <ul>
-            {amateurSoccerGroups.map(amateurSoccerGroup => {
-                const selfLink = amateurSoccerGroup._links.self.href
-                return <li key={selfLink}>
+            {amateurSoccerGroups.map((amateurSoccerGroup, amateurSoccerGroupIndex) => {
+                return <li key={amateurSoccerGroupIndex}>
                     {amateurSoccerGroup.name}{' '}
                     <button onClick={() => {
-                        setViewLink(selfLink)
+                        setViewLink(amateurSoccerGroup._links.self.href)
                         navigate("/amateurSoccerGroups/view")
                     }}>
                         View
