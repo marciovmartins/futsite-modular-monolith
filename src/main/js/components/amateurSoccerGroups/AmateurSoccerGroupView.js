@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 
 export function AmateurSoccerGroupView(
-    {uri, setGamedaysLink}
+    {uri, setGamedaysLink, setCalculateRankingLink}
 ) {
     const [amateurSoccerGroup, setAmateurSoccerGroup] = useState({
         name: ''
@@ -12,6 +12,7 @@ export function AmateurSoccerGroupView(
             .then(amateurSoccerGroup => {
                 setAmateurSoccerGroup(amateurSoccerGroup)
                 setGamedaysLink(amateurSoccerGroup._links?.["get-gamedays"]?.href)
+                setCalculateRankingLink(amateurSoccerGroup._links?.["calculate-ranking"]?.href)
             })
     }, [])
 
