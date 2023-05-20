@@ -1,6 +1,5 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup
 
-import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.GamedayController
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.application.RankingDTO
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.infrastructure.CalculateRankingController
 import org.springframework.hateoas.CollectionModel

@@ -2,7 +2,7 @@ package com.gitlab.marciovmartins.futsite.modularmonolith.ranking.infrastructure
 
 import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.AmateurSoccerGroup
 import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.AmateurSoccerGroupRepository
-import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.GamedayRepository
+import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.GamedayRepository
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.application.CalculateRanking
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.application.RankingDTO
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.AmateurSoccerGroupId

@@ -6,10 +6,11 @@ import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.GamedayR
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.PlayerId
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.Ranking
 import org.springframework.stereotype.Repository
+import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.Gameday as ExternalGameday
 
 @Repository
 class GamedayBoundedContextGamedayRepository(
-    private val gamedayRepository: com.gitlab.marciovmartins.futsite.modularmonolith.gameday.GamedayRepository
+    private val gamedayRepository: com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.GamedayRepository
 ) : GamedayRepository {
     override fun findBy(amateurSoccerGroupId: AmateurSoccerGroupId, period: Ranking.Period): Set<Gameday> {
         return gamedayRepository.findByAmateurSoccerGroupIdAndDateAfterAndDateBefore(
@@ -19,7 +20,7 @@ class GamedayBoundedContextGamedayRepository(
             .toSet()
     }
 
-    private fun mapTo(gamedayEntity: com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday): Gameday {
+    private fun mapTo(gamedayEntity: ExternalGameday): Gameday {
         return Gameday(
             amateurSoccerGroupId = AmateurSoccerGroupId(gamedayEntity.amateurSoccerGroupId!!),
             date = Gameday.Date(gamedayEntity.date),
@@ -27,13 +28,13 @@ class GamedayBoundedContextGamedayRepository(
         )
     }
 
-    private fun mapTo(matchEntity: com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match): Gameday.Match {
+    private fun mapTo(matchEntity: ExternalGameday.Match): Gameday.Match {
         return Gameday.Match(
             players = matchEntity.players.map { mapTo(it) }.toSet(),
         )
     }
 
-    private fun mapTo(playerStatistic: com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday.Match.PlayerStatistic): Gameday.Match.PlayerStatistic {
+    private fun mapTo(playerStatistic: ExternalGameday.Match.PlayerStatistic): Gameday.Match.PlayerStatistic {
         return Gameday.Match.PlayerStatistic(
             playerId = PlayerId(playerStatistic.playerId),
             team = Gameday.Match.Team.valueOf(playerStatistic.team.name),

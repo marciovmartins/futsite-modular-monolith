@@ -1,6 +1,5 @@
-package com.gitlab.marciovmartins.futsite.modularmonolith.gameday
+package com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup
 
-import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.AmateurSoccerGroupController
 import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.EntityModel
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder

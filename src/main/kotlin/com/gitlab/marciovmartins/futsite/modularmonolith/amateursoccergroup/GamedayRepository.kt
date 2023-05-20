@@ -1,4 +1,4 @@
-package com.gitlab.marciovmartins.futsite.modularmonolith.gameday
+package com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository

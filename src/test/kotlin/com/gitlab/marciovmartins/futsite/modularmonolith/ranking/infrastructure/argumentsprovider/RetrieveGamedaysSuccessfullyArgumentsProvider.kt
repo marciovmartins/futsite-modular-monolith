@@ -16,7 +16,7 @@ import java.time.temporal.ChronoUnit
 import java.util.UUID
 import java.util.function.Function
 import java.util.stream.Stream
-import com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday as ExternalGameday
+import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.Gameday as ExternalGameday
 
 object RetrieveGamedaysSuccessfullyArgumentsProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> = Stream.of(

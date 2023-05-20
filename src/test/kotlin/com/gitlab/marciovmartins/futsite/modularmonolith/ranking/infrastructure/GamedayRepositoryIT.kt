@@ -1,6 +1,8 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.ranking.infrastructure
 
 import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.AmateurSoccerGroup
+import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.AmateurSoccerGroupRepository
+import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.GamedayRepository
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.AmateurSoccerGroupId
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.Gameday
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.domain.Ranking
@@ -12,12 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import kotlin.random.Random
+import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.Gameday as ExternalGameday
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class GamedayRepositoryIT(
-    @Autowired private val jpaAmateurSoccerGroup: com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.AmateurSoccerGroupRepository,
-    @Autowired private val jpaGamedayRepository: com.gitlab.marciovmartins.futsite.modularmonolith.gameday.GamedayRepository
+    @Autowired private val jpaAmateurSoccerGroup: AmateurSoccerGroupRepository,
+    @Autowired private val jpaGamedayRepository: GamedayRepository
 ) {
     @ParameterizedTest(name = "{0}")
     @ArgumentsSource(RetrieveGamedaysSuccessfullyArgumentsProvider::class)
@@ -25,7 +28,7 @@ class GamedayRepositoryIT(
         testDescription: String,
         amateurSoccerGroupId: AmateurSoccerGroupId,
         period: Ranking.Period,
-        gamedaysToPersist: Set<com.gitlab.marciovmartins.futsite.modularmonolith.gameday.Gameday>,
+        gamedaysToPersist: Set<ExternalGameday>,
         expectedGamedays: Set<Gameday>,
     ) {
         // given

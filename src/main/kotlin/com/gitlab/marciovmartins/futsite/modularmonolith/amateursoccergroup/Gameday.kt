@@ -1,4 +1,4 @@
-package com.gitlab.marciovmartins.futsite.modularmonolith.gameday
+package com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.CascadeType
