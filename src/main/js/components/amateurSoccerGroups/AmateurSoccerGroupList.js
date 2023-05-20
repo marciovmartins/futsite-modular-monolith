@@ -7,8 +7,14 @@ export function AmateurSoccerGroupList(
 
     useEffect(() => {
         fetchAmateurSoccerGroups().then((list) => {
-            setAmateurSoccerGroups(list._embedded.amateurSoccerGroups)
-            setCreationUrl(list._links?.create?.href)
+            Promise.all(list._embedded.amateurSoccerGroups.map(it => fetchAmateurSoccerGroupUserData(it._links["get-user-data"].href)))
+                .then(values => {
+                    setAmateurSoccerGroups(values.map((userData, index) => ({
+                        name: userData.name,
+                        url: list._embedded.amateurSoccerGroups[index]._links.self.href
+                    })))
+                    setCreationUrl(list._links?.create?.href)
+                })
         })
     }, [])
 
@@ -19,7 +25,7 @@ export function AmateurSoccerGroupList(
                 return <li key={amateurSoccerGroupIndex}>
                     {amateurSoccerGroup.name}{' '}
                     <button onClick={() => {
-                        setViewUrl(amateurSoccerGroup._links.self.href)
+                        setViewUrl(amateurSoccerGroup.url)
                     }}>
                         View
                     </button>
@@ -31,6 +37,14 @@ export function AmateurSoccerGroupList(
 
 function fetchAmateurSoccerGroups() {
     return fetch("http://localhost:8080/api/amateurSoccerGroups", {
+        method: 'GET',
+        headers: {"Accept": "application/hal+json"},
+        mode: "cors"
+    }).then(response => response.json())
+}
+
+function fetchAmateurSoccerGroupUserData(url) {
+    return fetch(url, {
         method: 'GET',
         headers: {"Accept": "application/hal+json"},
         mode: "cors"

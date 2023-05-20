@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.net.URI
 import java.time.Instant
 import java.util.UUID
+import com.gitlab.marciovmartins.futsite.modularmonolith.usercore.AmateurSoccerGroupController as UserCoreAmateurSoccerGroupController
 
 @RestController
 @RequestMapping(value = ["/api/amateurSoccerGroups"])
@@ -27,11 +28,7 @@ class AmateurSoccerGroupController(
     @GetMapping
     fun showAll(): CollectionModel<EntityModel<*>> {
         val allAmateurSoccerGroupModel = amateurSoccerGroupRepository.findAll().map {
-            EntityModel.of(
-                it,
-                linkTo(methodOn(AmateurSoccerGroupController::class.java).show(it.amateurSoccerGroupId!!)!!)
-                    .withSelfRel(),
-            )
+            amateurSoccerGroupEntityModel(it)
         }
 
         return CollectionModel.of(
@@ -77,7 +74,9 @@ class AmateurSoccerGroupController(
             linkTo(methodOn(GamedayController::class.java).create(amateurSoccerGroupId, null))
                 .withRel("create-gameday"),
             linkTo(methodOn(CalculateRankingController::class.java).calculateRanking(amateurSoccerGroupId, period))
-                .withRel("calculate-ranking")
+                .withRel("calculate-ranking"),
+            linkTo(methodOn(UserCoreAmateurSoccerGroupController::class.java).show(amateurSoccerGroupId)!!)
+                .withRel("get-user-data"),
         )
     }
 }

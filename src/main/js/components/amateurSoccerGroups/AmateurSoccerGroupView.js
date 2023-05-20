@@ -10,9 +10,13 @@ export function AmateurSoccerGroupView(
     useEffect(() => {
         fetchAmateurSoccerGroup(url)
             .then(amateurSoccerGroup => {
-                setAmateurSoccerGroup(amateurSoccerGroup)
-                setGamedaysUrl(amateurSoccerGroup._links?.["get-gamedays"]?.href)
-                setCalculateRankingUrl(amateurSoccerGroup._links?.["calculate-ranking"]?.href)
+                fetchAmateurSoccerGroupUserData(amateurSoccerGroup._links["get-user-data"].href).then(userData => {
+                    setAmateurSoccerGroup({
+                        name: userData.name
+                    })
+                    setGamedaysUrl(amateurSoccerGroup._links?.["get-gamedays"]?.href)
+                    setCalculateRankingUrl(amateurSoccerGroup._links?.["calculate-ranking"]?.href)
+                })
             })
     }, [])
 
@@ -30,4 +34,12 @@ function fetchAmateurSoccerGroup(link) {
         mode: "cors"
     })
         .then(response => response.json())
+}
+
+function fetchAmateurSoccerGroupUserData(url) {
+    return fetch(url, {
+        method: 'GET',
+        headers: {"Accept": "application/hal+json"},
+        mode: "cors"
+    }).then(response => response.json())
 }
