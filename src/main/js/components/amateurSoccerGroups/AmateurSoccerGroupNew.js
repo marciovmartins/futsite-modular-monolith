@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import {v4 as uuidv4} from 'uuid';
 
 export function AmateurSoccerGroupNew(
-    {creationUrl, setCreatedAmateurSoccerGroupUrl}
+    {creationUrl, userDataCreationUrl, setCreatedAmateurSoccerGroupUrl}
 ) {
     const [formData, setFormData] = useState({
         name: ''
@@ -14,10 +14,14 @@ export function AmateurSoccerGroupNew(
 
     const handleSubmit = (event) => {
         event.preventDefault()
-        submitAmateurSoccerGroup(creationUrl, formData)
-            .then(data => {
-                setCreatedAmateurSoccerGroupUrl(data?._links?.self?.href)
-            })
+        const amateurSoccerGroupId = uuidv4()
+        Promise.all([
+            submitAmateurSoccerGroup(creationUrl, amateurSoccerGroupId),
+            submitAmateurSoccerGroupUserData(userDataCreationUrl, amateurSoccerGroupId, formData)
+        ]).then(values => {
+            const [amateurSoccerGroupResult] = values
+            setCreatedAmateurSoccerGroupUrl(amateurSoccerGroupResult?._links?.self?.href)
+        })
     }
 
     return <div>
@@ -34,7 +38,7 @@ export function AmateurSoccerGroupNew(
     </div>
 }
 
-function submitAmateurSoccerGroup(link, formData) {
+function submitAmateurSoccerGroup(link, amateurSoccerGroupId) {
     return fetch(link, {
         method: 'POST',
         headers: {
@@ -42,7 +46,20 @@ function submitAmateurSoccerGroup(link, formData) {
             "Content-Type": "application/json"
         },
         mode: "cors",
-        body: JSON.stringify({...formData, amateurSoccerGroupId: uuidv4()})
+        body: JSON.stringify({amateurSoccerGroupId: amateurSoccerGroupId})
+    })
+        .then(response => response.json())
+}
+
+function submitAmateurSoccerGroupUserData(link, amateurSoccerGroupId, formData) {
+    return fetch(link, {
+        method: 'POST',
+        headers: {
+            "Accept": "application/hal+json",
+            "Content-Type": "application/json"
+        },
+        mode: "cors",
+        body: JSON.stringify({...formData, amateurSoccerGroupId: amateurSoccerGroupId})
     })
         .then(response => response.json())
 }

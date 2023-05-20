@@ -36,6 +36,8 @@ class AmateurSoccerGroupController(
             linkTo(methodOn(AmateurSoccerGroupController::class.java).showAll()).withSelfRel()
                 .andAffordance(afford(methodOn(AmateurSoccerGroupController::class.java).create(null)))
                 .withRel("create"),
+            linkTo(methodOn(UserCoreAmateurSoccerGroupController::class.java).create(null))
+                .withRel("create-user-data")
         )
     }
 

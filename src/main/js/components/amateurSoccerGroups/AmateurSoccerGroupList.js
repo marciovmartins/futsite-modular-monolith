@@ -1,19 +1,20 @@
 import React, {useEffect, useState} from "react";
 
 export function AmateurSoccerGroupList(
-    {setViewUrl, setCreationUrl}
+    {setViewUrl, setCreationUrl, setUserDataCreationUrl}
 ) {
     const [amateurSoccerGroups, setAmateurSoccerGroups] = useState([]);
 
     useEffect(() => {
         fetchAmateurSoccerGroups().then((list) => {
+            setCreationUrl(list._links?.create?.href)
+            setUserDataCreationUrl(list._links?.["create-user-data"]?.href)
             Promise.all(list._embedded.amateurSoccerGroups.map(it => fetchAmateurSoccerGroupUserData(it._links["get-user-data"].href)))
                 .then(values => {
                     setAmateurSoccerGroups(values.map((userData, index) => ({
                         name: userData.name,
                         url: list._embedded.amateurSoccerGroups[index]._links.self.href
                     })))
-                    setCreationUrl(list._links?.create?.href)
                 })
         })
     }, [])

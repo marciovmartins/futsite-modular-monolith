@@ -11,6 +11,7 @@ export function AmateurSoccerGroupPage() {
 
     const [viewUrl, setViewUrl] = useState(state?.amateurSoccerGroupLink)
     const [creationUrl, setCreationUrl] = useState()
+    const [userDataCreationUrl, setUserDataCreationUrl] = useState()
     const [gamedaysUrl, setGamedaysUrl] = useState()
     const [calculateRankingUrl, setCalculateRankingUrl] = useState()
 
@@ -34,6 +35,7 @@ export function AmateurSoccerGroupPage() {
             <Route index element={
                 <ResetAmateurSoccerGroup
                     setCreationUrl={setCreationUrl}
+                    setUserDataCreationUrl={setUserDataCreationUrl}
                     setViewUrl={setViewUrl}
                     setGamedaysUrl={setGamedaysUrl}
                     setCalculateRankingUrl={setCalculateRankingUrl}
@@ -44,6 +46,7 @@ export function AmateurSoccerGroupPage() {
                             navigate("/amateurSoccerGroups/view")
                         }}
                         setCreationUrl={setCreationUrl}
+                        setUserDataCreationUrl={setUserDataCreationUrl}
                     />
                 </ResetAmateurSoccerGroup>
             }/>
@@ -59,6 +62,7 @@ export function AmateurSoccerGroupPage() {
             <Route path="new" element={
                 <AmateurSoccerGroupNew
                     creationUrl={creationUrl}
+                    userDataCreationUrl={userDataCreationUrl}
                     setCreatedAmateurSoccerGroupUrl={(link) => {
                         setViewUrl(link)
                         navigate('/amateurSoccerGroups/view')
@@ -78,6 +82,7 @@ export function AmateurSoccerGroupPage() {
 function ResetAmateurSoccerGroup(props) {
     useEffect(() => {
         props.setCreationUrl(undefined)
+        props.setUserDataCreationUrl(undefined)
         props.setViewUrl(undefined)
         props.setGamedaysUrl(undefined)
         props.setCalculateRankingUrl(undefined)
