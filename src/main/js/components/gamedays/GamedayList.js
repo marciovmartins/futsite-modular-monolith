@@ -1,16 +1,15 @@
 import React, {useEffect, useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 
 export function GamedayList(
-    {uri, setCreationLink, creationLink, setViewLink, setAmateurSoccerGroupLink}
+    {url, setCreationUrl, creationUrl, setViewUrl, setAmateurSoccerGroupUrl}
 ) {
-    const navigate = useNavigate()
     const [gamedays, setGamedays] = useState([])
 
     useEffect(() => {
-        fetchGamedays(uri).then(data => {
-            setCreationLink(data._links?.["create-gameday"]?.href)
-            setAmateurSoccerGroupLink(data._links?.["get-amateur-soccer-group"]?.href)
+        fetchGamedays(url).then(data => {
+            setCreationUrl(data._links?.["create-gameday"]?.href)
+            setAmateurSoccerGroupUrl(data._links?.["get-amateur-soccer-group"]?.href)
             let sortedGamedays = data._embedded?.gamedays?.sort((a, b) => (a.date > b.date) - (a.date < b.date)) || []
             setGamedays(sortedGamedays)
         })
@@ -21,8 +20,8 @@ export function GamedayList(
 
         {gamedays.length === 0 && <p>
             No game days registered.
-            {creationLink
-                && <span> Click <Link to="/gamedays/new" state={{gamedaysLink: uri}}>here</Link> to register one</span>}
+            {creationUrl
+                && <span> Click <Link to="/gamedays/new" state={{gamedaysLink: url}}>here</Link> to register one</span>}
         </p>}
         {gamedays.length > 0 && <table>
             <thead>
@@ -38,10 +37,7 @@ export function GamedayList(
                 return <tr key={index}>
                     <td>{index + 1}</td>
                     <td>
-                        <button onClick={() => {
-                            setViewLink(selfLink)
-                            navigate("/gamedays/view")
-                        }}>{gameday.date}</button>
+                        <button onClick={() => setViewUrl(selfLink)}>{gameday.date}</button>
                     </td>
                     <td align="right">{gameday.matches.length}</td>
                 </tr>

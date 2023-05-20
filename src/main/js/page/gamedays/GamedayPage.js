@@ -1,35 +1,36 @@
 import React, {useEffect, useState} from "react";
-import {Link, Outlet, Route, Routes, useLocation} from "react-router-dom";
+import {Link, Outlet, Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import {GamedayList} from "../../components/gamedays/GamedayList";
 import {GamedayNew} from "../../components/gamedays/GamedayNew";
 import {GamedayView} from "../../components/gamedays/GamedayView";
 
 export function GamedayPage() {
     const state = useLocation().state;
+    const navigate = useNavigate()
 
-    const [viewLink, setViewLink] = useState()
-    const [creationLink, setCreationLink] = useState()
-    const [amateurSoccerGroupLink, setAmateurSoccerGroupLink] = useState()
+    const [viewUrl, setViewUrl] = useState()
+    const [creationUrl, setCreationUrl] = useState()
+    const [amateurSoccerGroupUrl, setAmateurSoccerGroupUrl] = useState()
 
-    const gamedaysLink = (state && state.gamedaysLink) || window.sessionStorage.getItem("gamedaysLink")
+    const gamedaysUrl = (state && state.gamedaysLink) || window.sessionStorage.getItem("gamedaysLink")
 
     useEffect(() => {
-        window.sessionStorage.setItem("gamedaysLink", gamedaysLink)
-    }, [gamedaysLink])
+        window.sessionStorage.setItem("gamedaysLink", gamedaysUrl)
+    }, [gamedaysUrl])
 
     return <div>
         <nav>
-            {amateurSoccerGroupLink
+            {amateurSoccerGroupUrl
                 && <Link to="/amateurSoccerGroups/view"
-                         state={{amateurSoccerGroupLink}}
+                         state={{amateurSoccerGroupLink: amateurSoccerGroupUrl}}
                 > | Amateur Soccer Group</Link>}
 
-            {gamedaysLink &&
-                <Link to="/gamedays" state={{gamedaysLink}}> | List</Link>}
+            {gamedaysUrl &&
+                <Link to="/gamedays" state={{gamedaysLink: gamedaysUrl}}> | List</Link>}
 
-            {creationLink
+            {creationUrl
                 && <Link to="/gamedays/new"
-                         state={{gamedaysLink}}
+                         state={{gamedaysLink: gamedaysUrl}}
                 > | New</Link>}
         </nav>
 
@@ -37,24 +38,27 @@ export function GamedayPage() {
         <Routes>
             <Route index element={
                 <GamedayList
-                    uri={gamedaysLink}
-                    setCreationLink={setCreationLink}
-                    creationLink={creationLink}
-                    setViewLink={setViewLink}
-                    setAmateurSoccerGroupLink={setAmateurSoccerGroupLink}
+                    url={gamedaysUrl}
+                    setCreationUrl={setCreationUrl}
+                    creationUrl={creationUrl}
+                    setViewUrl={(link) => {
+                        setViewUrl(link)
+                        navigate("/gamedays/view")
+                    }}
+                    setAmateurSoccerGroupUrl={setAmateurSoccerGroupUrl}
                 />
             }/>
 
             <Route path="view" element={
                 <GamedayView
-                    uri={viewLink}
+                    uri={viewUrl}
                 />
             }/>
 
             <Route path="new" element={
                 <GamedayNew
-                    creationLink={creationLink}
-                    setViewLink={setViewLink}
+                    creationLink={creationUrl}
+                    setViewLink={setViewUrl}
                 />
             }/>
         </Routes>
