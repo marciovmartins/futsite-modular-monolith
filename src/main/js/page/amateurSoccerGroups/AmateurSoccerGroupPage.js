@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Link, Outlet, Route, Routes, useLocation} from "react-router-dom";
+import {Link, Outlet, Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import {AmateurSoccerGroupList} from "../../components/amateurSoccerGroups/AmateurSoccerGroupList";
 import {AmateurSoccerGroupView} from "../../components/amateurSoccerGroups/AmateurSoccerGroupView";
 import {AmateurSoccerGroupNew} from "../../components/amateurSoccerGroups/AmateurSoccerGroupNew";
@@ -7,23 +7,25 @@ import {CalculateRanking} from "../../components/amateurSoccerGroups/CalculateRa
 
 export function AmateurSoccerGroupPage() {
     const state = useLocation().state
-    const [viewLink, setViewLink] = useState(state?.amateurSoccerGroupLink)
-    const [creationLink, setCreationLink] = useState()
-    const [gamedaysLink, setGamedaysLink] = useState()
-    const [calculateRankingLink, setCalculateRankingLink] = useState()
+    const navigate = useNavigate()
+
+    const [viewUrl, setViewUrl] = useState(state?.amateurSoccerGroupLink)
+    const [creationUrl, setCreationUrl] = useState()
+    const [gamedaysUrl, setGamedaysUrl] = useState()
+    const [calculateRankingUrl, setCalculateRankingUrl] = useState()
 
     return <main>
         <nav>
-            {creationLink && !viewLink &&
+            {creationUrl && !viewUrl &&
                 <Link to="/amateurSoccerGroups/new"> | New</Link>}
 
-            {viewLink &&
-                <Link to={"/amateurSoccerGroups/view"} state={{viewLink}}> | Amateur Soccer Group</Link>}
+            {viewUrl &&
+                <Link to={"/amateurSoccerGroups/view"} state={{viewUrl: viewUrl}}> | Amateur Soccer Group</Link>}
 
-            {gamedaysLink &&
-                <Link to={"/gamedays"} state={{gamedaysLink}}> | Gamedays</Link>}
+            {gamedaysUrl &&
+                <Link to={"/gamedays"} state={{gamedaysLink: gamedaysUrl}}> | Gamedays</Link>}
 
-            {calculateRankingLink &&
+            {calculateRankingUrl &&
                 <Link to={"/amateurSoccerGroups/ranking"}> | Ranking</Link>}
         </nav>
 
@@ -31,36 +33,42 @@ export function AmateurSoccerGroupPage() {
         <Routes>
             <Route index element={
                 <ResetAmateurSoccerGroup
-                    setCreationLink={setCreationLink}
-                    setViewLink={setViewLink}
-                    setGamedaysLink={setGamedaysLink}
-                    setCalculateRankingLink={setCalculateRankingLink}
+                    setCreationUrl={setCreationUrl}
+                    setViewUrl={setViewUrl}
+                    setGamedaysUrl={setGamedaysUrl}
+                    setCalculateRankingUrl={setCalculateRankingUrl}
                 >
                     <AmateurSoccerGroupList
-                        setViewLink={setViewLink}
-                        setCreationLink={setCreationLink}
+                        setViewUrl={(link) => {
+                            setViewUrl(link)
+                            navigate("/amateurSoccerGroups/view")
+                        }}
+                        setCreationUrl={setCreationUrl}
                     />
                 </ResetAmateurSoccerGroup>
             }/>
 
             <Route path="view" element={
                 <AmateurSoccerGroupView
-                    uri={viewLink}
-                    setGamedaysLink={setGamedaysLink}
-                    setCalculateRankingLink={setCalculateRankingLink}
+                    url={viewUrl}
+                    setGamedaysUrl={setGamedaysUrl}
+                    setCalculateRankingUrl={setCalculateRankingUrl}
                 />
             }/>
 
             <Route path="new" element={
                 <AmateurSoccerGroupNew
-                    creationLink={creationLink}
-                    setViewLink={setViewLink}
+                    creationUrl={creationUrl}
+                    setCreatedAmateurSoccerGroupUrl={(link) => {
+                        setViewUrl(link)
+                        navigate('/amateurSoccerGroups/view')
+                    }}
                 />
             }/>
 
             <Route path="ranking" element={
                 <CalculateRanking
-                    uri={calculateRankingLink}
+                    uri={calculateRankingUrl}
                 />
             }/>
         </Routes>
@@ -69,10 +77,10 @@ export function AmateurSoccerGroupPage() {
 
 function ResetAmateurSoccerGroup(props) {
     useEffect(() => {
-        props.setCreationLink(undefined)
-        props.setViewLink(undefined)
-        props.setGamedaysLink(undefined)
-        props.setCalculateRankingLink(undefined)
+        props.setCreationUrl(undefined)
+        props.setViewUrl(undefined)
+        props.setGamedaysUrl(undefined)
+        props.setCalculateRankingUrl(undefined)
     }, [])
     return props.children;
 }

@@ -1,16 +1,14 @@
 import React, {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
 
 export function AmateurSoccerGroupList(
-    {setViewLink, setCreationLink}
+    {setViewUrl, setCreationUrl}
 ) {
-    const navigate = useNavigate()
     const [amateurSoccerGroups, setAmateurSoccerGroups] = useState([]);
 
     useEffect(() => {
         fetchAmateurSoccerGroups().then((list) => {
             setAmateurSoccerGroups(list._embedded.amateurSoccerGroups)
-            setCreationLink(list._links?.create?.href)
+            setCreationUrl(list._links?.create?.href)
         })
     }, [])
 
@@ -21,8 +19,7 @@ export function AmateurSoccerGroupList(
                 return <li key={amateurSoccerGroupIndex}>
                     {amateurSoccerGroup.name}{' '}
                     <button onClick={() => {
-                        setViewLink(amateurSoccerGroup._links.self.href)
-                        navigate("/amateurSoccerGroups/view")
+                        setViewUrl(amateurSoccerGroup._links.self.href)
                     }}>
                         View
                     </button>

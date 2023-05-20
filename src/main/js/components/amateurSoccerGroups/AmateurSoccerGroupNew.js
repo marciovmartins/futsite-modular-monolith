@@ -1,11 +1,9 @@
 import React, {useState} from 'react'
-import {useNavigate} from "react-router-dom";
 import {v4 as uuidv4} from 'uuid';
 
 export function AmateurSoccerGroupNew(
-    {creationLink, setViewLink}
+    {creationUrl, setCreatedAmateurSoccerGroupUrl}
 ) {
-    const navigate = useNavigate()
     const [formData, setFormData] = useState({
         name: ''
     })
@@ -16,10 +14,9 @@ export function AmateurSoccerGroupNew(
 
     const handleSubmit = (event) => {
         event.preventDefault()
-        submitAmateurSoccerGroup(creationLink, formData)
+        submitAmateurSoccerGroup(creationUrl, formData)
             .then(data => {
-                setViewLink(data?._links?.self?.href)
-                navigate('/amateurSoccerGroups')
+                setCreatedAmateurSoccerGroupUrl(data?._links?.self?.href)
             })
     }
 

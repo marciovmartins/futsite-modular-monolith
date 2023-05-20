@@ -5,10 +5,12 @@ import {GamedayNew} from "../../components/gamedays/GamedayNew";
 import {GamedayView} from "../../components/gamedays/GamedayView";
 
 export function GamedayPage() {
+    const state = useLocation().state;
+
     const [viewLink, setViewLink] = useState()
     const [creationLink, setCreationLink] = useState()
     const [amateurSoccerGroupLink, setAmateurSoccerGroupLink] = useState()
-    const state = useLocation().state;
+
     const gamedaysLink = (state && state.gamedaysLink) || window.sessionStorage.getItem("gamedaysLink")
 
     useEffect(() => {
