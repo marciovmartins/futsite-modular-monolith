@@ -51,7 +51,7 @@ export function GamedayPage() {
 
             <Route path="view" element={
                 <GamedayView
-                    uri={viewUrl}
+                    url={viewUrl}
                 />
             }/>
 

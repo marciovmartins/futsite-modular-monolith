@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 
 export function GamedayView(
-    {uri}
+    {url}
 ) {
     const [gameday, setGameday] = useState({
         date: '',
@@ -9,7 +9,7 @@ export function GamedayView(
     })
 
     useEffect(() => {
-        fetchGameday(uri).then(setGameday)
+        fetchGameday(url).then(setGameday)
     }, [])
 
     return <div>
