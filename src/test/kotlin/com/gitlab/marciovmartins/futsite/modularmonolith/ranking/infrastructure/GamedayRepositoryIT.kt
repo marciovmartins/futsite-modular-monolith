@@ -13,7 +13,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import kotlin.random.Random
 import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.Gameday as ExternalGameday
 
 @DataJpaTest
@@ -34,7 +33,6 @@ class GamedayRepositoryIT(
         // given
         val amateurSoccerGroup = AmateurSoccerGroup().apply {
             this.amateurSoccerGroupId = amateurSoccerGroupId.value
-            this.name = "${GamedayRepositoryIT::class.simpleName} ${Random.nextLong(1, 99999999)}"
         }
         jpaAmateurSoccerGroup.save(amateurSoccerGroup)
 

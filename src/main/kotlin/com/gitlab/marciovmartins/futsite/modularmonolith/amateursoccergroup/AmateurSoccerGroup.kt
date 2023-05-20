@@ -10,7 +10,4 @@ class AmateurSoccerGroup {
     @Id
     @Column(unique = true, nullable = false, insertable = true, updatable = false)
     var amateurSoccerGroupId: UUID? = null
-
-    @Column(nullable = false, insertable = true, updatable = true)
-    lateinit var name: String
 }

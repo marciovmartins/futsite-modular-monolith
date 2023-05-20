@@ -26,7 +26,6 @@ import org.springframework.web.context.request.ServletRequestAttributes
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.UUID
-import kotlin.random.Random
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 internal class CalculateRankingControllerIT(
@@ -46,7 +45,6 @@ internal class CalculateRankingControllerIT(
         amateurSoccerGroupRepository.save(
             AmateurSoccerGroup().apply {
                 this.amateurSoccerGroupId = amateurSoccerGroupId.value
-                this.name = "${CalculateRankingControllerIT::class.simpleName} ${Random.nextLong(1, 99999999)}"
             }
         )
 
