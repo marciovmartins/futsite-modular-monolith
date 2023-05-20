@@ -57,8 +57,11 @@ export function GamedayPage() {
 
             <Route path="new" element={
                 <GamedayNew
-                    creationLink={creationUrl}
-                    setViewLink={setViewUrl}
+                    creationUrl={creationUrl}
+                    setViewUrl={(link) => {
+                        setViewUrl(link)
+                        navigate("/gamedays/view")
+                    }}
                 />
             }/>
         </Routes>
