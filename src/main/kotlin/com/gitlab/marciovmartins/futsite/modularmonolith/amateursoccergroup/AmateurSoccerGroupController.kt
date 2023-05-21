@@ -19,6 +19,7 @@ import java.net.URI
 import java.time.Instant
 import java.util.UUID
 import com.gitlab.marciovmartins.futsite.modularmonolith.usercore.AmateurSoccerGroupController as UserCoreAmateurSoccerGroupController
+import com.gitlab.marciovmartins.futsite.modularmonolith.usercore.UserCorePlayerController as UserCorePlayerController
 
 @RestController
 @RequestMapping(value = ["/api/amateurSoccerGroups"])
@@ -37,7 +38,7 @@ class AmateurSoccerGroupController(
                 .andAffordance(afford(methodOn(AmateurSoccerGroupController::class.java).create(null)))
                 .withRel("create"),
             linkTo(methodOn(UserCoreAmateurSoccerGroupController::class.java).create(null))
-                .withRel("create-user-data")
+                .withRel("create-user-data"),
         )
     }
 
@@ -79,6 +80,12 @@ class AmateurSoccerGroupController(
                 .withRel("calculate-ranking"),
             linkTo(methodOn(UserCoreAmateurSoccerGroupController::class.java).show(amateurSoccerGroupId)!!)
                 .withRel("get-user-data"),
+            linkTo(methodOn(PlayerController::class.java).showAll(amateurSoccerGroupId))
+                .withRel("get-players"),
+            linkTo(methodOn(PlayerController::class.java).create(amateurSoccerGroupId, null))
+                .withRel("create-player"),
+            linkTo(methodOn(UserCorePlayerController::class.java).create(null))
+                .withRel("create-player-user-data")
         )
     }
 }

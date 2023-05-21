@@ -1,10 +1,9 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup
 
+import com.gitlab.marciovmartins.futsite.modularmonolith.usercore.UserCorePlayerController
 import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.EntityModel
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -35,11 +34,11 @@ class GamedayController(
 
         return CollectionModel.of(
             allGamedaysModel,
-            linkTo(methodOn(GamedayController::class.java).showAll(amateurSoccerGroupId)).withSelfRel(),
-            linkTo(methodOn(GamedayController::class.java).showAll(amateurSoccerGroupId)).withRel("create-gameday")
-                .andAffordance(
-                    WebMvcLinkBuilder.afford(methodOn(GamedayController::class.java).create(amateurSoccerGroupId, null))
-                ),
+            linkTo(methodOn(GamedayController::class.java).showAll(amateurSoccerGroupId))
+                .withSelfRel(),
+            linkTo(methodOn(GamedayController::class.java).showAll(amateurSoccerGroupId))
+                .withRel("create-gameday")
+                .andAffordance(afford(methodOn(GamedayController::class.java).create(amateurSoccerGroupId, null))),
             linkTo(methodOn(AmateurSoccerGroupController::class.java).show(amateurSoccerGroupId)!!)
                 .withRel("get-amateur-soccer-group")
         )
@@ -74,17 +73,31 @@ class GamedayController(
         @PathVariable amateurSoccerGroupId: UUID,
         @PathVariable gamedayId: UUID,
     ): EntityModel<*>? {
-        return gamedayRepository.findByAmateurSoccerGroupIdAndGamedayId(amateurSoccerGroupId, gamedayId)
-            ?.let {
-                EntityModel.of(
-                    it,
-                    linkTo(methodOn(GamedayController::class.java).show(amateurSoccerGroupId, it.gamedayId!!)!!)
-                        .withSelfRel(),
-                    linkTo(methodOn(GamedayController::class.java).showAll(amateurSoccerGroupId))
-                        .withRel("get-gamedays"),
-                    linkTo(methodOn(AmateurSoccerGroupController::class.java).show(amateurSoccerGroupId)!!)
-                        .withRel("get-amateur-soccer-group")
+        val gameday = gamedayRepository.findByAmateurSoccerGroupIdAndGamedayId(amateurSoccerGroupId, gamedayId)
+
+        val links = mutableListOf(
+            linkTo(methodOn(GamedayController::class.java).show(amateurSoccerGroupId, gamedayId)!!)
+                .withSelfRel(),
+            linkTo(methodOn(GamedayController::class.java).showAll(amateurSoccerGroupId))
+                .withRel("get-gamedays"),
+            linkTo(methodOn(AmateurSoccerGroupController::class.java).show(amateurSoccerGroupId)!!)
+                .withRel("get-amateur-soccer-group"),
+        )
+
+        gameday?.matches?.forEach { match ->
+            match.players.forEach { playerStatistic ->
+                val playerId = playerStatistic.playerId
+                links.add(
+                    linkTo(methodOn(PlayerController::class.java).show(amateurSoccerGroupId, playerId)!!)
+                        .withRel("get-player-$playerId")
+                )
+                links.add(
+                    linkTo(methodOn(UserCorePlayerController::class.java).show(playerId)!!)
+                        .withRel("get-player-user-data-$playerId")
                 )
             }
+        }
+
+        return gameday?.let { EntityModel.of(it, links) }
     }
 }
