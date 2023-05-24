@@ -33,19 +33,23 @@ export function CalculateRanking(
     return <div>
         <h1>Calculate Ranking</h1>
 
-        <form onSubmit={handleSubmit}>
-            <label htmlFor="from">
-                From:
-                <input id="from" type="date" name="from" value={formData.from}
-                       onChange={handleChange}/>
-            </label>
-            <label htmlFor="to">
-                To:
-                <input id="to" type="date" name="to" value={formData.to} onChange={handleChange}/>
-            </label>
-            <p>
-                <button type="submit">Calculate</button>
-            </p>
+        <form onSubmit={handleSubmit} className="form-inline">
+            <label htmlFor="from">From: </label>
+            <input id="from"
+                   type="date"
+                   name="from"
+                   className="form-control mx-sm-3"
+                   value={formData.from}
+                   onChange={handleChange}/>
+
+            <label htmlFor="to">To: </label>
+            <input id="to"
+                   type="date"
+                   name="to"
+                   className="form-control mx-sm-3"
+                   value={formData.to}
+                   onChange={handleChange}/>
+            <button type="submit" className="btn btn-primary">Calculate</button>
         </form>
 
         {result && <div>

@@ -1,22 +1,24 @@
 const path = require('path');
 
+const port = process.env.PORT || 8081;
+
 module.exports = {
     entry: './src/main/js/index.js',
-    devtool: 'eval-cheap-module-source-map',
+    devtool: 'inline-source-map',
     devServer: {
         static: [
             './src/main/resources/templates',
             './src/main/resources/static',
         ],
-        port: 8081,
+        port: port,
         liveReload: true,
         hot: true,
     },
     cache: false,
     mode: 'development',
     output: {
-        path: __dirname,
-        filename: './src/main/resources/static/built/bundle.js'
+        path: path.resolve(__dirname, './src/main/resources/static/built/'),
+        filename: 'bundle.js'
     },
     module: {
         rules: [
