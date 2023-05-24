@@ -1,8 +1,8 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {v4 as uuidv4} from "uuid";
 
 export function GamedayNew(
-    {creationUrl, setViewUrl}
+    {creationUrl, setViewUrl, amateurSoccerGroupUrl}
 ) {
     const [formData, setFormData] = useState({
         date: '',
@@ -31,6 +31,22 @@ export function GamedayNew(
             }
         ],
     })
+
+    const [players, setPlayers] = useState([])
+
+    useEffect(() => {
+        fetchUrl(amateurSoccerGroupUrl).then(amateurSoccerGroup => {
+            fetchUrl(amateurSoccerGroup._links["get-players"].href).then(players => {
+                Promise.all(players._embedded.players.map(player => fetchUrl(player._links["get-player-user-data"].href))).then(values => {
+                    let list = values.map(player => ({
+                        playerId: extractId(player._links.self.href),
+                        name: player.name,
+                    }));
+                    setPlayers(list)
+                })
+            })
+        })
+    }, [])
 
     const handleChange = (event) => {
         const {name, value} = event.target
@@ -82,12 +98,15 @@ export function GamedayNew(
                                 return <tr key={playerStatisticKey}>
                                     <td>
                                         <label htmlFor={playerStatisticKey + ".playerId"}>
-                                            <input type="text"
-                                                   id={playerStatisticKey + ".playerId"}
-                                                   name={playerStatisticKey + ".playerId"}
-                                                   value={playerStatistic.playerId}
-                                                   onChange={handlePlayerStatisticChange}
-                                            />
+                                            <select id={playerStatisticKey + ".playerId"}
+                                                    name={playerStatisticKey + ".playerId"}
+                                                    value={playerStatistic.playerId}
+                                                    onChange={handlePlayerStatisticChange}
+                                            >
+                                                <option></option>
+                                                {players.map((player, playerIndex) =>
+                                                    <option key={playerIndex} value={player.playerId}>{player.name}</option>)}
+                                            </select>
                                         </label>
                                     </td>
                                     <td>
@@ -178,4 +197,20 @@ function submitGameday(link, formData) {
         body: JSON.stringify({...formData, date: parsedDate, gamedayId: uuidv4()})
     })
         .then(response => response.json())
+}
+
+function fetchUrl(link) {
+    return fetch(link, {
+        method: 'GET',
+        headers: {
+            "Accept": "application/hal+json",
+            "Content-Type": "application/json"
+        },
+        mode: "cors"
+    })
+        .then(response => response.json())
+}
+
+function extractId(url) {
+    return url.slice(url.lastIndexOf("/") + 1)
 }

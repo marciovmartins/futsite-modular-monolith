@@ -62,6 +62,7 @@ export function GamedayPage() {
                         setViewUrl(link)
                         navigate("/gamedays/view")
                     }}
+                    amateurSoccerGroupUrl={amateurSoccerGroupUrl}
                 />
             }/>
         </Routes>
