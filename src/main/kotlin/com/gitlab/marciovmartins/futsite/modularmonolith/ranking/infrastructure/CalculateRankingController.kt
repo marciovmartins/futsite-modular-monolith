@@ -1,8 +1,10 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.ranking.infrastructure
 
 import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.AmateurSoccerGroupController
+import com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup.PlayerController
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.application.CalculateRanking
 import com.gitlab.marciovmartins.futsite.modularmonolith.ranking.application.RankingDTO
+import com.gitlab.marciovmartins.futsite.modularmonolith.usercore.UserCorePlayerController
 import org.springframework.hateoas.EntityModel
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
@@ -26,12 +28,22 @@ class CalculateRankingController(
         @RequestBody period: RankingDTO.Period,
     ): EntityModel<*> {
         val rankingDTO = calculateRanking.with(amateurSoccerGroupId, period)
-        return EntityModel.of(
-            rankingDTO,
+
+        val links = mutableListOf(
             linkTo(methodOn(CalculateRankingController::class.java).calculateRanking(amateurSoccerGroupId, period))
                 .withSelfRel(),
             linkTo(methodOn(AmateurSoccerGroupController::class.java).show(amateurSoccerGroupId)!!)
-                .withRel("get-amateur-soccer-group")
+                .withRel("get-amateur-soccer-group"),
         )
+        links += rankingDTO.playerStatistics.map { it.playerId }.map {
+            linkTo(methodOn(PlayerController::class.java).show(amateurSoccerGroupId, it)!!)
+                .withRel("get-player-$it")
+        }
+        links += rankingDTO.playerStatistics.map { it.playerId }.map {
+            linkTo(methodOn(UserCorePlayerController::class.java).show(it)!!)
+                .withRel("get-player-user-data-$it")
+        }
+
+        return EntityModel.of(rankingDTO, links)
     }
 }

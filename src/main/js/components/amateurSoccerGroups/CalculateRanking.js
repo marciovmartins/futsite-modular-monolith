@@ -16,7 +16,18 @@ export function CalculateRanking(
 
     const handleSubmit = (event) => {
         event.preventDefault()
-        submitCalculateRanking(uri, formData).then(setResult)
+        submitCalculateRanking(uri, formData).then(response => {
+            Promise.all(Object.entries(response._links)
+                .filter(entry => entry[0].includes("get-player-user-data-"))
+                .map(entry => fetchUrl(entry[1].href)))
+                .then(values => {
+                    response.playerStatistics.forEach(playerStatistic => {
+                        const player = values.find((it) => it._links.self.href.includes(playerStatistic.playerId))
+                        playerStatistic.playerName = player.name
+                    })
+                    setResult(response)
+                })
+        })
     }
 
     return <div>
@@ -57,7 +68,7 @@ export function CalculateRanking(
                 </thead>
                 <tbody>
                 {result.playerStatistics.map((playerStatistic, playerStatisticIndex) => <tr key={playerStatisticIndex}>
-                    <td>{playerStatistic.playerId}</td>
+                    <td>{playerStatistic.playerName}</td>
                     <td>{playerStatistic.matches}</td>
                     <td>{playerStatistic.victories}</td>
                     <td>{playerStatistic.draws}</td>
@@ -84,4 +95,15 @@ function submitCalculateRanking(link, formData) {
         body: JSON.stringify({from: parsedStartPeriodDate, to: parsedEndPeriodDate})
     })
         .then(response => response.json())
+}
+
+function fetchUrl(link) {
+    return fetch(link, {
+        method: 'GET',
+        headers: {
+            "Accept": "application/hal+json",
+            "Content-Type": "application/json"
+        },
+        mode: "cors"
+    }).then(response => response.json())
 }
