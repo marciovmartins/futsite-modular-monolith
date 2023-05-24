@@ -6,6 +6,7 @@ module.exports = {
     entry: './src/main/js/index.js',
     devtool: 'inline-source-map',
     devServer: {
+        historyApiFallback: true,
         static: [
             './src/main/resources/templates',
             './src/main/resources/static',
