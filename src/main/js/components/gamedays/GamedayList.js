@@ -27,23 +27,23 @@ export function GamedayList(
             {creationUrl
                 && <span> Click <Link to="/gamedays/new" state={{gamedaysLink: url}}>here</Link> to register one</span>}
         </p>}
-        {gamedays.length > 0 && <table>
+        {gamedays.length > 0 && <table className="table">
             <thead>
             <tr>
-                <th>#</th>
-                <th>Date</th>
-                <th>Matches</th>
+                <th scope="col">#</th>
+                <th scope="col">Date</th>
+                <th scope="col">Matches</th>
             </tr>
             </thead>
             <tbody>
             {gamedays.map((gameday, index) => {
                 const selfLink = gameday._links.self.href
                 return <tr key={index}>
-                    <td>{index + 1}</td>
+                    <th scope="row">{index + 1}</th>
                     <td>
                         <button onClick={() => setViewUrl(selfLink)}>{gameday.date}</button>
                     </td>
-                    <td align="right">{gameday.matches.length}</td>
+                    <td>{gameday.matches.length}</td>
                 </tr>
             })}
             </tbody>

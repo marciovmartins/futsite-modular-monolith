@@ -30,7 +30,16 @@ export function GamedayView(
     return <div>
         <h1>Gameday</h1>
 
-        Date: {gameday.date}
+        <div className="form-group row">
+            <label className="col-sm-2 col-form-label">Date</label>
+            <div className="col-sm-10">
+                <input readOnly
+                       type="email"
+                       value={gameday.date}
+                       className="form-control-plaintext"
+                       aria-describedby="emailHelp"/>
+            </div>
+        </div>
 
         <h2>Matches</h2>
 
@@ -38,7 +47,7 @@ export function GamedayView(
             return <div key={index}>
                 <b>#{index + 1}</b>
 
-                <table>
+                <table className="table table-striped">
                     <thead>
                     <tr>
                         <th>Player</th>

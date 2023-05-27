@@ -27,9 +27,7 @@ export function AmateurSoccerGroupView(
     }, [])
 
     return <div>
-        <h1>Amateur Soccer Group</h1>
-
-        Name: {amateurSoccerGroup.name}
+        <h1>{amateurSoccerGroup.name}</h1>
     </div>
 }
 
