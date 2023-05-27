@@ -45,33 +45,6 @@ export default function App() {
                         <li className="nav-item">
                             <Link to="/amateurSoccerGroups" className="nav-link">Amateur Soccer Groups</Link>
                         </li>
-                        {menu.amateurSoccerGroup.viewUrl.value &&
-                            <li className="nav-item dropdown">
-                                <a className="nav-link dropdown-toggle"
-                                   href="#"
-                                   role="button"
-                                   data-toggle="dropdown"
-                                   aria-haspopup="true"
-                                   aria-expanded="false">
-                                    Current Amateur Soccer Group
-                                </a>
-                                <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <Link to={"/amateurSoccerGroups/view"}
-                                          className="dropdown-item">
-                                        Amateur Soccer Group
-                                    </Link>
-                                    {amateurSoccerGroupGamedaysUrl &&
-                                        <Link to={"/gamedays"}
-                                              className="dropdown-item">
-                                            Gamedays
-                                        </Link>}
-                                    {amateurSoccerGroupCalculateRankingUrl &&
-                                        <Link to={"/amateurSoccerGroups/ranking"}
-                                              className="dropdown-item">
-                                            Ranking
-                                        </Link>}
-                                </div>
-                            </li>}
                     </ul>
                 </div>
             </nav>

@@ -1,5 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
-import {Outlet, Route, Routes, useNavigate} from "react-router-dom";
+import {Outlet, Route, Routes, useLocation, useNavigate} from "react-router-dom";
+import {AmateurSoccerGroupMenu} from "./AmateurSoccerGroupMenu";
 import {AmateurSoccerGroupList} from "../../components/amateurSoccerGroups/AmateurSoccerGroupList";
 import {AmateurSoccerGroupView} from "../../components/amateurSoccerGroups/AmateurSoccerGroupView";
 import {AmateurSoccerGroupNew} from "../../components/amateurSoccerGroups/AmateurSoccerGroupNew";
@@ -7,11 +8,14 @@ import {CalculateRanking} from "../../components/amateurSoccerGroups/CalculateRa
 import {MenuContext} from "../App";
 
 export function AmateurSoccerGroupPage() {
+    const location = useLocation()
     const navigate = useNavigate()
     const menu = useContext(MenuContext)
     const [userDataCreationUrl, setUserDataCreationUrl] = useState()
 
     return <main>
+        {!location.pathname.includes('/amateurSoccerGroups/new') &&
+            <AmateurSoccerGroupMenu menu={menu}/>}
         <Outlet/>
         <Routes>
             <Route index element={
