@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import {fetchUrl} from "../../api/fetchUrl";
 
 export function AmateurSoccerGroupView(
     {url, setGamedaysUrl, setCalculateRankingUrl}
@@ -7,16 +8,10 @@ export function AmateurSoccerGroupView(
         name: ''
     })
 
-    const amateurSoccerGroupUrl = url || window.sessionStorage.getItem("amateurSoccerGroupUrl")
-
     useEffect(() => {
-        window.sessionStorage.setItem("amateurSoccerGroupUrl", amateurSoccerGroupUrl)
-    }, [url])
-
-    useEffect(() => {
-        fetchAmateurSoccerGroup(amateurSoccerGroupUrl)
+        fetchUrl(url)
             .then(amateurSoccerGroup => {
-                fetchAmateurSoccerGroupUserData(amateurSoccerGroup._links["get-user-data"].href).then(userData => {
+                fetchUrl(amateurSoccerGroup._links["get-user-data"].href).then(userData => {
                     setAmateurSoccerGroup({
                         name: userData.name
                     })
@@ -24,26 +19,9 @@ export function AmateurSoccerGroupView(
                     setCalculateRankingUrl(amateurSoccerGroup._links?.["calculate-ranking"]?.href)
                 })
             })
-    }, [])
+    }, [url])
 
     return <div>
         <h1>{amateurSoccerGroup.name}</h1>
     </div>
-}
-
-function fetchAmateurSoccerGroup(link) {
-    return fetch(link, {
-        method: 'GET',
-        headers: {"Accept": "application/hal+json"},
-        mode: "cors"
-    })
-        .then(response => response.json())
-}
-
-function fetchAmateurSoccerGroupUserData(url) {
-    return fetch(url, {
-        method: 'GET',
-        headers: {"Accept": "application/hal+json"},
-        mode: "cors"
-    }).then(response => response.json())
 }

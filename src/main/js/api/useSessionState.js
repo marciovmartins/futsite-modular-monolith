@@ -1,10 +1,11 @@
 import React, {useState} from "react";
 
 export function useSessionState(key, initialState) {
-    let initialStateOrNull = initialState || sessionStorage.getItem("useSessionState-" + key);
-    const [value, setValue] = useState(initialStateOrNull == null ? undefined : initialStateOrNull)
+    const initialStateOrNull = JSON.parse(sessionStorage.getItem("useSessionState-" + key)) || initialState;
+    const initialStateOrUndefined = initialStateOrNull == null ? undefined : initialStateOrNull;
+    const [value, setValue] = useState(initialStateOrUndefined)
     return [value, (v) => {
-        sessionStorage.setItem("useSessionState-" + key, v)
+        sessionStorage.setItem("useSessionState-" + key, JSON.stringify(v))
         setValue(v)
     }]
 }

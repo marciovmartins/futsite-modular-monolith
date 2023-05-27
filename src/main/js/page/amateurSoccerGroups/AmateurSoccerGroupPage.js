@@ -1,44 +1,24 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext} from "react";
 import {Outlet, Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import {AmateurSoccerGroupMenu} from "./AmateurSoccerGroupMenu";
-import {AmateurSoccerGroupList} from "../../components/amateurSoccerGroups/AmateurSoccerGroupList";
 import {AmateurSoccerGroupView} from "../../components/amateurSoccerGroups/AmateurSoccerGroupView";
 import {AmateurSoccerGroupNew} from "../../components/amateurSoccerGroups/AmateurSoccerGroupNew";
 import {CalculateRanking} from "../../components/amateurSoccerGroups/CalculateRanking";
-import {MenuContext} from "../App";
+import {AmateurSoccerGroupsLoadedContext, MenuContext} from "../App";
+import {useSessionState} from "../../api/useSessionState";
 
 export function AmateurSoccerGroupPage() {
     const location = useLocation()
     const navigate = useNavigate()
     const menu = useContext(MenuContext)
-    const [userDataCreationUrl, setUserDataCreationUrl] = useState()
+    const amateurSoccerGroupLoadedContext = useContext(AmateurSoccerGroupsLoadedContext)
+    const [userDataCreationUrl] = useSessionState("amateurSoccerGroupUserDataCreationUrl") //TODO: weird! Should be replace if used GraphQL
 
     return <main>
         {!location.pathname.includes('/amateurSoccerGroups/new') &&
             <AmateurSoccerGroupMenu menu={menu}/>}
         <Outlet/>
         <Routes>
-            <Route index element={
-                <ResetAmateurSoccerGroup
-                    setCreationUrl={menu.amateurSoccerGroup.creationUrl.set}
-                    setUserDataCreationUrl={setUserDataCreationUrl}
-                    setViewUrl={menu.amateurSoccerGroup.viewUrl.set}
-                    setGamedaysUrl={menu.amateurSoccerGroup.gamedaysUrl.set}
-                    setCalculateRankingUrl={menu.amateurSoccerGroup.calculateRankingUrl.set}
-                >
-                    <AmateurSoccerGroupList
-                        setViewUrl={(link) => {
-                            menu.amateurSoccerGroup.viewUrl.set(link)
-                            navigate("/amateurSoccerGroups/view")
-                        }}
-                        setCreationUrl={menu.amateurSoccerGroup.creationUrl.set}
-                        setUserDataCreationUrl={setUserDataCreationUrl}
-                        urlToNewAmateurSoccerGroup={menu.amateurSoccerGroup.creationUrl.value
-                            && "/amateurSoccerGroups/new"}
-                    />
-                </ResetAmateurSoccerGroup>
-            }/>
-
             <Route path="view" element={
                 <AmateurSoccerGroupView
                     url={menu.amateurSoccerGroup.viewUrl.value}
@@ -53,6 +33,7 @@ export function AmateurSoccerGroupPage() {
                     userDataCreationUrl={userDataCreationUrl}
                     setCreatedAmateurSoccerGroupUrl={(link) => {
                         menu.amateurSoccerGroup.viewUrl.set(link)
+                        amateurSoccerGroupLoadedContext.set(false)
                         navigate('/amateurSoccerGroups/view')
                     }}
                 />
@@ -65,15 +46,4 @@ export function AmateurSoccerGroupPage() {
             }/>
         </Routes>
     </main>;
-}
-
-function ResetAmateurSoccerGroup(props) {
-    useEffect(() => {
-        props.setCreationUrl(undefined)
-        props.setUserDataCreationUrl(undefined)
-        props.setViewUrl(undefined)
-        props.setGamedaysUrl(undefined)
-        props.setCalculateRankingUrl(undefined)
-    }, [])
-    return props.children;
 }
