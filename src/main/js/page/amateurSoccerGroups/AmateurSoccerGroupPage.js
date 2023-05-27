@@ -1,22 +1,20 @@
 import React, {useContext} from "react";
-import {Outlet, Route, Routes, useLocation, useNavigate} from "react-router-dom";
+import {Outlet, Route, Routes, useNavigate} from "react-router-dom";
 import {AmateurSoccerGroupMenu} from "./AmateurSoccerGroupMenu";
 import {AmateurSoccerGroupView} from "../../components/amateurSoccerGroups/AmateurSoccerGroupView";
 import {AmateurSoccerGroupNew} from "../../components/amateurSoccerGroups/AmateurSoccerGroupNew";
 import {CalculateRanking} from "../../components/amateurSoccerGroups/CalculateRanking";
-import {AmateurSoccerGroupsLoadedContext, MenuContext} from "../App";
+import {AmateurSoccerGroupsLoadContext, MenuContext} from "../App";
 import {useSessionState} from "../../api/useSessionState";
 
 export function AmateurSoccerGroupPage() {
-    const location = useLocation()
     const navigate = useNavigate()
     const menu = useContext(MenuContext)
-    const amateurSoccerGroupLoadedContext = useContext(AmateurSoccerGroupsLoadedContext)
+    const amateurSoccerGroupLoadContext = useContext(AmateurSoccerGroupsLoadContext)
     const [userDataCreationUrl] = useSessionState("amateurSoccerGroupUserDataCreationUrl") //TODO: weird! Should be replace if used GraphQL
 
     return <main>
-        {!location.pathname.includes('/amateurSoccerGroups/new') &&
-            <AmateurSoccerGroupMenu menu={menu}/>}
+        <AmateurSoccerGroupMenu menu={menu}/>
         <Outlet/>
         <Routes>
             <Route path="view" element={
@@ -33,7 +31,7 @@ export function AmateurSoccerGroupPage() {
                     userDataCreationUrl={userDataCreationUrl}
                     setCreatedAmateurSoccerGroupUrl={(link) => {
                         menu.amateurSoccerGroup.viewUrl.set(link)
-                        amateurSoccerGroupLoadedContext.set(false)
+                        amateurSoccerGroupLoadContext.set(true)
                         navigate('/amateurSoccerGroups/view')
                     }}
                 />
@@ -41,7 +39,7 @@ export function AmateurSoccerGroupPage() {
 
             <Route path="ranking" element={
                 <CalculateRanking
-                    uri={menu.amateurSoccerGroup.calculateRankingUrl.value}
+                    url={menu.amateurSoccerGroup.calculateRankingUrl.value}
                 />
             }/>
         </Routes>

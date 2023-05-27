@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 
 export function CalculateRanking(
-    {uri}
+    {url}
 ) {
     const [formData, setFormData] = useState({
         from: '',
@@ -16,7 +16,7 @@ export function CalculateRanking(
 
     const handleSubmit = (event) => {
         event.preventDefault()
-        submitCalculateRanking(uri, formData).then(response => {
+        submitCalculateRanking(url, formData).then(response => {
             Promise.all(Object.entries(response._links)
                 .filter(entry => entry[0].includes("get-player-user-data-"))
                 .map(entry => fetchUrl(entry[1].href)))

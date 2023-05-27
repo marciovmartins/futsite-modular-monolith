@@ -1,10 +1,13 @@
 import React from "react";
-import {Link} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 
 export function AmateurSoccerGroupMenu(
     {menu}
 ) {
-    return (
+    const location = useLocation()
+    let isAmateurSoccerGroupNewUrl = location.pathname.includes('/amateurSoccerGroups/new');
+
+    return !isAmateurSoccerGroupNewUrl &&
         <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
             <Link to="/amateurSoccerGroups/view" className="navbar-brand">Amateur Soccer Group</Link>
             <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
@@ -24,5 +27,4 @@ export function AmateurSoccerGroupMenu(
                 </ul>
             </div>
         </nav>
-    )
 }

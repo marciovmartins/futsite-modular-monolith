@@ -30,10 +30,10 @@ export default function App() {
         }
     }
 
-    const [amateurSoccerGroupsLoaded, setAmateurSoccerGroupsLoaded] = useState(false)
+    const [amateurSoccerGroupsLoad, setAmateurSoccerGroupsLoad] = useState(true)
     const [amateurSoccerGroups, setAmateurSoccerGroups] = useState([])
     useEffect(() => {
-        if (amateurSoccerGroupsLoaded) return
+        if (!amateurSoccerGroupsLoad) return
         fetchAmateurSoccerGroups().then((list) => {
             setAmateurSoccerGroupCreationUrl(list._links?.create?.href)
             setAmateurSoccerGroupUserDataCreationUrl(list._links?.["create-user-data"]?.href)
@@ -46,16 +46,16 @@ export default function App() {
                             url: list._embedded.amateurSoccerGroups[index]._links.self.href
                         }))
                     )
-                    setAmateurSoccerGroupsLoaded(true)
+                    setAmateurSoccerGroupsLoad(false)
                 })
         })
-    }, [amateurSoccerGroupsLoaded])
+    }, [amateurSoccerGroupsLoad])
 
     return (
         <MenuContext.Provider value={menu}>
-            <AmateurSoccerGroupsLoadedContext.Provider value={{
-                value: amateurSoccerGroupsLoaded,
-                set: setAmateurSoccerGroupsLoaded
+            <AmateurSoccerGroupsLoadContext.Provider value={{
+                value: amateurSoccerGroupsLoad,
+                set: setAmateurSoccerGroupsLoad
             }}>
                 <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                     <Link to="/" className="navbar-brand">Home</Link>
@@ -97,13 +97,13 @@ export default function App() {
                     </div>
                 </nav>
                 <Outlet/>
-            </AmateurSoccerGroupsLoadedContext.Provider>
+            </AmateurSoccerGroupsLoadContext.Provider>
         </MenuContext.Provider>
     )
 }
 
 export const MenuContext = createContext(null)
-export const AmateurSoccerGroupsLoadedContext = createContext(null)
+export const AmateurSoccerGroupsLoadContext = createContext(null)
 
 function fetchAmateurSoccerGroups() {
     return fetch("http://localhost:8080/api/amateurSoccerGroups", {
