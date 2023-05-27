@@ -7,8 +7,14 @@ export function AmateurSoccerGroupView(
         name: ''
     })
 
+    const amateurSoccerGroupUrl = url || window.sessionStorage.getItem("amateurSoccerGroupUrl")
+
     useEffect(() => {
-        fetchAmateurSoccerGroup(url)
+        window.sessionStorage.setItem("amateurSoccerGroupUrl", amateurSoccerGroupUrl)
+    }, [url])
+
+    useEffect(() => {
+        fetchAmateurSoccerGroup(amateurSoccerGroupUrl)
             .then(amateurSoccerGroup => {
                 fetchAmateurSoccerGroupUserData(amateurSoccerGroup._links["get-user-data"].href).then(userData => {
                     setAmateurSoccerGroup({

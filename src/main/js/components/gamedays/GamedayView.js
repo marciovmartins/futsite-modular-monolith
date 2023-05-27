@@ -8,8 +8,12 @@ export function GamedayView(
         matches: []
     })
 
+    const gamedayUrl = url || window.sessionStorage.getItem("gamedayUrl")
+
+    useEffect(() => window.sessionStorage.setItem("gamedayUrl", gamedayUrl), [url])
+
     useEffect(() => {
-        fetchUrl(url).then(gameday => {
+        fetchUrl(gamedayUrl).then(gameday => {
             const playerIds = gameday.matches.flatMap((match) => match.players.map(playerStatistic => playerStatistic.playerId))
             Promise.all(playerIds.map((playerId) => fetchUrl(gameday._links["get-player-user-data-" + playerId].href))).then(values => {
                 gameday.matches.forEach((match) => {

@@ -10,13 +10,11 @@ export function GamedayPage() {
 
     const [viewUrl, setViewUrl] = useState()
     const [creationUrl, setCreationUrl] = useState()
-    const [amateurSoccerGroupUrl, setAmateurSoccerGroupUrl] = useState()
+    const [amateurSoccerGroupUrl, setAmateurSoccerGroupUrl] = useState(window.sessionStorage.getItem("amateurSoccerGroupUrl"))
 
     const gamedaysUrl = (state && state.gamedaysLink) || window.sessionStorage.getItem("gamedaysLink")
 
-    useEffect(() => {
-        window.sessionStorage.setItem("gamedaysLink", gamedaysUrl)
-    }, [gamedaysUrl])
+    useEffect(() => window.sessionStorage.setItem("gamedaysLink", gamedaysUrl), [gamedaysUrl])
 
     return <div>
         <nav>
