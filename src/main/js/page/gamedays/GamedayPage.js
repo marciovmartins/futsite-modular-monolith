@@ -1,49 +1,31 @@
-import React, {useEffect, useState} from "react";
-import {Link, Outlet, Route, Routes, useLocation, useNavigate} from "react-router-dom";
+import React, {useContext, useState} from "react";
+import {Outlet, Route, Routes, useNavigate} from "react-router-dom";
 import {GamedayList} from "../../components/gamedays/GamedayList";
 import {GamedayNew} from "../../components/gamedays/GamedayNew";
 import {GamedayView} from "../../components/gamedays/GamedayView";
+import {MenuContext} from "../App";
 
 export function GamedayPage() {
-    const state = useLocation().state;
     const navigate = useNavigate()
+    const menu = useContext(MenuContext)
 
     const [viewUrl, setViewUrl] = useState()
     const [creationUrl, setCreationUrl] = useState()
-    const [amateurSoccerGroupUrl, setAmateurSoccerGroupUrl] = useState(window.sessionStorage.getItem("amateurSoccerGroupUrl"))
-
-    const gamedaysUrl = (state && state.gamedaysLink) || window.sessionStorage.getItem("gamedaysLink")
-
-    useEffect(() => window.sessionStorage.setItem("gamedaysLink", gamedaysUrl), [gamedaysUrl])
 
     return <div>
-        <nav>
-            {amateurSoccerGroupUrl
-                && <Link to="/amateurSoccerGroups/view"
-                         state={{amateurSoccerGroupLink: amateurSoccerGroupUrl}}
-                > | Amateur Soccer Group</Link>}
-
-            {gamedaysUrl &&
-                <Link to="/gamedays" state={{gamedaysLink: gamedaysUrl}}> | List</Link>}
-
-            {creationUrl
-                && <Link to="/gamedays/new"
-                         state={{gamedaysLink: gamedaysUrl}}
-                > | New</Link>}
-        </nav>
-
         <Outlet/>
         <Routes>
             <Route index element={
                 <GamedayList
-                    url={gamedaysUrl}
+                    url={menu.amateurSoccerGroup.gamedaysUrl.value}
                     setCreationUrl={setCreationUrl}
                     creationUrl={creationUrl}
                     setViewUrl={(link) => {
                         setViewUrl(link)
                         navigate("/gamedays/view")
                     }}
-                    setAmateurSoccerGroupUrl={setAmateurSoccerGroupUrl}
+                    setAmateurSoccerGroupUrl={menu.amateurSoccerGroup.viewUrl.set}
+                    urlToNewGameday={creationUrl && "/gamedays/new"}
                 />
             }/>
 
@@ -60,7 +42,7 @@ export function GamedayPage() {
                         setViewUrl(link)
                         navigate("/gamedays/view")
                     }}
-                    amateurSoccerGroupUrl={amateurSoccerGroupUrl}
+                    amateurSoccerGroupUrl={menu.amateurSoccerGroup.viewUrl.value}
                 />
             }/>
         </Routes>

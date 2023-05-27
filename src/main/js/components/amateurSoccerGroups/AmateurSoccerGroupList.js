@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from "react";
+import {Link} from "react-router-dom";
 
 export function AmateurSoccerGroupList(
-    {setViewUrl, setCreationUrl, setUserDataCreationUrl}
+    {setViewUrl, setCreationUrl, setUserDataCreationUrl, urlToNewAmateurSoccerGroup}
 ) {
     const [amateurSoccerGroups, setAmateurSoccerGroups] = useState([]);
 
@@ -20,7 +21,11 @@ export function AmateurSoccerGroupList(
     }, [])
 
     return <div>
-        <h1>Amateur Soccer Groups</h1>
+        <h1>
+            Amateur Soccer Groups
+            {urlToNewAmateurSoccerGroup &&
+                <Link to={urlToNewAmateurSoccerGroup} className="btn btn-primary">New</Link>}
+        </h1>
         <ul>
             {amateurSoccerGroups.map((amateurSoccerGroup, amateurSoccerGroupIndex) => {
                 return <li key={amateurSoccerGroupIndex}>

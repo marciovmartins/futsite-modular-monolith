@@ -1,70 +1,54 @@
-import React, {useEffect, useState} from "react";
-import {Link, Outlet, Route, Routes, useLocation, useNavigate} from "react-router-dom";
+import React, {useContext, useEffect, useState} from "react";
+import {Outlet, Route, Routes, useNavigate} from "react-router-dom";
 import {AmateurSoccerGroupList} from "../../components/amateurSoccerGroups/AmateurSoccerGroupList";
 import {AmateurSoccerGroupView} from "../../components/amateurSoccerGroups/AmateurSoccerGroupView";
 import {AmateurSoccerGroupNew} from "../../components/amateurSoccerGroups/AmateurSoccerGroupNew";
 import {CalculateRanking} from "../../components/amateurSoccerGroups/CalculateRanking";
+import {MenuContext} from "../App";
 
 export function AmateurSoccerGroupPage() {
-    const state = useLocation().state
     const navigate = useNavigate()
-
-    const [viewUrl, setViewUrl] = useState(state?.amateurSoccerGroupLink)
-    const [creationUrl, setCreationUrl] = useState()
+    const menu = useContext(MenuContext)
     const [userDataCreationUrl, setUserDataCreationUrl] = useState()
-    const [gamedaysUrl, setGamedaysUrl] = useState()
-    const [calculateRankingUrl, setCalculateRankingUrl] = useState()
 
     return <main>
-        <nav>
-            {creationUrl && !viewUrl &&
-                <Link to="/amateurSoccerGroups/new"> | New</Link>}
-
-            {viewUrl &&
-                <Link to={"/amateurSoccerGroups/view"} state={{viewUrl: viewUrl}}> | Amateur Soccer Group</Link>}
-
-            {gamedaysUrl &&
-                <Link to={"/gamedays"} state={{gamedaysLink: gamedaysUrl}}> | Gamedays</Link>}
-
-            {calculateRankingUrl &&
-                <Link to={"/amateurSoccerGroups/ranking"}> | Ranking</Link>}
-        </nav>
-
         <Outlet/>
         <Routes>
             <Route index element={
                 <ResetAmateurSoccerGroup
-                    setCreationUrl={setCreationUrl}
+                    setCreationUrl={menu.amateurSoccerGroup.creationUrl.set}
                     setUserDataCreationUrl={setUserDataCreationUrl}
-                    setViewUrl={setViewUrl}
-                    setGamedaysUrl={setGamedaysUrl}
-                    setCalculateRankingUrl={setCalculateRankingUrl}
+                    setViewUrl={menu.amateurSoccerGroup.viewUrl.set}
+                    setGamedaysUrl={menu.amateurSoccerGroup.gamedaysUrl.set}
+                    setCalculateRankingUrl={menu.amateurSoccerGroup.calculateRankingUrl.set}
                 >
                     <AmateurSoccerGroupList
                         setViewUrl={(link) => {
-                            setViewUrl(link)
+                            menu.amateurSoccerGroup.viewUrl.set(link)
                             navigate("/amateurSoccerGroups/view")
                         }}
-                        setCreationUrl={setCreationUrl}
+                        setCreationUrl={menu.amateurSoccerGroup.creationUrl.set}
                         setUserDataCreationUrl={setUserDataCreationUrl}
+                        urlToNewAmateurSoccerGroup={menu.amateurSoccerGroup.creationUrl.value
+                            && "/amateurSoccerGroups/new"}
                     />
                 </ResetAmateurSoccerGroup>
             }/>
 
             <Route path="view" element={
                 <AmateurSoccerGroupView
-                    url={viewUrl}
-                    setGamedaysUrl={setGamedaysUrl}
-                    setCalculateRankingUrl={setCalculateRankingUrl}
+                    url={menu.amateurSoccerGroup.viewUrl.value}
+                    setGamedaysUrl={menu.amateurSoccerGroup.gamedaysUrl.set}
+                    setCalculateRankingUrl={menu.amateurSoccerGroup.calculateRankingUrl.set}
                 />
             }/>
 
             <Route path="new" element={
                 <AmateurSoccerGroupNew
-                    creationUrl={creationUrl}
+                    creationUrl={menu.amateurSoccerGroup.creationUrl.value}
                     userDataCreationUrl={userDataCreationUrl}
                     setCreatedAmateurSoccerGroupUrl={(link) => {
-                        setViewUrl(link)
+                        menu.amateurSoccerGroup.viewUrl.set(link)
                         navigate('/amateurSoccerGroups/view')
                     }}
                 />
@@ -72,7 +56,7 @@ export function AmateurSoccerGroupPage() {
 
             <Route path="ranking" element={
                 <CalculateRanking
-                    uri={calculateRankingUrl}
+                    uri={menu.amateurSoccerGroup.calculateRankingUrl.value}
                 />
             }/>
         </Routes>
