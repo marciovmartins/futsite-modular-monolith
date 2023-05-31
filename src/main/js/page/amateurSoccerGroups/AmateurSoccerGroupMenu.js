@@ -1,11 +1,23 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Link, useLocation} from "react-router-dom";
+import {fetchUrl} from "../../api/fetchUrl";
 
 export function AmateurSoccerGroupMenu(
-    {menu}
+    {menu, setGamedayCreationUrl}
 ) {
+    const gamedaysUrl = menu.amateurSoccerGroup.gamedaysUrl.value;
     const location = useLocation()
-    let isAmateurSoccerGroupNewUrl = location.pathname.includes('/amateurSoccerGroups/new');
+    const isAmateurSoccerGroupNewUrl = location.pathname.includes('/amateurSoccerGroups/new');
+
+    const [_gamedays, setGamedays] = useState([])
+    useEffect(() => {
+        if (gamedaysUrl === undefined) return
+        fetchUrl(gamedaysUrl).then(data => {
+            menu.amateurSoccerGroup.viewUrl.set(data._links?.["get-amateur-soccer-group"]?.href)
+            let sortedGamedays = data._embedded?.gamedays?.sort((a, b) => (a.date > b.date) - (a.date < b.date)) || []
+            setGamedays(sortedGamedays)
+        })
+    }, [gamedaysUrl])
 
     return !isAmateurSoccerGroupNewUrl &&
         <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -16,13 +28,28 @@ export function AmateurSoccerGroupMenu(
             </button>
             <div className="collapse navbar-collapse" id="navbarNav">
                 <ul className="navbar-nav">
-                    {menu.amateurSoccerGroup.gamedaysUrl.value &&
-                        <li className="nav-item">
-                            <Link to={"/gamedays"} className="nav-link">Gamedays</Link>
-                        </li>}
-                    {menu.amateurSoccerGroup.calculateRankingUrl.value &&
-                        <li className="nav-item">
-                            <Link to={"/amateurSoccerGroups/ranking"} className="nav-link">Ranking</Link>
+                    {gamedaysUrl &&
+                        <li className="nav-item dropdown">
+                            <Link to="/gamedays"
+                                  className="nav-link dropdown-toggle"
+                                  role="button"
+                                  data-toggle="dropdown"
+                                  aria-haspopup="true"
+                                  aria-expanded="false">
+                                Gamedays
+                            </Link>
+                            <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+                                {setGamedayCreationUrl &&
+                                    <Link to="/gamedays/new"
+                                          className="dropdown-item">
+                                        Register Gameday
+                                    </Link>}
+                                {menu.amateurSoccerGroup.calculateRankingUrl.value &&
+                                    <Link to="/amateurSoccerGroups/ranking"
+                                          className="dropdown-item">
+                                        Calculate Ranking
+                                    </Link>}
+                            </div>
                         </li>}
                 </ul>
             </div>

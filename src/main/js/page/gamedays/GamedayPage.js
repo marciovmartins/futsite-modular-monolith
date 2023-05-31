@@ -14,7 +14,10 @@ export function GamedayPage() {
     const [creationUrl, setCreationUrl] = useState()
 
     return <div>
-        <AmateurSoccerGroupMenu menu={menu}/>
+        <AmateurSoccerGroupMenu
+            menu={menu}
+            setGamedayCreationUrl={setCreationUrl}
+        />
         <Outlet/>
         <Routes>
             <Route index element={
@@ -27,7 +30,6 @@ export function GamedayPage() {
                         navigate("/gamedays/view")
                     }}
                     setAmateurSoccerGroupUrl={menu.amateurSoccerGroup.viewUrl.set}
-                    urlToNewGameday={creationUrl && "/gamedays/new"}
                 />
             }/>
 

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 
 export function GamedayList(
-    {url, setCreationUrl, creationUrl, setViewUrl, setAmateurSoccerGroupUrl, urlToNewGameday}
+    {url, setCreationUrl, creationUrl, setViewUrl, setAmateurSoccerGroupUrl}
 ) {
     const [gamedays, setGamedays] = useState([])
 
@@ -16,11 +16,7 @@ export function GamedayList(
     }, [])
 
     return <div>
-        <h1>
-            Gamedays
-            {urlToNewGameday
-                && <Link to={urlToNewGameday} className="btn btn-primary">New</Link>}
-        </h1>
+        <h1>Gamedays</h1>
 
         {gamedays.length === 0 && <p>
             No game days registered.
