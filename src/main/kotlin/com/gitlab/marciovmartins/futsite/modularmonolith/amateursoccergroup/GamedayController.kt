@@ -1,8 +1,10 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup
 
 import com.gitlab.marciovmartins.futsite.modularmonolith.usercore.UserCorePlayerController
-import org.springframework.hateoas.CollectionModel
+import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PagedResourcesAssembler
 import org.springframework.hateoas.EntityModel
+import org.springframework.hateoas.PagedModel
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,29 +21,31 @@ import java.util.UUID
 )
 class GamedayController(
     private val gamedayRepository: GamedayRepository,
+    private val pagedResourcesAssembler: PagedResourcesAssembler<Gameday>,
 ) {
     @GetMapping
     fun showAll(
-        @PathVariable amateurSoccerGroupId: UUID
-    ): CollectionModel<EntityModel<*>> {
-        val allGamedaysModel = gamedayRepository.findByAmateurSoccerGroupId(amateurSoccerGroupId).map {
+        @PathVariable amateurSoccerGroupId: UUID,
+        pageable: Pageable?,
+    ): PagedModel<EntityModel<Gameday>> {
+        val allGamedaysModel = gamedayRepository.findByAmateurSoccerGroupId(amateurSoccerGroupId, pageable)
+
+        return pagedResourcesAssembler.toModel(allGamedaysModel) {
             EntityModel.of(
                 it,
                 linkTo(methodOn(GamedayController::class.java).show(amateurSoccerGroupId, it.gamedayId!!)!!)
                     .withSelfRel(),
             )
         }
-
-        return CollectionModel.of(
-            allGamedaysModel,
-            linkTo(methodOn(GamedayController::class.java).showAll(amateurSoccerGroupId))
-                .withSelfRel(),
-            linkTo(methodOn(GamedayController::class.java).showAll(amateurSoccerGroupId))
-                .withRel("create-gameday")
-                .andAffordance(afford(methodOn(GamedayController::class.java).create(amateurSoccerGroupId, null))),
-            linkTo(methodOn(AmateurSoccerGroupController::class.java).show(amateurSoccerGroupId)!!)
-                .withRel("get-amateur-soccer-group")
-        )
+            .add(
+                linkTo(methodOn(GamedayController::class.java).showAll(amateurSoccerGroupId, pageable))
+                    .withRel("create-gameday")
+                    .andAffordance(afford(methodOn(GamedayController::class.java).create(amateurSoccerGroupId, null)))
+            )
+            .add(
+                linkTo(methodOn(AmateurSoccerGroupController::class.java).show(amateurSoccerGroupId)!!)
+                    .withRel("get-amateur-soccer-group")
+            ) as PagedModel<EntityModel<Gameday>>
     }
 
     @PostMapping
@@ -78,7 +82,7 @@ class GamedayController(
         val links = mutableListOf(
             linkTo(methodOn(GamedayController::class.java).show(amateurSoccerGroupId, gamedayId)!!)
                 .withSelfRel(),
-            linkTo(methodOn(GamedayController::class.java).showAll(amateurSoccerGroupId))
+            linkTo(methodOn(GamedayController::class.java).showAll(amateurSoccerGroupId, null))
                 .withRel("get-gamedays"),
             linkTo(methodOn(AmateurSoccerGroupController::class.java).show(amateurSoccerGroupId)!!)
                 .withRel("get-amateur-soccer-group"),

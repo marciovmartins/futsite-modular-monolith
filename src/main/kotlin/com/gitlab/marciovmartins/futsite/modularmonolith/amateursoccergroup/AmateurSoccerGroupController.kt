@@ -72,7 +72,7 @@ class AmateurSoccerGroupController(
                 .withSelfRel(),
             linkTo(methodOn(AmateurSoccerGroupController::class.java).showAll())
                 .withRel("get-amateur-soccer-groups"),
-            linkTo(methodOn(GamedayController::class.java).showAll(amateurSoccerGroupId))
+            linkTo(methodOn(GamedayController::class.java).showAll(amateurSoccerGroupId, null))
                 .withRel("get-gamedays"),
             linkTo(methodOn(GamedayController::class.java).create(amateurSoccerGroupId, null))
                 .withRel("create-gameday"),

@@ -34,6 +34,7 @@ export default function App() {
     const [amateurSoccerGroups, setAmateurSoccerGroups] = useState([])
     useEffect(() => {
         if (!amateurSoccerGroupsLoad) return
+        setAmateurSoccerGroupsLoad(false)
         fetchAmateurSoccerGroups().then((list) => {
             setAmateurSoccerGroupCreationUrl(list._links?.create?.href)
             setAmateurSoccerGroupUserDataCreationUrl(list._links?.["create-user-data"]?.href)
@@ -46,10 +47,9 @@ export default function App() {
                             url: list._embedded.amateurSoccerGroups[index]._links.self.href
                         }))
                     )
-                    setAmateurSoccerGroupsLoad(false)
                 })
         })
-    }, [amateurSoccerGroupsLoad])
+    }, [])
 
     return (
         <MenuContext.Provider value={menu}>

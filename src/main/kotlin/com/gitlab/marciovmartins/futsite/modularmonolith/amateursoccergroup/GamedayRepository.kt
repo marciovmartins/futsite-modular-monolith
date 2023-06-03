@@ -1,17 +1,18 @@
 package com.gitlab.marciovmartins.futsite.modularmonolith.amateursoccergroup
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import java.time.Instant
 import java.util.UUID
 
 @Repository
-interface GamedayRepository : JpaRepository<Gameday, UUID>, CustomizedGamedayRepository
-
-interface CustomizedGamedayRepository {
+interface GamedayRepository : JpaRepository<Gameday, UUID> {
     fun findByAmateurSoccerGroupId(
         amateurSoccerGroupId: UUID,
-    ): Set<Gameday>
+        pageable: Pageable?,
+    ): Page<Gameday>
 
     fun findByAmateurSoccerGroupIdAndDateAfterAndDateBefore(
         amateurSoccerGroupId: UUID,
