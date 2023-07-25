@@ -70,17 +70,27 @@ export function GamedayNew(
     }
 
     return <div>
-        <h1>Create Gameday</h1>
+        <h1 className={"mb-3"}>Create Gameday</h1>
         <form onSubmit={handleSubmit}>
-            <label htmlFor="date">
-                Date:
-                <input type="date" id="date" name="date" value={formData.date} onChange={handleChange}/>
-            </label>
+            <div className={"row g-3 align-items-center"}>
+                <div className={"col-auto mb-3"}>
+                    <label htmlFor={"inputDate"} className={"col-form-label"}>Date:</label>
+                </div>
+                <div className={"col-auto mb-3"}>
+                    <input type={"date"}
+                           id={"inputDate"}
+                           className={"form-control"}
+                           name={"date"}
+                           value={formData.date}
+                           onChange={handleChange}
+                    />
+                </div>
+            </div>
 
-            <h2>Matches</h2>
+            <h2 className={"mb-3"}>Matches</h2>
             {formData.matches.map((match, matchIndex) => {
                     const matchKey = "match." + matchIndex
-                    return <table key={matchKey}>
+                    return <table key={matchKey} className={"table"}>
                         <thead>
                         <tr>
                             <th>Player ID</th>
@@ -97,44 +107,42 @@ export function GamedayNew(
                                 const playerStatisticKey = matchKey + ".playerStatistic." + playerStatisticIndex
                                 return <tr key={playerStatisticKey}>
                                     <td>
-                                        <label htmlFor={playerStatisticKey + ".playerId"}>
-                                            <select id={playerStatisticKey + ".playerId"}
-                                                    name={playerStatisticKey + ".playerId"}
-                                                    value={playerStatistic.playerId}
-                                                    onChange={handlePlayerStatisticChange}
-                                            >
-                                                <option></option>
-                                                {players.map((player, playerIndex) =>
-                                                    <option key={playerIndex} value={player.playerId}>{player.name}</option>)}
-                                            </select>
-                                        </label>
+                                        <select id={playerStatisticKey + ".playerId"}
+                                                className={"form-select"}
+                                                name={playerStatisticKey + ".playerId"}
+                                                value={playerStatistic.playerId}
+                                                onChange={handlePlayerStatisticChange}
+                                        >
+                                            <option></option>
+                                            {players.map((player, playerIndex) =>
+                                                <option key={playerIndex} value={player.playerId}>{player.name}</option>)}
+                                        </select>
                                     </td>
                                     <td>
-                                        <label htmlFor={playerStatisticKey + ".team"}>
-                                            <select id={playerStatisticKey + ".team"}
-                                                    name={playerStatisticKey + ".team"}
-                                                    value={playerStatistic.team}
-                                                    onChange={handlePlayerStatisticChange}>
-                                                <option value=""></option>
-                                                <option value="A">A</option>
-                                                <option value="B">B</option>
-                                            </select>
-                                        </label>
+                                        <select id={playerStatisticKey + ".team"}
+                                                className={"form-select"}
+                                                name={playerStatisticKey + ".team"}
+                                                value={playerStatistic.team}
+                                                onChange={handlePlayerStatisticChange}>
+                                            <option value=""></option>
+                                            <option value="A">A</option>
+                                            <option value="B">B</option>
+                                        </select>
                                     </td>
                                     <td>
-                                        <label htmlFor={playerStatisticKey + ".goalsInFavor"}>
-                                            <input type="number"
-                                                   id={playerStatisticKey + ".goalsInFavor"}
-                                                   name={playerStatisticKey + ".goalsInFavor"}
-                                                   value={playerStatistic.goalsInFavor}
-                                                   onChange={handlePlayerStatisticChange}
-                                            />
-                                        </label>
+                                        <input type="number"
+                                               id={playerStatisticKey + ".goalsInFavor"}
+                                               className={"form-control"}
+                                               name={playerStatisticKey + ".goalsInFavor"}
+                                               value={playerStatistic.goalsInFavor}
+                                               onChange={handlePlayerStatisticChange}
+                                        />
                                     </td>
                                     <td>
                                         <label htmlFor={playerStatisticKey + ".ownGoals"}>
                                             <input type="number"
                                                    id={playerStatisticKey + ".ownGoals"}
+                                                   className={"form-control"}
                                                    name={playerStatisticKey + ".ownGoals"}
                                                    value={playerStatistic.ownGoals}
                                                    onChange={handlePlayerStatisticChange}
@@ -145,6 +153,7 @@ export function GamedayNew(
                                         <label htmlFor={playerStatisticKey + ".yellowCards"}>
                                             <input type="number"
                                                    id={playerStatisticKey + ".yellowCards"}
+                                                   className={"form-control"}
                                                    name={playerStatisticKey + ".yellowCards"}
                                                    value={playerStatistic.yellowCards}
                                                    onChange={handlePlayerStatisticChange}
@@ -155,6 +164,7 @@ export function GamedayNew(
                                         <label htmlFor={playerStatisticKey + ".blueCards"}>
                                             <input type="number"
                                                    id={playerStatisticKey + ".blueCards"}
+                                                   className={"form-control"}
                                                    name={playerStatisticKey + ".blueCards"}
                                                    value={playerStatistic.blueCards}
                                                    onChange={handlePlayerStatisticChange}
@@ -165,6 +175,7 @@ export function GamedayNew(
                                         <label htmlFor={playerStatisticKey + ".redCards"}>
                                             <input type="number"
                                                    id={playerStatisticKey + ".redCards"}
+                                                   className={"form-control"}
                                                    name={playerStatisticKey + ".redCards"}
                                                    value={playerStatistic.redCards}
                                                    onChange={handlePlayerStatisticChange}
@@ -178,9 +189,7 @@ export function GamedayNew(
                     </table>
                 }
             )}
-            <p>
-                <button type="submit">Submit</button>
-            </p>
+            <button type="submit" className={"btn btn-primary"}>Submit</button>
         </form>
     </div>
 }

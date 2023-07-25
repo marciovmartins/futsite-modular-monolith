@@ -9,7 +9,7 @@ module.exports = {
         historyApiFallback: true,
         static: [
             './src/main/resources/templates',
-            './src/main/resources/static',
+            './src/main/resources/static/built',
         ],
         port: port,
         liveReload: true,

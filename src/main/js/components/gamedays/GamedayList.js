@@ -21,7 +21,7 @@ export function GamedayList(
         setPreviousGamedayUrl(data._links?.["next"]?.href)
         setNextGamedayUrl(data._links?.["prev"]?.href)
 
-        const currentGameday = fetchUrl(data._embedded?.gamedays?.[0]._links.self.href)
+        fetchUrl(data._embedded?.gamedays?.[0]._links.self.href)
             .then(gameday => {
                 const playersUserDataHref = gameday.matches
                     .flatMap(match => match.players)
@@ -33,6 +33,7 @@ export function GamedayList(
                             const player = values.find(it => it._links.self.href.includes(playerStatistic.playerId))
                             playerStatistic.playerName = player.name
                         })
+                        match.players = match.players.sort((a, b) => a.playerName < b.playerName ? -1 : a.playerName > b.playerName)
                     })
                     setGameday(gameday)
                 })

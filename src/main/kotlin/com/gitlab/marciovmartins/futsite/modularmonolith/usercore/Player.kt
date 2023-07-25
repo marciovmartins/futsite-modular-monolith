@@ -11,6 +11,9 @@ class Player {
     @Column(unique = true, nullable = false, insertable = true, updatable = false)
     lateinit var playerId: UUID
 
+    @Column(nullable = false, insertable = true, updatable = false)
+    lateinit var amateurSoccerGroupId: UUID
+
     @Column(nullable = false, insertable = true, updatable = true)
     lateinit var name: String
 }

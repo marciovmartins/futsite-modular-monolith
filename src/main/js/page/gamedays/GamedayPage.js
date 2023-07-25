@@ -17,7 +17,9 @@ export function GamedayPage() {
             menu={menu}
             setGamedayCreationUrl={setCreationUrl}
         />
-        <Outlet/>
+        <div className={"m-3"}>
+            <Outlet/>
+        </div>
         <Routes>
             <Route index element={
                 <GamedayList

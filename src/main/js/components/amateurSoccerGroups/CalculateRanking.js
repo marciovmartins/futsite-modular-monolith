@@ -25,31 +25,45 @@ export function CalculateRanking(
                         const player = values.find((it) => it._links.self.href.includes(playerStatistic.playerId))
                         playerStatistic.playerName = player.name
                     })
+                    response.playerStatistics = response.playerStatistics.sort((a, b) => a.playerName < b.playerName ? -1 : a.playerName > b.playerName)
                     setResult(response)
                 })
         })
     }
 
     return <div>
-        <h1>Calculate Ranking</h1>
+        <h1 className={"mb-3"}>Calculate Ranking</h1>
+        <form onSubmit={handleSubmit}>
+            <div className={"row g-3 align-items-center"}>
+                <div className={"col-auto mb-3"}>
+                    <label htmlFor="inputFrom">From:</label>
+                </div>
+                <div className={"col-auto mb-3"}>
+                    <input type={"date"}
+                           className={"form-control"}
+                           id={"inputFrom"}
+                           name={"from"}
+                           value={formData.from}
+                           onChange={handleChange}
+                    />
+                </div>
+                <div className={"col-auto mb-3"}>
+                    <label htmlFor={"inputTo"}>To:</label>
+                </div>
+                <div className={"col-auto mb-3"}>
+                    <input type={"date"}
+                           className={"form-control"}
+                           id={"inputTo"}
+                           name={"to"}
+                           value={formData.to}
+                           onChange={handleChange}
+                    />
+                </div>
+                <div className={"col-auto mb-3"}>
+                    <button type="submit" className="btn btn-primary">Calculate</button>
+                </div>
+            </div>
 
-        <form onSubmit={handleSubmit} className="form-inline">
-            <label htmlFor="from">From: </label>
-            <input id="from"
-                   type="date"
-                   name="from"
-                   className="form-control mx-sm-3"
-                   value={formData.from}
-                   onChange={handleChange}/>
-
-            <label htmlFor="to">To: </label>
-            <input id="to"
-                   type="date"
-                   name="to"
-                   className="form-control mx-sm-3"
-                   value={formData.to}
-                   onChange={handleChange}/>
-            <button type="submit" className="btn btn-primary">Calculate</button>
         </form>
 
         {result && <div>
@@ -58,7 +72,7 @@ export function CalculateRanking(
             <p>Period: {result.period.from} to {result.period.to}</p>
             <p>Matches: {result.matches}</p>
 
-            <table width="100%">
+            <table width="100%" className={"table table-hover"}>
                 <thead>
                 <tr>
                     <th>PlayerId</th>
@@ -70,7 +84,7 @@ export function CalculateRanking(
                     <th>Own Goals</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody className={"table-group-divider"}>
                 {result.playerStatistics.map((playerStatistic, playerStatisticIndex) => <tr key={playerStatisticIndex}>
                     <td>{playerStatistic.playerName}</td>
                     <td>{playerStatistic.matches}</td>

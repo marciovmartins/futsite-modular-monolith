@@ -27,6 +27,8 @@ class PlayerController(
     ): ResponseEntity<*> {
         if (player == null) return ResponseEntity.badRequest().body("Unable to create")
 
+        player.amateurSoccerGroupId = amateurSoccerGroupId
+
         playerRepository.save(player)
 
         val location = linkTo(methodOn(PlayerController::class.java).show(amateurSoccerGroupId, player.playerId)!!)
@@ -69,6 +71,8 @@ class PlayerController(
                 .withSelfRel(),
             linkTo(methodOn(AmateurSoccerGroupController::class.java).show(player.amateurSoccerGroupId)!!)
                 .withRel("get-amateur-soccer-group"),
+            linkTo(methodOn(UserCorePlayerController::class.java).upsert(player.playerId, null))
+                .withRel("set-player-user-data"),
             linkTo(methodOn(UserCorePlayerController::class.java).show(player.playerId)!!)
                 .withRel("get-player-user-data")
         )

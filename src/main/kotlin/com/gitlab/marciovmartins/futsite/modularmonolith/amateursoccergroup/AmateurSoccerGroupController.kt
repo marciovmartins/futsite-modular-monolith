@@ -84,8 +84,6 @@ class AmateurSoccerGroupController(
                 .withRel("get-players"),
             linkTo(methodOn(PlayerController::class.java).create(amateurSoccerGroupId, null))
                 .withRel("create-player"),
-            linkTo(methodOn(UserCorePlayerController::class.java).create(null))
-                .withRel("create-player-user-data")
         )
     }
 }

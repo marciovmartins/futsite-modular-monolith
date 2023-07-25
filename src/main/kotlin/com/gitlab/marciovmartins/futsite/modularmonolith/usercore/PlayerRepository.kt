@@ -5,4 +5,6 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository(value = "userCorePlayerRepository")
-interface PlayerRepository : JpaRepository<Player, UUID>
+interface PlayerRepository : JpaRepository<Player, UUID> {
+    abstract fun findByAmateurSoccerGroupId(amateurSoccerGroupId: UUID): Set<Player>
+}

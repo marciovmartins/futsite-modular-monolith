@@ -11,10 +11,13 @@ class CorsConfiguration {
     fun corsConfigurer(): WebMvcConfigurer {
         return object : WebMvcConfigurer {
             override fun addCorsMappings(registry: CorsRegistry) {
-                registry.addMapping("/**").allowedOrigins(
-                    "http://localhost:8080",
-                    "http://localhost:8081",
-                )
+                registry
+                    .addMapping("/**")
+                    .allowedOrigins(
+                        "http://localhost:8080",
+                        "http://localhost:8081",
+                    )
+                    .allowedMethods("GET", "POST", "PUT", "OPTIONS")
             }
         }
     }

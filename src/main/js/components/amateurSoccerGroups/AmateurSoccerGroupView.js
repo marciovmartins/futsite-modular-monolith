@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {fetchUrl} from "../../api/fetchUrl";
 
 export function AmateurSoccerGroupView(
-    {url, setGamedaysUrl, setCalculateRankingUrl}
+    {url, setGamedaysUrl, setCalculateRankingUrl, setPlayersUrl}
 ) {
     const [amateurSoccerGroup, setAmateurSoccerGroup] = useState({
         name: ''
@@ -17,6 +17,7 @@ export function AmateurSoccerGroupView(
                     })
                     setGamedaysUrl(amateurSoccerGroup._links?.["get-gamedays"]?.href)
                     setCalculateRankingUrl(amateurSoccerGroup._links?.["calculate-ranking"]?.href)
+                    setPlayersUrl(amateurSoccerGroup._links?.["get-players"]?.href)
                 })
             })
     }, [url])

@@ -25,15 +25,23 @@ export function AmateurSoccerGroupNew(
     }
 
     return <div>
-        <h1>Create Amateur Soccer Group</h1>
+        <h1 className={"mb-3"}>Create Amateur Soccer Group</h1>
         <form onSubmit={handleSubmit}>
-            <label htmlFor="name">
-                Name:
-                <input type="text" id="name" name="name" value={formData.name} onChange={handleChange}/>
-            </label>
-            <p>
-                <button type='submit'>Submit</button>
-            </p>
+            <div className={"row g-3 align-items-center"}>
+                <div className={"col-auto mb-3"}>
+                    <label htmlFor={"inputName"} className={"form-label"}>Name:</label>
+                </div>
+                <div className={"col-auto mb-3"}>
+                    <input type={"text"}
+                           className={"form-control"}
+                           id={"inputName"}
+                           name={"name"}
+                           value={formData.name}
+                           onChange={handleChange}
+                    />
+                </div>
+            </div>
+            <button type='submit' className={"btn btn-primary"}>Submit</button>
         </form>
     </div>
 }
