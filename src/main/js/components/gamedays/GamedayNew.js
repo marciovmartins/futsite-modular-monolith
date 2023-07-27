@@ -4,6 +4,7 @@ import {v4 as uuidv4} from "uuid";
 export function GamedayNew(
     {creationUrl, setViewUrl, amateurSoccerGroupUrl}
 ) {
+    //TODO: replace player selectbox by explicit row
     const [formData, setFormData] = useState({
         date: '',
         matches: [
@@ -118,16 +119,26 @@ export function GamedayNew(
                                                 <option key={playerIndex} value={player.playerId}>{player.name}</option>)}
                                         </select>
                                     </td>
-                                    <td>
-                                        <select id={playerStatisticKey + ".team"}
-                                                className={"form-select"}
-                                                name={playerStatisticKey + ".team"}
-                                                value={playerStatistic.team}
-                                                onChange={handlePlayerStatisticChange}>
-                                            <option value=""></option>
-                                            <option value="A">A</option>
-                                            <option value="B">B</option>
-                                        </select>
+                                    <td width={"90px"}>
+                                        <input type={"radio"}
+                                               className={"btn-check"}
+                                               name={playerStatisticKey + ".team"}
+                                               id={playerStatisticKey + ".radioTeamA"}
+                                               value={playerStatistic.team === 'A' ? 'checked' : ''}
+                                               onChange={handlePlayerStatisticChange}
+                                        />
+                                        <label className={"btn btn-secondary"}
+                                               htmlFor={playerStatisticKey + ".radioTeamA"}>A</label>
+
+                                        <input type={"radio"}
+                                               className={"btn-check"}
+                                               name={playerStatisticKey + ".team"}
+                                               id={playerStatisticKey + ".radioTeamB"}
+                                               value={playerStatistic.team === 'B' ? 'checked' : ''}
+                                               onChange={handlePlayerStatisticChange}
+                                        />
+                                        <label className={"btn btn-secondary"}
+                                               htmlFor={playerStatisticKey + ".radioTeamB"}>B</label>
                                     </td>
                                     <td>
                                         <input type="number"
