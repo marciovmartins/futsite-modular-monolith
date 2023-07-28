@@ -40,13 +40,13 @@ export function AmateurSoccerGroupMenu(
                                     Gamedays
                                 </Link>
                                 <ul className="dropdown-menu">
-                                    <Link to={"/gamedays"}
+                                    <Link to={"/amateurSoccerGroups/gamedays"}
                                           className={"dropdown-item"}>
                                         View Gameday
                                     </Link>
                                     {menu.amateurSoccerGroup.gamedaysCreationUrl.set &&
                                         <li>
-                                            <Link to="/gamedays/new"
+                                            <Link to="/amateurSoccerGroups/gamedays/new"
                                                   className="dropdown-item">
                                                 Register Gameday
                                             </Link>

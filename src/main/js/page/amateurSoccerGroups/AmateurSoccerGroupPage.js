@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Outlet, Route, Routes, useNavigate} from "react-router-dom";
 import {AmateurSoccerGroupMenu} from "./AmateurSoccerGroupMenu";
 import {AmateurSoccerGroupView} from "../../components/amateurSoccerGroups/AmateurSoccerGroupView";
@@ -9,6 +9,8 @@ import {useSessionState} from "../../api/useSessionState";
 import {PlayerList} from "../../components/amateurSoccerGroups/PlayerList";
 import {PlayerNew} from "../../components/amateurSoccerGroups/PlayerNew";
 import {fetchUrl} from "../../api/fetchUrl";
+import {GamedayList} from "../../components/amateurSoccerGroups/GamedayList";
+import {GamedayNew} from "../../components/amateurSoccerGroups/GamedayNew";
 
 export function AmateurSoccerGroupPage() {
     const navigate = useNavigate()
@@ -16,6 +18,7 @@ export function AmateurSoccerGroupPage() {
     const amateurSoccerGroupLoadContext = useContext(AmateurSoccerGroupsLoadContext)
     const [userDataCreationUrl] = useSessionState("amateurSoccerGroupUserDataCreationUrl") //TODO: weird! Should be replace if used GraphQL
     const [creationUrl, setCreationUrl] = useSessionState("amateurSoccerGroupPlayerCreationUrl")
+    const [, setGamedayViewUrl] = useState()
 
     useEffect(() => {
         fetchUrl(menu.amateurSoccerGroup.viewUrl.value).then(amateurSoccerGroup => {
@@ -47,6 +50,24 @@ export function AmateurSoccerGroupPage() {
                         amateurSoccerGroupLoadContext.set(true)
                         navigate('/amateurSoccerGroups/view')
                     }}
+                />
+            }/>
+
+            <Route path="gamedays" element={
+                <GamedayList
+                    url={menu.amateurSoccerGroup.gamedaysUrl.value}
+                    creationRedirectWhenEmptyUrl={"/amateurSoccerGroups/gamedays/new"}
+                />
+            }/>
+
+            <Route path="gamedays/new" element={
+                <GamedayNew
+                    creationUrl={menu.amateurSoccerGroup.gamedaysCreationUrl.value}
+                    setViewUrl={(link) => {
+                        setGamedayViewUrl(link)
+                        navigate("/gamedays")
+                    }}
+                    amateurSoccerGroupUrl={menu.amateurSoccerGroup.viewUrl.value}
                 />
             }/>
 
