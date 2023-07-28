@@ -5,8 +5,6 @@ import {fetchUrl} from "../../api/fetchUrl";
 export function AmateurSoccerGroupMenu(
     {menu}
 ) {
-    //TODO: menu link to gamedays is not working.
-    //TODO: refreshing /gamedays/new is not working.
     const gamedaysUrl = menu.amateurSoccerGroup.gamedaysUrl.value;
     const location = useLocation()
     const isAmateurSoccerGroupNewUrl = location.pathname.includes('/amateurSoccerGroups/new');
@@ -16,7 +14,6 @@ export function AmateurSoccerGroupMenu(
     useEffect(() => {
         if (gamedaysUrl === undefined) return
         fetchUrl(gamedaysUrl).then(data => {
-            menu.amateurSoccerGroup.viewUrl.set(data._links?.["get-amateur-soccer-group"]?.href)
             let sortedGamedays = data._embedded?.gamedays?.sort((a, b) => (a.date > b.date) - (a.date < b.date)) || []
             setGamedays(sortedGamedays)
         })
@@ -34,7 +31,7 @@ export function AmateurSoccerGroupMenu(
                     <ul className="navbar-nav">
                         {gamedaysUrl &&
                             <li className="nav-item dropdown">
-                                <Link to="/gamedays"
+                                <Link to="#"
                                       className="nav-link dropdown-toggle"
                                       role="button"
                                       data-bs-toggle="dropdown"
@@ -42,18 +39,26 @@ export function AmateurSoccerGroupMenu(
                                       aria-expanded="false">
                                     Gamedays
                                 </Link>
-                                <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <ul className="dropdown-menu">
+                                    <Link to={"/gamedays"}
+                                          className={"dropdown-item"}>
+                                        View Gameday
+                                    </Link>
                                     {menu.amateurSoccerGroup.gamedaysCreationUrl.set &&
-                                        <Link to="/gamedays/new"
-                                              className="dropdown-item">
-                                            Register Gameday
-                                        </Link>}
+                                        <li>
+                                            <Link to="/gamedays/new"
+                                                  className="dropdown-item">
+                                                Register Gameday
+                                            </Link>
+                                        </li>}
                                     {menu.amateurSoccerGroup.calculateRankingUrl.value &&
-                                        <Link to="/amateurSoccerGroups/ranking"
-                                              className="dropdown-item">
-                                            Calculate Ranking
-                                        </Link>}
-                                </div>
+                                        <li>
+                                            <Link to="/amateurSoccerGroups/ranking"
+                                                  className="dropdown-item">
+                                                Calculate Ranking
+                                            </Link>
+                                        </li>}
+                                </ul>
                             </li>}
                         {playersUrl &&
                             <li className="nav-item">

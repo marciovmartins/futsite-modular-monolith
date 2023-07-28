@@ -6,7 +6,7 @@ import classNames from "classnames";
 //TODO: remove hard-coded <Link> "to", should be uplifted
 
 export function GamedayList(
-    {url, setCreationUrl, creationUrl, setAmateurSoccerGroupUrl}
+    {url, creationRedirectWhenEmptyUrl}
 ) {
     const [gameday, setGameday] = useState()
     const [previousGamedayUrl, setPreviousGamedayUrl] = useState()
@@ -16,8 +16,6 @@ export function GamedayList(
 
     const fetchGameday = (url) => fetchUrl(url).then((data) => {
         if (data === undefined) return
-        setCreationUrl(data._links?.["create-gameday"]?.href)
-        setAmateurSoccerGroupUrl(data._links?.["get-amateur-soccer-group"]?.href)
         setPreviousGamedayUrl(data._links?.["next"]?.href)
         setNextGamedayUrl(data._links?.["prev"]?.href)
 
@@ -50,8 +48,7 @@ export function GamedayList(
 
         {!gameday && <p>
             No game days registered.
-            {creationUrl
-                && <span> Click <Link to="/gamedays/new" state={{gamedaysLink: url}}>here</Link> to register one</span>}
+            {creationRedirectWhenEmptyUrl && <span> Click <Link to={creationRedirectWhenEmptyUrl}>here</Link> to register one</span>}
         </p>}
         <div className="row justify-content-between">
             <div className="col-4">

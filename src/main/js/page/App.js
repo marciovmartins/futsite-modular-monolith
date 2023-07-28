@@ -51,10 +51,12 @@ export default function App() {
             Promise.all(list._embedded.amateurSoccerGroups.map(it => fetchUrl(it._links["get-user-data"].href)))
                 .then(values => {
                     setAmateurSoccerGroups(values
-                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .sort((a, b) => a.name < b.name ? -1 : a.name > b.name)
                         .map((userData, index) => ({
                             name: userData.name,
-                            url: list._embedded.amateurSoccerGroups[index]._links.self.href
+                            url: list._embedded.amateurSoccerGroups
+                                .filter((row) => row._links["get-user-data"].href === userData._links["self"].href)
+                                .map((row) => row._links["self"].href)
                         }))
                     )
                 })

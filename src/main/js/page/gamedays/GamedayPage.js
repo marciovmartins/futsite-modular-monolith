@@ -9,13 +9,11 @@ export function GamedayPage() {
     const navigate = useNavigate()
     const menu = useContext(MenuContext)
 
-    const [_viewUrl, setViewUrl] = useState()
-    const [creationUrl, setCreationUrl] = useState()
+    const [, setViewUrl] = useState()
 
     return <div>
         <AmateurSoccerGroupMenu
             menu={menu}
-            setGamedayCreationUrl={setCreationUrl}
         />
         <div className={"m-3"}>
             <Outlet/>
@@ -24,15 +22,13 @@ export function GamedayPage() {
             <Route index element={
                 <GamedayList
                     url={menu.amateurSoccerGroup.gamedaysUrl.value}
-                    setCreationUrl={setCreationUrl}
-                    creationUrl={creationUrl}
-                    setAmateurSoccerGroupUrl={menu.amateurSoccerGroup.viewUrl.set}
+                    creationRedirectWhenEmptyUrl={"/gamedays/new"}
                 />
             }/>
 
             <Route path="new" element={
                 <GamedayNew
-                    creationUrl={creationUrl}
+                    creationUrl={menu.amateurSoccerGroup.gamedaysCreationUrl.value}
                     setViewUrl={(link) => {
                         setViewUrl(link)
                         navigate("/gamedays/view")
