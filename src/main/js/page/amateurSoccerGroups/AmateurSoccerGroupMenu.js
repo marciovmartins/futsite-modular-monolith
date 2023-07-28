@@ -5,6 +5,8 @@ import {fetchUrl} from "../../api/fetchUrl";
 export function AmateurSoccerGroupMenu(
     {menu}
 ) {
+    //TODO: menu link to gamedays is not working.
+    //TODO: refreshing /gamedays/new is not working.
     const gamedaysUrl = menu.amateurSoccerGroup.gamedaysUrl.value;
     const location = useLocation()
     const isAmateurSoccerGroupNewUrl = location.pathname.includes('/amateurSoccerGroups/new');

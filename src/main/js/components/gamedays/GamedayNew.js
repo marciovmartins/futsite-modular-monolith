@@ -4,33 +4,9 @@ import {v4 as uuidv4} from "uuid";
 export function GamedayNew(
     {creationUrl, setViewUrl, amateurSoccerGroupUrl}
 ) {
-    //TODO: replace player selectbox by explicit row
     const [formData, setFormData] = useState({
         date: '',
-        matches: [
-            {
-                players: [
-                    {
-                        playerId: "",
-                        team: "",
-                        goalsInFavor: 0,
-                        ownGoals: 0,
-                        yellowCards: 0,
-                        blueCards: 0,
-                        redCards: 0,
-                    },
-                    {
-                        playerId: "",
-                        team: "",
-                        goalsInFavor: 0,
-                        ownGoals: 0,
-                        yellowCards: 0,
-                        blueCards: 0,
-                        redCards: 0,
-                    }
-                ]
-            }
-        ],
+        matches: [],
     })
 
     const [players, setPlayers] = useState([])
@@ -48,6 +24,27 @@ export function GamedayNew(
             })
         })
     }, [])
+
+    useEffect(() => {
+        const rows = players
+            .sort((a, b) => a.name < b.name ? -1 : a.name > b.name)
+            .map(player => ({
+                playerId: player.playerId,
+                playerName: player.name,
+                team: "",
+                goalsInFavor: 0,
+                ownGoals: 0,
+                yellowCards: 0,
+                blueCards: 0,
+                redCards: 0,
+            }))
+        setFormData((prevFormData) => {
+            prevFormData["matches"][0] = {
+                "players": [...rows]
+            }
+            return {...prevFormData}
+        })
+    }, [players]);
 
     const handleChange = (event) => {
         const {name, value} = event.target
@@ -108,23 +105,19 @@ export function GamedayNew(
                                 const playerStatisticKey = matchKey + ".playerStatistic." + playerStatisticIndex
                                 return <tr key={playerStatisticKey}>
                                     <td>
-                                        <select id={playerStatisticKey + ".playerId"}
-                                                className={"form-select"}
-                                                name={playerStatisticKey + ".playerId"}
-                                                value={playerStatistic.playerId}
-                                                onChange={handlePlayerStatisticChange}
-                                        >
-                                            <option></option>
-                                            {players.map((player, playerIndex) =>
-                                                <option key={playerIndex} value={player.playerId}>{player.name}</option>)}
-                                        </select>
+                                        <input type={"hidden"}
+                                               name={playerStatisticKey + ".playerId"}
+                                               value={playerStatistic.playerId}
+                                        />
+                                        {playerStatistic.playerName}
                                     </td>
                                     <td width={"90px"}>
                                         <input type={"radio"}
                                                className={"btn-check"}
                                                name={playerStatisticKey + ".team"}
                                                id={playerStatisticKey + ".radioTeamA"}
-                                               value={playerStatistic.team === 'A' ? 'checked' : ''}
+                                               value={"A"}
+                                               checked={playerStatistic.team === 'A' ? 'checked' : ''}
                                                onChange={handlePlayerStatisticChange}
                                         />
                                         <label className={"btn btn-secondary"}
@@ -134,7 +127,8 @@ export function GamedayNew(
                                                className={"btn-check"}
                                                name={playerStatisticKey + ".team"}
                                                id={playerStatisticKey + ".radioTeamB"}
-                                               value={playerStatistic.team === 'B' ? 'checked' : ''}
+                                               value={"B"}
+                                               checked={playerStatistic.team === 'B' ? 'checked' : ''}
                                                onChange={handlePlayerStatisticChange}
                                         />
                                         <label className={"btn btn-secondary"}
