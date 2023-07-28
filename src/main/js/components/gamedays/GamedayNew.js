@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {v4 as uuidv4} from "uuid";
+import {fetchUrl} from "../../api/fetchUrl";
 
 export function GamedayNew(
     {creationUrl, setViewUrl, amateurSoccerGroupUrl}
@@ -201,6 +202,11 @@ export function GamedayNew(
 
 function submitGameday(link, formData) {
     const parsedDate = formData.date + "T00:00:00.000Z"
+
+    formData.matches.forEach((match) => {
+        match.players = match.players.filter((player) => player.team !== '')
+    })
+
     return fetch(link, {
         method: 'POST',
         headers: {
@@ -209,18 +215,6 @@ function submitGameday(link, formData) {
         },
         mode: "cors",
         body: JSON.stringify({...formData, date: parsedDate, gamedayId: uuidv4()})
-    })
-        .then(response => response.json())
-}
-
-function fetchUrl(link) {
-    return fetch(link, {
-        method: 'GET',
-        headers: {
-            "Accept": "application/hal+json",
-            "Content-Type": "application/json"
-        },
-        mode: "cors"
     })
         .then(response => response.json())
 }
