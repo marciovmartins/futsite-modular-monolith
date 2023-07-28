@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {v4 as uuidv4} from "uuid";
 import {fetchUrl} from "../../api/fetchUrl";
+import {Link} from "react-router-dom";
 
 export function GamedayNew(
-    {creationUrl, setViewUrl, amateurSoccerGroupUrl}
+    {creationUrl, setViewUrl, amateurSoccerGroupUrl, playersCreationUrl}
 ) {
     const [formData, setFormData] = useState({
         date: '',
@@ -15,13 +16,15 @@ export function GamedayNew(
     useEffect(() => {
         fetchUrl(amateurSoccerGroupUrl).then(amateurSoccerGroup => {
             fetchUrl(amateurSoccerGroup._links["get-players"].href).then(players => {
-                Promise.all(players._embedded.players.map(player => fetchUrl(player._links["get-player-user-data"].href))).then(values => {
-                    let list = values.map(player => ({
-                        playerId: extractId(player._links.self.href),
-                        name: player.name,
-                    }));
-                    setPlayers(list)
-                })
+                if (players && players._embedded && players._embedded.players) {
+                    Promise.all(players._embedded.players.map(player => fetchUrl(player._links["get-player-user-data"].href))).then(values => {
+                        let list = values.map(player => ({
+                            playerId: extractId(player._links.self.href),
+                            name: player.name,
+                        }));
+                        setPlayers(list)
+                    })
+                }
             })
         })
     }, [])
@@ -70,133 +73,140 @@ export function GamedayNew(
 
     return <div>
         <h1 className={"mb-3"}>Create Gameday</h1>
-        <form onSubmit={handleSubmit}>
-            <div className={"row g-3 align-items-center"}>
-                <div className={"col-auto mb-3"}>
-                    <label htmlFor={"inputDate"} className={"col-form-label"}>Date:</label>
-                </div>
-                <div className={"col-auto mb-3"}>
-                    <input type={"date"}
-                           id={"inputDate"}
-                           className={"form-control"}
-                           name={"date"}
-                           value={formData.date}
-                           onChange={handleChange}
-                    />
-                </div>
-            </div>
 
-            <h2 className={"mb-3"}>Matches</h2>
-            {formData.matches.map((match, matchIndex) => {
-                    const matchKey = "match." + matchIndex
-                    return <table key={matchKey} className={"table"}>
-                        <thead>
-                        <tr>
-                            <th>Player ID</th>
-                            <th>Team</th>
-                            <th>Goals in Favor</th>
-                            <th>Own Goals</th>
-                            <th>Yellow Cards</th>
-                            <th>Blue Cards</th>
-                            <th>Red Cards</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {match.players.map((playerStatistic, playerStatisticIndex) => {
-                                const playerStatisticKey = matchKey + ".playerStatistic." + playerStatisticIndex
-                                return <tr key={playerStatisticKey}>
-                                    <td>
-                                        <input type={"hidden"}
-                                               name={playerStatisticKey + ".playerId"}
-                                               value={playerStatistic.playerId}
-                                        />
-                                        {playerStatistic.playerName}
-                                    </td>
-                                    <td width={"90px"}>
-                                        <input type={"radio"}
-                                               className={"btn-check"}
-                                               name={playerStatisticKey + ".team"}
-                                               id={playerStatisticKey + ".radioTeamA"}
-                                               value={"A"}
-                                               checked={playerStatistic.team === 'A' ? 'checked' : ''}
-                                               onChange={handlePlayerStatisticChange}
-                                        />
-                                        <label className={"btn btn-secondary"}
-                                               htmlFor={playerStatisticKey + ".radioTeamA"}>A</label>
+        {players.length === 0 && <p>
+            No players registered.
+            {playersCreationUrl &&
+                <span> Click <Link to={playersCreationUrl}>here</Link> to register one</span>}
+        </p>}
+        {players.length > 0 &&
+            <form onSubmit={handleSubmit}>
+                <div className={"row g-3 align-items-center"}>
+                    <div className={"col-auto mb-3"}>
+                        <label htmlFor={"inputDate"} className={"col-form-label"}>Date:</label>
+                    </div>
+                    <div className={"col-auto mb-3"}>
+                        <input type={"date"}
+                               id={"inputDate"}
+                               className={"form-control"}
+                               name={"date"}
+                               value={formData.date}
+                               onChange={handleChange}
+                        />
+                    </div>
+                </div>
 
-                                        <input type={"radio"}
-                                               className={"btn-check"}
-                                               name={playerStatisticKey + ".team"}
-                                               id={playerStatisticKey + ".radioTeamB"}
-                                               value={"B"}
-                                               checked={playerStatistic.team === 'B' ? 'checked' : ''}
-                                               onChange={handlePlayerStatisticChange}
-                                        />
-                                        <label className={"btn btn-secondary"}
-                                               htmlFor={playerStatisticKey + ".radioTeamB"}>B</label>
-                                    </td>
-                                    <td>
-                                        <input type="number"
-                                               id={playerStatisticKey + ".goalsInFavor"}
-                                               className={"form-control"}
-                                               name={playerStatisticKey + ".goalsInFavor"}
-                                               value={playerStatistic.goalsInFavor}
-                                               onChange={handlePlayerStatisticChange}
-                                        />
-                                    </td>
-                                    <td>
-                                        <label htmlFor={playerStatisticKey + ".ownGoals"}>
-                                            <input type="number"
-                                                   id={playerStatisticKey + ".ownGoals"}
-                                                   className={"form-control"}
-                                                   name={playerStatisticKey + ".ownGoals"}
-                                                   value={playerStatistic.ownGoals}
+                <h2 className={"mb-3"}>Matches</h2>
+                {formData.matches.map((match, matchIndex) => {
+                        const matchKey = "match." + matchIndex
+                        return <table key={matchKey} className={"table"}>
+                            <thead>
+                            <tr>
+                                <th>Player ID</th>
+                                <th>Team</th>
+                                <th>Goals in Favor</th>
+                                <th>Own Goals</th>
+                                <th>Yellow Cards</th>
+                                <th>Blue Cards</th>
+                                <th>Red Cards</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {match.players.map((playerStatistic, playerStatisticIndex) => {
+                                    const playerStatisticKey = matchKey + ".playerStatistic." + playerStatisticIndex
+                                    return <tr key={playerStatisticKey}>
+                                        <td>
+                                            <input type={"hidden"}
+                                                   name={playerStatisticKey + ".playerId"}
+                                                   value={playerStatistic.playerId}
+                                            />
+                                            {playerStatistic.playerName}
+                                        </td>
+                                        <td width={"90px"}>
+                                            <input type={"radio"}
+                                                   className={"btn-check"}
+                                                   name={playerStatisticKey + ".team"}
+                                                   id={playerStatisticKey + ".radioTeamA"}
+                                                   value={"A"}
+                                                   checked={playerStatistic.team === 'A' ? 'checked' : ''}
                                                    onChange={handlePlayerStatisticChange}
                                             />
-                                        </label>
-                                    </td>
-                                    <td>
-                                        <label htmlFor={playerStatisticKey + ".yellowCards"}>
-                                            <input type="number"
-                                                   id={playerStatisticKey + ".yellowCards"}
-                                                   className={"form-control"}
-                                                   name={playerStatisticKey + ".yellowCards"}
-                                                   value={playerStatistic.yellowCards}
+                                            <label className={"btn btn-secondary"}
+                                                   htmlFor={playerStatisticKey + ".radioTeamA"}>A</label>
+
+                                            <input type={"radio"}
+                                                   className={"btn-check"}
+                                                   name={playerStatisticKey + ".team"}
+                                                   id={playerStatisticKey + ".radioTeamB"}
+                                                   value={"B"}
+                                                   checked={playerStatistic.team === 'B' ? 'checked' : ''}
                                                    onChange={handlePlayerStatisticChange}
                                             />
-                                        </label>
-                                    </td>
-                                    <td>
-                                        <label htmlFor={playerStatisticKey + ".blueCards"}>
+                                            <label className={"btn btn-secondary"}
+                                                   htmlFor={playerStatisticKey + ".radioTeamB"}>B</label>
+                                        </td>
+                                        <td>
                                             <input type="number"
-                                                   id={playerStatisticKey + ".blueCards"}
+                                                   id={playerStatisticKey + ".goalsInFavor"}
                                                    className={"form-control"}
-                                                   name={playerStatisticKey + ".blueCards"}
-                                                   value={playerStatistic.blueCards}
+                                                   name={playerStatisticKey + ".goalsInFavor"}
+                                                   value={playerStatistic.goalsInFavor}
                                                    onChange={handlePlayerStatisticChange}
                                             />
-                                        </label>
-                                    </td>
-                                    <td>
-                                        <label htmlFor={playerStatisticKey + ".redCards"}>
-                                            <input type="number"
-                                                   id={playerStatisticKey + ".redCards"}
-                                                   className={"form-control"}
-                                                   name={playerStatisticKey + ".redCards"}
-                                                   value={playerStatistic.redCards}
-                                                   onChange={handlePlayerStatisticChange}
-                                            />
-                                        </label>
-                                    </td>
-                                </tr>
-                            }
-                        )}
-                        </tbody>
-                    </table>
-                }
-            )}
-            <button type="submit" className={"btn btn-primary"}>Submit</button>
-        </form>
+                                        </td>
+                                        <td>
+                                            <label htmlFor={playerStatisticKey + ".ownGoals"}>
+                                                <input type="number"
+                                                       id={playerStatisticKey + ".ownGoals"}
+                                                       className={"form-control"}
+                                                       name={playerStatisticKey + ".ownGoals"}
+                                                       value={playerStatistic.ownGoals}
+                                                       onChange={handlePlayerStatisticChange}
+                                                />
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <label htmlFor={playerStatisticKey + ".yellowCards"}>
+                                                <input type="number"
+                                                       id={playerStatisticKey + ".yellowCards"}
+                                                       className={"form-control"}
+                                                       name={playerStatisticKey + ".yellowCards"}
+                                                       value={playerStatistic.yellowCards}
+                                                       onChange={handlePlayerStatisticChange}
+                                                />
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <label htmlFor={playerStatisticKey + ".blueCards"}>
+                                                <input type="number"
+                                                       id={playerStatisticKey + ".blueCards"}
+                                                       className={"form-control"}
+                                                       name={playerStatisticKey + ".blueCards"}
+                                                       value={playerStatistic.blueCards}
+                                                       onChange={handlePlayerStatisticChange}
+                                                />
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <label htmlFor={playerStatisticKey + ".redCards"}>
+                                                <input type="number"
+                                                       id={playerStatisticKey + ".redCards"}
+                                                       className={"form-control"}
+                                                       name={playerStatisticKey + ".redCards"}
+                                                       value={playerStatistic.redCards}
+                                                       onChange={handlePlayerStatisticChange}
+                                                />
+                                            </label>
+                                        </td>
+                                    </tr>
+                                }
+                            )}
+                            </tbody>
+                        </table>
+                    }
+                )}
+                <button type="submit" className={"btn btn-primary"}>Submit</button>
+            </form>}
     </div>
 }
 

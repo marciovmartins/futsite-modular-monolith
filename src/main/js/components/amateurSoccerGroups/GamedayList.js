@@ -3,8 +3,6 @@ import {Link} from "react-router-dom";
 import {fetchUrl} from "../../api/fetchUrl";
 import classNames from "classnames";
 
-//TODO: remove hard-coded <Link> "to", should be uplifted
-
 export function GamedayList(
     {url, creationRedirectWhenEmptyUrl}
 ) {
@@ -48,7 +46,8 @@ export function GamedayList(
 
         {!gameday && <p>
             No game days registered.
-            {creationRedirectWhenEmptyUrl && <span> Click <Link to={creationRedirectWhenEmptyUrl}>here</Link> to register one</span>}
+            {creationRedirectWhenEmptyUrl &&
+                <span> Click <Link to={creationRedirectWhenEmptyUrl}>here</Link> to register one</span>}
         </p>}
         <div className="row justify-content-between">
             <div className="col-4">

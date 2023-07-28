@@ -65,9 +65,10 @@ export function AmateurSoccerGroupPage() {
                     creationUrl={menu.amateurSoccerGroup.gamedaysCreationUrl.value}
                     setViewUrl={(link) => {
                         setGamedayViewUrl(link)
-                        navigate("/gamedays")
+                        navigate("/amateurSoccerGroups/gamedays")
                     }}
                     amateurSoccerGroupUrl={menu.amateurSoccerGroup.viewUrl.value}
+                    playersCreationUrl={"/amateurSoccerGroups/players/new"}
                 />
             }/>
 
