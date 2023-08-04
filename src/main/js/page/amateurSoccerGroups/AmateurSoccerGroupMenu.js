@@ -44,7 +44,7 @@ export function AmateurSoccerGroupMenu(
                                           className={"dropdown-item"}>
                                         View Gameday
                                     </Link>
-                                    {menu.amateurSoccerGroup.gamedaysCreationUrl.set &&
+                                    {menu.amateurSoccerGroup.gamedaysCreationUrl.value &&
                                         <li>
                                             <Link to="/amateurSoccerGroups/gamedays/new"
                                                   className="dropdown-item">

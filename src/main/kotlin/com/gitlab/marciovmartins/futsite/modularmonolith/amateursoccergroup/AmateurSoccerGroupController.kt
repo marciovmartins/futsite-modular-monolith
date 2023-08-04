@@ -73,14 +73,14 @@ class AmateurSoccerGroupController(
                 .withSelfRel(),
             linkTo(methodOn(AmateurSoccerGroupController::class.java).showAll())
                 .withRel("get-amateur-soccer-groups"),
+            linkTo(methodOn(UserCoreAmateurSoccerGroupController::class.java).show(amateurSoccerGroupId)!!)
+                .withRel("get-user-data"),
             linkTo(methodOn(GamedayController::class.java).showAll(amateurSoccerGroupId, null))
                 .withRel("get-gamedays"),
             linkTo(methodOn(GamedayController::class.java).create(amateurSoccerGroupId, null))
                 .withRel("create-gameday"),
             linkTo(methodOn(CalculateRankingController::class.java).calculateRanking(amateurSoccerGroupId, period))
                 .withRel("calculate-ranking"),
-            linkTo(methodOn(UserCoreAmateurSoccerGroupController::class.java).show(amateurSoccerGroupId)!!)
-                .withRel("get-user-data"),
             linkTo(methodOn(PlayerController::class.java).showAll(amateurSoccerGroupId))
                 .withRel("get-players"),
             linkTo(methodOn(PlayerController::class.java).create(amateurSoccerGroupId, null))
