@@ -40,11 +40,8 @@ export default function App() {
         }
     }
 
-    const [amateurSoccerGroupsLoad, setAmateurSoccerGroupsLoad] = useState(true)
     const [amateurSoccerGroups, setAmateurSoccerGroups] = useState([])
     useEffect(() => {
-        if (!amateurSoccerGroupsLoad) return
-        setAmateurSoccerGroupsLoad(false)
         fetchAmateurSoccerGroups().then((list) => {
             setAmateurSoccerGroupCreationUrl(list._links?.create?.href)
             setAmateurSoccerGroupUserDataCreationUrl(list._links?.["create-user-data"]?.href)
@@ -65,66 +62,60 @@ export default function App() {
 
     return (
         <MenuContext.Provider value={menu}>
-            <AmateurSoccerGroupsLoadContext.Provider value={{
-                value: amateurSoccerGroupsLoad,
-                set: setAmateurSoccerGroupsLoad
-            }}>
-                <nav className="navbar navbar-expand-lg bg-body-tertiary">
-                    <div className="container-fluid">
-                        <Link to="/" className="navbar-brand">Home</Link>
-                        <button className="navbar-toggler"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#navbarSupportedContent"
-                                aria-controls="navbarSupportedContent"
-                                aria-expanded="false"
-                                aria-label="Toggle navigation">
-                            <span className="navbar-toggler-icon"></span>
-                        </button>
-                        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                                <li className="nav-item dropdown">
-                                    <Link to="#"
-                                          className="nav-link dropdown-toggle"
-                                          role="button"
-                                          data-bs-toggle="dropdown"
-                                          aria-haspopup="true"
-                                          aria-expanded="false">
-                                        Amateur Soccer Groups
-                                    </Link>
-                                    <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        {amateurSoccerGroups.map((amateurSoccerGroup, amateurSoccerGroupIndex) =>
-                                            <li key={amateurSoccerGroupIndex}>
-                                                <Link to="/amateurSoccerGroups/view"
-                                                      onClick={() => {
-                                                          setAmateurSoccerGroupViewUrl(amateurSoccerGroup.url)
-                                                      }}
-                                                      className="dropdown-item">
-                                                    {amateurSoccerGroup.name}
-                                                </Link>
-                                            </li>)}
-                                        {amateurSoccerGroups.length > 0 && amateurSoccerGroupCreationUrl &&
-                                            <li>
-                                                <hr className="dropdown-divider"/>
-                                            </li>}
-                                        {amateurSoccerGroupCreationUrl &&
-                                            <Link to="/amateurSoccerGroups/new" className="dropdown-item">New</Link>}
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>
+            <nav className="navbar navbar-expand-lg bg-body-tertiary">
+                <div className="container-fluid">
+                    <Link to="/" className="navbar-brand">Home</Link>
+                    <button className="navbar-toggler"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#navbarSupportedContent"
+                            aria-controls="navbarSupportedContent"
+                            aria-expanded="false"
+                            aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon"></span>
+                    </button>
+                    <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li className="nav-item dropdown">
+                                <Link to="#"
+                                      className="nav-link dropdown-toggle"
+                                      role="button"
+                                      data-bs-toggle="dropdown"
+                                      aria-haspopup="true"
+                                      aria-expanded="false">
+                                    Amateur Soccer Groups
+                                </Link>
+                                <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    {amateurSoccerGroups.map((amateurSoccerGroup, amateurSoccerGroupIndex) =>
+                                        <li key={amateurSoccerGroupIndex}>
+                                            <Link to="/amateurSoccerGroups/view"
+                                                  onClick={() => {
+                                                      setAmateurSoccerGroupViewUrl(amateurSoccerGroup.url)
+                                                  }}
+                                                  className="dropdown-item">
+                                                {amateurSoccerGroup.name}
+                                            </Link>
+                                        </li>)}
+                                    {amateurSoccerGroups.length > 0 && amateurSoccerGroupCreationUrl &&
+                                        <li>
+                                            <hr className="dropdown-divider"/>
+                                        </li>}
+                                    {amateurSoccerGroupCreationUrl &&
+                                        <Link to="/amateurSoccerGroups/new" className="dropdown-item">New</Link>}
+                                </ul>
+                            </li>
+                        </ul>
                     </div>
-                </nav>
-                <div className={"m-3"}>
-                    <Outlet/>
                 </div>
-            </AmateurSoccerGroupsLoadContext.Provider>
+            </nav>
+            <div className={"m-3"}>
+                <Outlet/>
+            </div>
         </MenuContext.Provider>
     )
 }
 
 export const MenuContext = createContext(null)
-export const AmateurSoccerGroupsLoadContext = createContext(null)
 
 function fetchAmateurSoccerGroups() {
     return fetch("http://localhost:8080/api/amateurSoccerGroups", {

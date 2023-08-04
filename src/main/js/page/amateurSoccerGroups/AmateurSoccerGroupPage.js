@@ -1,21 +1,20 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Outlet, Route, Routes, useNavigate} from "react-router-dom";
+import {useSessionState} from "../../api/useSessionState";
+import {fetchUrl} from "../../api/fetchUrl";
+import {MenuContext} from "../App";
 import {AmateurSoccerGroupMenu} from "./AmateurSoccerGroupMenu";
 import {AmateurSoccerGroupView} from "../../components/amateurSoccerGroups/AmateurSoccerGroupView";
 import {AmateurSoccerGroupNew} from "../../components/amateurSoccerGroups/AmateurSoccerGroupNew";
 import {CalculateRanking} from "../../components/amateurSoccerGroups/CalculateRanking";
-import {AmateurSoccerGroupsLoadContext, MenuContext} from "../App";
-import {useSessionState} from "../../api/useSessionState";
 import {PlayerList} from "../../components/amateurSoccerGroups/PlayerList";
 import {PlayerNew} from "../../components/amateurSoccerGroups/PlayerNew";
-import {fetchUrl} from "../../api/fetchUrl";
 import {GamedayList} from "../../components/amateurSoccerGroups/GamedayList";
 import {GamedayNew} from "../../components/amateurSoccerGroups/GamedayNew";
 
 export function AmateurSoccerGroupPage() {
     const navigate = useNavigate()
     const menu = useContext(MenuContext)
-    const amateurSoccerGroupLoadContext = useContext(AmateurSoccerGroupsLoadContext)
     const [userDataCreationUrl] = useSessionState("amateurSoccerGroupUserDataCreationUrl") //TODO: weird! Should be replace if used GraphQL
     const [creationUrl, setCreationUrl] = useSessionState("amateurSoccerGroupPlayerCreationUrl")
     const [, setGamedayViewUrl] = useState()
@@ -47,7 +46,6 @@ export function AmateurSoccerGroupPage() {
                     userDataCreationUrl={userDataCreationUrl}
                     setCreatedAmateurSoccerGroupUrl={(link) => {
                         menu.amateurSoccerGroup.viewUrl.set(link)
-                        amateurSoccerGroupLoadContext.set(true)
                         navigate('/amateurSoccerGroups/view')
                     }}
                 />
