@@ -48,6 +48,7 @@ class PlayerController(
 
         return CollectionModel.of(
             allPlayerModel,
+            linkTo(methodOn(PlayerController::class.java).showAll(amateurSoccerGroupId)).withSelfRel(),
             linkTo(methodOn(PlayerController::class.java).showAll(amateurSoccerGroupId)).withSelfRel()
                 .andAffordance(afford(methodOn(PlayerController::class.java).create(amateurSoccerGroupId, null)))
                 .withRel("create"),

@@ -6,12 +6,15 @@ export function PlayerList(
     {url, toPlayerNew, setCreationUrl}
 ) {
     const [players, setPlayers] = useState([])
+    const [hasCreationUrl, setHasCreationUrl] = useState(false)
 
     useEffect(() => {
         if (url === undefined) return
         fetchUrl(url)
             .then(response => {
-                setCreationUrl(response._links?.create?.href)
+                const creationUrl = response._links?.create?.href;
+                setCreationUrl(creationUrl)
+                setHasCreationUrl(creationUrl != null)
                 return response
             })
             .then(response => response._embedded?.players)
@@ -25,14 +28,16 @@ export function PlayerList(
     return <div>
         <h1>
             Players
-            <Link to="#"
-                  onClick={(e) => {
-                      e.preventDefault()
-                      toPlayerNew()
-                  }}
-                  className="btn btn-primary">
-                New
-            </Link>
+            {hasCreationUrl &&
+                <Link to="#"
+                      onClick={(e) => {
+                          e.preventDefault()
+                          toPlayerNew()
+                      }}
+                      className="btn btn-primary">
+                    New
+                </Link>
+            }
         </h1>
         <table className="table">
             <thead>
