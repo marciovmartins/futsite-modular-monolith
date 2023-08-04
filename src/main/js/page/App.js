@@ -52,7 +52,7 @@ export default function App() {
                 .then(values => {
                     setAmateurSoccerGroups(values
                         .sort((a, b) => a.name < b.name ? -1 : a.name > b.name)
-                        .map((userData, index) => ({
+                        .map((userData) => ({
                             name: userData.name,
                             url: list._embedded.amateurSoccerGroups
                                 .filter((row) => row._links["get-user-data"].href === userData._links["self"].href)
