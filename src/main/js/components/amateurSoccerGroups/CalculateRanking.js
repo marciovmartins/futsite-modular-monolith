@@ -1,7 +1,8 @@
 import React, {useState} from "react";
+import {fetchGraphQL} from "../../api/fetchGraphQL";
 
 export function CalculateRanking(
-    {url}
+    {amateurSoccerGroupId}
 ) {
     const [formData, setFormData] = useState({
         from: '',
@@ -16,19 +17,8 @@ export function CalculateRanking(
 
     const handleSubmit = (event) => {
         event.preventDefault()
-        submitCalculateRanking(url, formData).then(response => {
-            Promise.all(Object.entries(response._links)
-                .filter(entry => entry[0].includes("get-player-user-data-"))
-                .map(entry => fetchUrl(entry[1].href)))
-                .then(values => {
-                    response.playerStatistics.forEach(playerStatistic => {
-                        const player = values.find((it) => it._links.self.href.includes(playerStatistic.playerId))
-                        playerStatistic.playerName = player.name
-                    })
-                    response.playerStatistics = response.playerStatistics.sort((a, b) => a.playerName < b.playerName ? -1 : a.playerName > b.playerName)
-                    setResult(response)
-                })
-        })
+        submitCalculateRanking(amateurSoccerGroupId, formData)
+            .then(response => setResult(response.data.calculateRanking.content))
     }
 
     return <div>
@@ -69,7 +59,7 @@ export function CalculateRanking(
         {result && <div>
             <h2>Result</h2>
 
-            <p>Period: {result.period.from} to {result.period.to}</p>
+            <p>Period: {formData.from} to {formData.to}</p>
             <p>Matches: {result.matches}</p>
 
             {result.playerStatistics.length > 0 &&
@@ -88,7 +78,7 @@ export function CalculateRanking(
                     <tbody className={"table-group-divider"}>
                     {result.playerStatistics.map((playerStatistic, playerStatisticIndex) => <tr
                         key={playerStatisticIndex}>
-                        <td>{playerStatistic.playerName}</td>
+                        <td>{playerStatistic.userData.name}</td>
                         <td>{playerStatistic.matches}</td>
                         <td>{playerStatistic.victories}</td>
                         <td>{playerStatistic.draws}</td>
@@ -103,28 +93,32 @@ export function CalculateRanking(
     </div>
 }
 
-function submitCalculateRanking(link, formData) {
+function submitCalculateRanking(amateurSoccerGroupId, formData) {
     const parsedStartPeriodDate = formData.from + "T00:00:00.000Z"
     const parsedEndPeriodDate = formData.to + "T23:59:59.999Z"
-    return fetch(link, {
-        method: 'POST',
-        headers: {
-            "Accept": "application/hal+json",
-            "Content-Type": "application/json"
-        },
-        mode: "cors",
-        body: JSON.stringify({from: parsedStartPeriodDate, to: parsedEndPeriodDate})
-    })
-        .then(response => response.json())
-}
-
-function fetchUrl(link) {
-    return fetch(link, {
-        method: 'GET',
-        headers: {
-            "Accept": "application/hal+json",
-            "Content-Type": "application/json"
-        },
-        mode: "cors"
-    }).then(response => response.json())
+    return fetchGraphQL(`
+        {
+          calculateRanking(
+            amateurSoccerGroupId: "${amateurSoccerGroupId}"
+            period: {from: "${parsedStartPeriodDate}", to: "${parsedEndPeriodDate}"}
+          ) {
+            content {
+              amateurSoccerGroupId
+              matches
+              playerStatistics {
+                playerId
+                userData {
+                  name
+                }
+                matches
+                victories
+                draws
+                defeats
+                goalsInFavor
+                ownGoals
+              }
+            }
+          }
+        }
+    `)
 }

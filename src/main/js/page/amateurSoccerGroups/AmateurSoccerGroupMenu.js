@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {Link, useLocation} from "react-router-dom";
-import {fetchUrl} from "../../api/fetchUrl";
 
 export function AmateurSoccerGroupMenu(
     {menu}
@@ -9,15 +8,6 @@ export function AmateurSoccerGroupMenu(
     const location = useLocation()
     const isAmateurSoccerGroupNewUrl = location.pathname.includes('/amateurSoccerGroups/new');
     const playersUrl = menu.amateurSoccerGroup.playersUrl.value;
-
-    const [_gamedays, setGamedays] = useState([])
-    useEffect(() => {
-        if (gamedaysUrl === undefined) return
-        fetchUrl(gamedaysUrl).then(data => {
-            let sortedGamedays = data._embedded?.gamedays?.sort((a, b) => (a.date > b.date) - (a.date < b.date)) || []
-            setGamedays(sortedGamedays)
-        })
-    }, [gamedaysUrl])
 
     return !isAmateurSoccerGroupNewUrl &&
         <nav className="navbar navbar-expand-lg bg-primary">

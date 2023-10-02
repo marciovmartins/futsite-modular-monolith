@@ -1,24 +1,30 @@
 import React, {useEffect, useState} from "react";
-import {fetchUrl} from "../../api/fetchUrl";
+import {fetchGraphQL} from "../../api/fetchGraphQL";
 
 export function AmateurSoccerGroupView(
-    {url}
+    {id}
 ) {
     const [amateurSoccerGroup, setAmateurSoccerGroup] = useState({
-        name: ''
+        userData: {
+            name: ''
+        }
     })
 
     useEffect(() => {
-        fetchUrl(url).then(amateurSoccerGroup => {
-            fetchUrl(amateurSoccerGroup._links["get-user-data"].href).then(userData => {
-                setAmateurSoccerGroup({
-                    name: userData.name
-                })
-            })
-        })
-    }, [url])
+        if (id === undefined) return;
 
-    return <div>
-        <h1>{amateurSoccerGroup.name}</h1>
-    </div>
+        fetchGraphQL(`{
+          amateurSoccerGroupById(id: "${id}") {
+            userData {
+              name
+            }
+          }
+        }`)
+            .then(response => response.data.amateurSoccerGroupById)
+            .then(setAmateurSoccerGroup)
+    }, [id])
+
+    return (<div>
+        <h1>{amateurSoccerGroup.userData.name}</h1>
+    </div>)
 }

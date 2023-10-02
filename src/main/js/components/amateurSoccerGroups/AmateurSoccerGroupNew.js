@@ -1,8 +1,9 @@
 import React, {useState} from 'react'
 import {v4 as uuidv4} from 'uuid';
+import {fetchGraphQL} from "../../api/fetchGraphQL";
 
 export function AmateurSoccerGroupNew(
-    {creationUrl, userDataCreationUrl, setCreatedAmateurSoccerGroupUrl}
+    {setCreatedAmateurSoccerGroupId}
 ) {
     const [formData, setFormData] = useState({
         name: ''
@@ -15,13 +16,8 @@ export function AmateurSoccerGroupNew(
     const handleSubmit = (event) => {
         event.preventDefault()
         const amateurSoccerGroupId = uuidv4()
-        Promise.all([
-            submitAmateurSoccerGroup(creationUrl, amateurSoccerGroupId),
-            submitAmateurSoccerGroupUserData(userDataCreationUrl, amateurSoccerGroupId, formData)
-        ]).then(values => {
-            const [amateurSoccerGroupResult] = values
-            setCreatedAmateurSoccerGroupUrl(amateurSoccerGroupResult?._links?.self?.href)
-        })
+        void submitAmateurSoccerGroup(amateurSoccerGroupId, formData.name)
+        setTimeout(() => setCreatedAmateurSoccerGroupId(amateurSoccerGroupId), 200)
     }
 
     return <div>
@@ -46,28 +42,15 @@ export function AmateurSoccerGroupNew(
     </div>
 }
 
-function submitAmateurSoccerGroup(link, amateurSoccerGroupId) {
-    return fetch(link, {
-        method: 'POST',
-        headers: {
-            "Accept": "application/hal+json",
-            "Content-Type": "application/json"
-        },
-        mode: "cors",
-        body: JSON.stringify({amateurSoccerGroupId: amateurSoccerGroupId})
-    })
-        .then(response => response.json())
-}
-
-function submitAmateurSoccerGroupUserData(link, amateurSoccerGroupId, formData) {
-    return fetch(link, {
-        method: 'POST',
-        headers: {
-            "Accept": "application/hal+json",
-            "Content-Type": "application/json"
-        },
-        mode: "cors",
-        body: JSON.stringify({...formData, amateurSoccerGroupId: amateurSoccerGroupId})
-    })
-        .then(response => response.json())
+function submitAmateurSoccerGroup(amateurSoccerGroupId, name) {
+    return fetchGraphQL(`
+        mutation {
+          createAmateurSoccerGroup(
+            id: "${amateurSoccerGroupId}"
+            name: "${name}"
+          ) {
+            id
+          }
+        }
+    `)
 }

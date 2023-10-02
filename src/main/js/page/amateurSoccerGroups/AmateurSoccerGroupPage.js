@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Outlet, Route, Routes, useNavigate} from "react-router-dom";
-import {useSessionState} from "../../api/useSessionState";
-import {fetchUrl} from "../../api/fetchUrl";
+
 import {MenuContext} from "../App";
 import {AmateurSoccerGroupMenu} from "./AmateurSoccerGroupMenu";
 import {AmateurSoccerGroupView} from "../../components/amateurSoccerGroups/AmateurSoccerGroupView";
@@ -11,22 +10,35 @@ import {PlayerList} from "../../components/amateurSoccerGroups/PlayerList";
 import {PlayerNew} from "../../components/amateurSoccerGroups/PlayerNew";
 import {GamedayList} from "../../components/amateurSoccerGroups/GamedayList";
 import {GamedayNew} from "../../components/amateurSoccerGroups/GamedayNew";
+import {fetchGraphQL} from "../../api/fetchGraphQL";
 
 export function AmateurSoccerGroupPage() {
     const navigate = useNavigate()
     const menu = useContext(MenuContext)
-    const [userDataCreationUrl] = useSessionState("amateurSoccerGroupUserDataCreationUrl") //TODO: weird! Should be replace if used GraphQL
-    const [creationUrl, setCreationUrl] = useSessionState("amateurSoccerGroupPlayerCreationUrl")
-    const [, setGamedayViewUrl] = useState()
+    const amateurSoccerGroupId = menu.amateurSoccerGroup.id.value;
 
+    const [, setGamedayId] = useState()
     useEffect(() => {
-        fetchUrl(menu.amateurSoccerGroup.viewUrl.value).then(amateurSoccerGroup => {
-            menu.amateurSoccerGroup.gamedaysCreationUrl.set(amateurSoccerGroup._links?.["create-gameday"]?.href)
-            menu.amateurSoccerGroup.gamedaysUrl.set(amateurSoccerGroup._links?.["get-gamedays"]?.href)
-            menu.amateurSoccerGroup.calculateRankingUrl.set(amateurSoccerGroup._links?.["calculate-ranking"]?.href)
-            menu.amateurSoccerGroup.playersUrl.set(amateurSoccerGroup._links?.["get-players"]?.href)
-        })
-    }, [menu.amateurSoccerGroup.viewUrl.value]);
+        if (amateurSoccerGroupId === undefined) return;
+
+        fetchGraphQL(`{
+          amateurSoccerGroupById(id: "${amateurSoccerGroupId}") {
+            id
+            userData {
+              name
+            }
+            actions
+          }
+        }`)
+            .then(response => response.data.amateurSoccerGroupById)
+            .then(amateurSoccerGroup => {
+                const actions = Object.values(amateurSoccerGroup.actions)
+                menu.amateurSoccerGroup.gamedaysCreationUrl.set(actions.filter(action => action === "create-gameday").length === 1)
+                menu.amateurSoccerGroup.gamedaysUrl.set(actions.filter(action => action === "get-gamedays").length === 1)
+                menu.amateurSoccerGroup.calculateRankingUrl.set(actions.filter(action => action === "calculate-ranking").length === 1)
+                menu.amateurSoccerGroup.playersUrl.set(actions.filter(action => action === "get-players").length === 1)
+            })
+    }, [amateurSoccerGroupId]);
 
     return <main>
         <AmateurSoccerGroupMenu menu={menu}/>
@@ -36,16 +48,14 @@ export function AmateurSoccerGroupPage() {
         <Routes>
             <Route path="view" element={
                 <AmateurSoccerGroupView
-                    url={menu.amateurSoccerGroup.viewUrl.value}
+                    id={amateurSoccerGroupId}
                 />
             }/>
 
             <Route path="new" element={
                 <AmateurSoccerGroupNew
-                    creationUrl={menu.amateurSoccerGroup.creationUrl.value}
-                    userDataCreationUrl={userDataCreationUrl}
-                    setCreatedAmateurSoccerGroupUrl={(link) => {
-                        menu.amateurSoccerGroup.viewUrl.set(link)
+                    setCreatedAmateurSoccerGroupId={(id) => {
+                        menu.amateurSoccerGroup.id.set(id)
                         navigate('/amateurSoccerGroups/view')
                     }}
                 />
@@ -53,40 +63,37 @@ export function AmateurSoccerGroupPage() {
 
             <Route path="gamedays" element={
                 <GamedayList
-                    url={menu.amateurSoccerGroup.gamedaysUrl.value}
+                    amateurSoccerGroupId={amateurSoccerGroupId}
                     creationRedirectWhenEmptyUrl={"/amateurSoccerGroups/gamedays/new"}
                 />
             }/>
 
             <Route path="gamedays/new" element={
                 <GamedayNew
-                    creationUrl={menu.amateurSoccerGroup.gamedaysCreationUrl.value}
-                    setViewUrl={(link) => {
-                        setGamedayViewUrl(link)
+                    setViewId={(gamedayId) => {
+                        setGamedayId(gamedayId)
                         navigate("/amateurSoccerGroups/gamedays")
                     }}
-                    amateurSoccerGroupUrl={menu.amateurSoccerGroup.viewUrl.value}
+                    amateurSoccerGroupId={amateurSoccerGroupId}
                     playersCreationUrl={"/amateurSoccerGroups/players/new"}
                 />
             }/>
 
             <Route path="ranking" element={
                 <CalculateRanking
-                    url={menu.amateurSoccerGroup.calculateRankingUrl.value}
+                    amateurSoccerGroupId={menu.amateurSoccerGroup.id.value}
                 />
             }/>
 
             <Route path="players" element={
                 <PlayerList
-                    url={menu.amateurSoccerGroup.playersUrl.value}
-                    setCreationUrl={setCreationUrl}
+                    amateurSoccerGroupId={amateurSoccerGroupId}
                     toPlayerNew={() => navigate("/amateurSoccerGroups/players/new")}
                 />
             }/>
 
             <Route path="players/new" element={
                 <PlayerNew
-                    creationUrl={creationUrl}
                     toPlayerList={() => navigate("/amateurSoccerGroups/players")}
                 />
             }/>

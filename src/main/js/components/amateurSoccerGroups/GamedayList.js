@@ -1,45 +1,60 @@
 import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
-import {fetchUrl} from "../../api/fetchUrl";
 import classNames from "classnames";
+import {fetchGraphQL} from "../../api/fetchGraphQL";
 
 export function GamedayList(
-    {url, creationRedirectWhenEmptyUrl}
+    {amateurSoccerGroupId, creationRedirectWhenEmptyUrl}
 ) {
     const [gameday, setGameday] = useState()
-    const [previousGamedayUrl, setPreviousGamedayUrl] = useState()
-    const [nextGamedayUrl, setNextGamedayUrl] = useState()
+    const [hasPreviousGameday, setPreviousGameday] = useState(false)
+    const [hasNextGameday, setNextGameday] = useState(false)
     const [currentMatchIndex, setCurrentMatchIndex] = useState(0)
-    const currentMatch = gameday?.matches?.[currentMatchIndex]
+    const [pageNumber, setPageNumber] = useState(0)
 
-    const fetchGameday = (url) => fetchUrl(url).then((data) => {
-        if (data === undefined) return
-        setPreviousGamedayUrl(data._links?.["next"]?.href)
-        setNextGamedayUrl(data._links?.["prev"]?.href)
+    const fetchGameday = () => fetchGraphQL(`{
+          gamedays(
+            amateurSoccerGroupId: "${amateurSoccerGroupId}"
+            page: ${pageNumber}
+            size: 1
+            sort: "date"
+            direction: DESC
+          ) {
+            data {
+              date
+              matches {
+                players {
+                  playerId
+                  userData {
+                    name
+                  }
+                  team
+                  goalsInFavor
+                  ownGoals
+                  yellowCards
+                  blueCards
+                  redCards
+                }
+              }
+              actions
+            }
+            actions
+            page {
+              size
+              totalElements
+              totalPages
+              number
+            }
+          }
+        }`)
+        .then(response => response.data.gamedays)
+        .then(gamedays => {
+            setPreviousGameday(gamedays.actions.filter(action => action === "next").length === 1)
+            setNextGameday(gamedays.actions.filter(action => action === "prev").length === 1)
+            setGameday(gamedays.data[0])
+        })
 
-        fetchUrl(data._embedded?.gamedays?.[0]._links.self.href)
-            .then(gameday => {
-                const playersUserDataHref = gameday.matches
-                    .flatMap(match => match.players)
-                    .map(player => player.playerId)
-                    .map(playerId => gameday._links["get-player-user-data-" + playerId].href)
-                Promise.all(playersUserDataHref.map(fetchUrl)).then(values => {
-                    gameday.matches.forEach(match => {
-                        match.players.forEach(playerStatistic => {
-                            const player = values.find(it => it._links.self.href.includes(playerStatistic.playerId))
-                            playerStatistic.playerName = player.name
-                        })
-                        match.players = match.players.sort((a, b) => a.playerName < b.playerName ? -1 : a.playerName > b.playerName)
-                    })
-                    setGameday(gameday)
-                })
-            })
-    })
-
-    useEffect(() => {
-        if (url === undefined) return
-        void fetchGameday(url + "?size=1&sort=date,desc")
-    }, [url])
+    useEffect(() => void fetchGameday(amateurSoccerGroupId), [amateurSoccerGroupId, pageNumber])
 
     return <div>
         <h1>Gameday</h1>
@@ -51,17 +66,23 @@ export function GamedayList(
         </p>}
         <div className="row justify-content-between">
             <div className="col-4">
-                {previousGamedayUrl &&
+                {hasPreviousGameday &&
                     <Link to="#"
-                          onClick={() => fetchGameday(previousGamedayUrl)}
+                          onClick={() => {
+                              setCurrentMatchIndex(0)
+                              setPageNumber((prevState) => prevState + 1);
+                          }}
                           className="btn btn-primary"
                     >Previous</Link>}
             </div>
             <div className="col-4">
-                {nextGamedayUrl &&
+                {hasNextGameday &&
                     <Link
                         to="#"
-                        onClick={() => fetchGameday(nextGamedayUrl)}
+                        onClick={() => {
+                            setCurrentMatchIndex(0)
+                            setPageNumber((prevState) => prevState - 1);
+                        }}
                         className="btn btn-primary"
                     >Next</Link>}
             </div>
@@ -89,7 +110,10 @@ export function GamedayList(
                             <Link
                                 to="#"
                                 onClick={() => setCurrentMatchIndex(matchIndex)}
-                                className="page-link"
+                                className={
+                                    "page-link "
+                                    + (matchIndex === currentMatchIndex ? "active" : "")
+                                }
                             > {matchIndex + 1} </Link>
                         </li>
                     )}
@@ -119,15 +143,17 @@ export function GamedayList(
                 </tr>
                 </thead>
                 <tbody>
-                {currentMatch.players.map((player, playerIndex) => <tr key={playerIndex}>
-                    <th scope="row">{player.playerName}</th>
-                    <td>{player.team}</td>
-                    <td>{player.goalsInFavor}</td>
-                    <td>{player.ownGoals}</td>
-                    <td>{player.yellowCards}</td>
-                    <td>{player.blueCards}</td>
-                    <td>{player.redCards}</td>
-                </tr>)}
+                {gameday?.matches?.[currentMatchIndex].players
+                    .sort((a, b) => a.userData.name < b.userData.name ? -1 : a.userData.name > b.userData.name)
+                    .map(player => (<tr key={`${currentMatchIndex}-${player.playerId}`}>
+                        <th scope="row">{player.userData.name}</th>
+                        <td>{player.team}</td>
+                        <td>{player.goalsInFavor}</td>
+                        <td>{player.ownGoals}</td>
+                        <td>{player.yellowCards}</td>
+                        <td>{player.blueCards}</td>
+                        <td>{player.redCards}</td>
+                    </tr>))}
                 </tbody>
             </table>
         </div>}
