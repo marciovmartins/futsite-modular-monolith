@@ -1,11 +1,9 @@
 import React, {createContext, useEffect, useState} from "react";
 import {Link, Outlet} from "react-router-dom";
 import {useSessionState} from "../api/useSessionState";
-import {fetchUrl} from "../api/fetchUrl";
 
 export default function App() {
     const [amateurSoccerGroupCreationUrl, setAmateurSoccerGroupCreationUrl] = useSessionState("amateurSoccerGroupCreationUrl")
-    const [, setAmateurSoccerGroupUserDataCreationUrl] = useSessionState("amateurSoccerGroupUserDataCreationUrl")
     const [amateurSoccerGroupViewUrl, setAmateurSoccerGroupViewUrl] = useSessionState("amateurSoccerGroupViewUrl")
     const [amateurSoccerGroupGamedaysUrl, setAmateurSoccerGroupGamedaysUrl] = useSessionState("amateurSoccerGroupGamedaysUrl")
     const [amateurSoccerGroupGamedaysCreationUrl, setAmateurSoccerGroupGamedaysCreationUrl] = useSessionState("amateurSoccerGroupGamedaysCreationUrl")
@@ -17,7 +15,7 @@ export default function App() {
                 value: amateurSoccerGroupCreationUrl,
                 set: setAmateurSoccerGroupCreationUrl,
             },
-            viewUrl: {
+            id: {
                 value: amateurSoccerGroupViewUrl,
                 set: setAmateurSoccerGroupViewUrl,
             },
@@ -42,22 +40,12 @@ export default function App() {
 
     const [amateurSoccerGroups, setAmateurSoccerGroups] = useState([])
     useEffect(() => {
-        fetchAmateurSoccerGroups().then((list) => {
-            setAmateurSoccerGroupCreationUrl(list._links?.create?.href)
-            setAmateurSoccerGroupUserDataCreationUrl(list._links?.["create-user-data"]?.href)
-            Promise.all(list._embedded.amateurSoccerGroups.map(it => fetchUrl(it._links["get-user-data"].href)))
-                .then(values => {
-                    setAmateurSoccerGroups(values
-                        .sort((a, b) => a.name < b.name ? -1 : a.name > b.name)
-                        .map((userData) => ({
-                            name: userData.name,
-                            url: list._embedded.amateurSoccerGroups
-                                .filter((row) => row._links["get-user-data"].href === userData._links["self"].href)
-                                .map((row) => row._links["self"].href)
-                        }))
-                    )
-                })
-        })
+        fetchAmateurSoccerGroups()
+            .then(response => response.data.allAmateurSoccerGroups)
+            .then((allAmateurSoccerGroups) => {
+                setAmateurSoccerGroupCreationUrl(allAmateurSoccerGroups.actions.filter(action => action === 'create').length === 1)
+                setAmateurSoccerGroups(allAmateurSoccerGroups.data)
+            })
     }, [])
 
     return (
@@ -90,10 +78,10 @@ export default function App() {
                                         <li key={amateurSoccerGroupIndex}>
                                             <Link to="/amateurSoccerGroups/view"
                                                   onClick={() => {
-                                                      setAmateurSoccerGroupViewUrl(amateurSoccerGroup.url)
+                                                      setAmateurSoccerGroupViewUrl(amateurSoccerGroup.id)
                                                   }}
                                                   className="dropdown-item">
-                                                {amateurSoccerGroup.name}
+                                                {amateurSoccerGroup.userData.name}
                                             </Link>
                                         </li>)}
                                     {amateurSoccerGroups.length > 0 && amateurSoccerGroupCreationUrl &&
@@ -118,9 +106,26 @@ export default function App() {
 export const MenuContext = createContext(null)
 
 function fetchAmateurSoccerGroups() {
-    return fetch("http://localhost:8080/api/amateurSoccerGroups", {
-        method: 'GET',
-        headers: {"Accept": "application/hal+json"},
-        mode: "cors"
+    return fetch("http://localhost:8080/graphql", {
+        method: 'POST',
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        },
+        mode: "cors",
+        body: JSON.stringify({
+            query: `{
+          allAmateurSoccerGroups {
+            data {
+              id
+              userData {
+                name
+              }
+              actions
+            }
+            actions
+          }
+        }`
+        })
     }).then(response => response.json())
 }

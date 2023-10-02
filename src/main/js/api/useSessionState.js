@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import {useState} from "react";
 
 export function useSessionState(key, initialState) {
     let sessionState = sessionStorage.getItem("useSessionState-" + key);

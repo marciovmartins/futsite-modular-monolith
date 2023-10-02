@@ -1,0 +1,136 @@
+type Query {
+    allAmateurSoccerGroups: AllAmateurSoccerGroups!
+    amateurSoccerGroupById(id: ID!): AmateurSoccerGroup
+    gamedays(amateurSoccerGroupId: ID!, page: Int, size: Int, sort: String, direction: Direction): Gamedays
+    playersByAmateurSoccerGroupId(amateurSoccerGroupId: ID!): Players
+    calculateRanking(amateurSoccerGroupId: ID!, period: PeriodInput!): Ranking
+}
+
+type Mutation {
+    createAmateurSoccerGroup(id: ID! name: String) : AmateurSoccerGroup
+    registerGameday(id: ID!, amateurSoccerGroupId: ID!, date: String!, matches: [GamedayMatchToCreate]) : Gameday
+}
+
+type AllAmateurSoccerGroups {
+    data: [AmateurSoccerGroup]!
+    actions: [String]
+}
+
+type AmateurSoccerGroup {
+    id: ID!
+    userData: AmateurSoccerGroupUserData
+    actions: [String]
+}
+
+type AmateurSoccerGroupUserData {
+    id: ID!
+    name: String!
+    actions: [String]
+}
+
+type Gamedays {
+    data: [Gameday]!
+    actions: [String]
+    page: Page
+}
+
+type Gameday {
+    id: ID
+    amateurSoccerGroupId: ID
+    date: String
+    matches: [GamedayMatch]
+    actions: [String]
+}
+
+type GamedayMatch {
+    players: [GamedayMatchPlayerStatistic]
+}
+
+type GamedayMatchPlayerStatistic {
+    playerId: ID
+    userData: GamedayMatchPlayerStatisticUserData
+    team: String
+    goalsInFavor: Int
+    ownGoals: Int
+    yellowCards: Int
+    blueCards: Int
+    redCards: Int
+}
+
+type GamedayMatchPlayerStatisticUserData {
+    playerId: ID
+    name: String
+}
+
+type Players {
+    data: [Player]!
+    actions: [String]
+}
+
+type Player {
+    id: ID
+    userData: PlayerUserData
+    actions: [String]
+}
+
+type PlayerUserData {
+    name: String
+}
+
+enum Direction {
+    ASC, DESC
+}
+
+type Page {
+    size: Int
+    totalElements: Int
+    totalPages: Int
+    number: Int
+}
+
+type Ranking {
+    content: RankingContent!
+    actions: [String]!
+}
+
+type RankingContent {
+    amateurSoccerGroupId: ID,
+    period: Period,
+    matches: Int,
+    playerStatistics: [PlayerStatistic],
+}
+
+type Period {
+    from: String!
+    to: String!
+}
+
+type PlayerStatistic {
+    playerId: ID!
+    userData: PlayerUserData
+    matches: Int!
+    victories: Int!
+    draws: Int!
+    defeats: Int!
+    goalsInFavor: Int!
+    ownGoals: Int!
+}
+
+input GamedayMatchToCreate {
+    players: [GamedayMatchPlayerStatisticToCreate]!
+}
+
+input GamedayMatchPlayerStatisticToCreate {
+    playerId: ID
+    team: String
+    goalsInFavor: Int
+    ownGoals: Int
+    yellowCards: Int
+    blueCards: Int
+    redCards: Int
+}
+
+input PeriodInput {
+    from: String!,
+    to: String!
+}

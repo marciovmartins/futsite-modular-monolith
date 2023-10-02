@@ -1,34 +1,38 @@
 import React, {useEffect, useState} from "react";
-import {fetchUrl} from "../../api/fetchUrl";
 import {Link} from "react-router-dom";
 
+import {fetchGraphQL} from "../../api/fetchGraphQL";
+
 export function PlayerList(
-    {url, toPlayerNew, setCreationUrl}
+    {amateurSoccerGroupId, toPlayerNew}
 ) {
     const [players, setPlayers] = useState([])
-    const [hasCreationUrl, setHasCreationUrl] = useState(false)
+    const [hasPlayerCreationAction, setHasPlayerCreationAction] = useState(false)
 
     useEffect(() => {
-        if (url === undefined) return
-        fetchUrl(url)
-            .then(response => {
-                const creationUrl = response._links?.create?.href;
-                setCreationUrl(creationUrl)
-                setHasCreationUrl(creationUrl != null)
-                return response
+        fetchGraphQL(`{
+            playersByAmateurSoccerGroupId(amateurSoccerGroupId: "${amateurSoccerGroupId}") {
+                data {
+                    id
+                    userData {
+                        name
+                    }
+                    actions
+                }
+                actions
+            }
+        }`)
+            .then(response => response.data.playersByAmateurSoccerGroupId)
+            .then(players => {
+                setHasPlayerCreationAction(players.actions.filter(action => action === 'create').length === 1)
+                setPlayers(players.data)
             })
-            .then(response => response._embedded?.players)
-            .then(players => players?.flatMap(player => player._links["get-player-user-data"].href))
-            .then(playerUserDataUrls => {
-                if (playerUserDataUrls)
-                    Promise.all(playerUserDataUrls.map(fetchUrl)).then(setPlayers)
-            })
-    }, [url])
+    }, [amateurSoccerGroupId])
 
     return <div>
         <h1>
             Players
-            {hasCreationUrl &&
+            {hasPlayerCreationAction &&
                 <Link to="#"
                       onClick={(e) => {
                           e.preventDefault()
@@ -47,12 +51,14 @@ export function PlayerList(
             </tr>
             </thead>
             <tbody>
-            {players.length > 0 && players.map((player, playerIndex) =>
-                <tr key={playerIndex}>
-                    <th scope="row">{playerIndex + 1}</th>
-                    <td>{player.name}</td>
-                </tr>
-            )}
+            {players.length > 0 && players
+                .sort((a, b) => a.userData.name < b.userData.name ? -1 : a.userData.name > b.userData.name)
+                .map((player, playerIndex) =>
+                    <tr key={playerIndex}>
+                        <th scope="row">{playerIndex + 1}</th>
+                        <td>{player.userData.name}</td>
+                    </tr>
+                )}
             {players.length === 0 &&
                 <tr>
                     <th colSpan="2">

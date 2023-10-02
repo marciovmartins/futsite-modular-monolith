@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
 import {v4 as uuidv4} from "uuid";
-import {fetchUrl} from "../../api/fetchUrl";
 import {Link} from "react-router-dom";
 
+import {fetchGraphQL} from "../../api/fetchGraphQL";
+
 export function GamedayNew(
-    {creationUrl, setViewUrl, amateurSoccerGroupUrl, playersCreationUrl}
+    {setViewId, amateurSoccerGroupId, playersCreationUrl}
 ) {
     const [formData, setFormData] = useState({
         date: '',
@@ -14,27 +15,29 @@ export function GamedayNew(
     const [players, setPlayers] = useState([])
 
     useEffect(() => {
-        fetchUrl(amateurSoccerGroupUrl).then(amateurSoccerGroup => {
-            fetchUrl(amateurSoccerGroup._links["get-players"].href).then(players => {
-                if (players && players._embedded && players._embedded.players) {
-                    Promise.all(players._embedded.players.map(player => fetchUrl(player._links["get-player-user-data"].href))).then(values => {
-                        let list = values.map(player => ({
-                            playerId: extractId(player._links.self.href),
-                            name: player.name,
-                        }));
-                        setPlayers(list)
-                    })
+        fetchGraphQL(`{
+            playersByAmateurSoccerGroupId(amateurSoccerGroupId: "${amateurSoccerGroupId}") {
+                data {
+                    id
+                    userData {
+                        name
+                    }
+                    actions
                 }
+                actions
+            }
+        }`)
+            .then(response => response.data.playersByAmateurSoccerGroupId)
+            .then(players => {
+                setPlayers(players.data)
             })
-        })
-    }, [])
+    }, [amateurSoccerGroupId])
 
     useEffect(() => {
         const rows = players
-            .sort((a, b) => a.name < b.name ? -1 : a.name > b.name)
             .map(player => ({
-                playerId: player.playerId,
-                playerName: player.name,
+                playerId: player.id,
+                playerName: player.userData.name,
                 team: "",
                 goalsInFavor: 0,
                 ownGoals: 0,
@@ -57,18 +60,18 @@ export function GamedayNew(
 
     const handlePlayerStatisticChange = (event) => {
         const {name, value} = event.target
-        const [_, matchIndex, playerStatisticIndex, field] = /^match\.(.*?)\.playerStatistic\.(.*?)\.(.*?)$/.exec(name)
+        const [_, matchIndex, playerId, field] = /^match\.(.*?)\.playerStatistic\.(.*?)\.(.*?)$/.exec(name)
         setFormData((prevFormData) => {
-            prevFormData["matches"][matchIndex]["players"][playerStatisticIndex][field] = value
+            prevFormData["matches"][matchIndex]["players"][playerId][field] = value
             return {...prevFormData}
         })
     }
 
     const handleSubmit = (event) => {
         event.preventDefault()
-        submitGameday(creationUrl, formData)
-            .then(data => data._links.self.href)
-            .then(setViewUrl)
+        submitGameday(amateurSoccerGroupId, formData)
+            .then(response => response.data.registerGameday.id)
+            .then(setViewId)
     }
 
     return <div>
@@ -112,95 +115,97 @@ export function GamedayNew(
                             </tr>
                             </thead>
                             <tbody>
-                            {match.players.map((playerStatistic, playerStatisticIndex) => {
-                                    const playerStatisticKey = matchKey + ".playerStatistic." + playerStatisticIndex
-                                    return <tr key={playerStatisticKey}>
-                                        <td>
-                                            <input type={"hidden"}
-                                                   name={playerStatisticKey + ".playerId"}
-                                                   value={playerStatistic.playerId}
-                                            />
-                                            {playerStatistic.playerName}
-                                        </td>
-                                        <td width={"90px"}>
-                                            <input type={"radio"}
-                                                   className={"btn-check"}
-                                                   name={playerStatisticKey + ".team"}
-                                                   id={playerStatisticKey + ".radioTeamA"}
-                                                   value={"A"}
-                                                   checked={playerStatistic.team === 'A' ? 'checked' : ''}
-                                                   onChange={handlePlayerStatisticChange}
-                                            />
-                                            <label className={"btn btn-secondary"}
-                                                   htmlFor={playerStatisticKey + ".radioTeamA"}>A</label>
+                            {match.players
+                                .sort((a, b) => a.playerName < b.playerName ? -1 : a.playerName > b.playerName)
+                                .map((playerStatistic, playerStatisticIndex) => {
+                                        const playerStatisticKey = matchKey + ".playerStatistic." + playerStatisticIndex
+                                        return <tr key={playerStatisticKey}>
+                                            <td>
+                                                <input type={"hidden"}
+                                                       name={playerStatisticKey + ".playerId"}
+                                                       value={playerStatistic.playerId}
+                                                />
+                                                {playerStatistic.playerName}
+                                            </td>
+                                            <td width={"90px"}>
+                                                <input type={"radio"}
+                                                       className={"btn-check"}
+                                                       name={playerStatisticKey + ".team"}
+                                                       id={playerStatisticKey + ".radioTeamA"}
+                                                       value={"A"}
+                                                       checked={playerStatistic.team === 'A'}
+                                                       onChange={handlePlayerStatisticChange}
+                                                />
+                                                <label className={"btn btn-secondary"}
+                                                       htmlFor={playerStatisticKey + ".radioTeamA"}>A</label>
 
-                                            <input type={"radio"}
-                                                   className={"btn-check"}
-                                                   name={playerStatisticKey + ".team"}
-                                                   id={playerStatisticKey + ".radioTeamB"}
-                                                   value={"B"}
-                                                   checked={playerStatistic.team === 'B' ? 'checked' : ''}
-                                                   onChange={handlePlayerStatisticChange}
-                                            />
-                                            <label className={"btn btn-secondary"}
-                                                   htmlFor={playerStatisticKey + ".radioTeamB"}>B</label>
-                                        </td>
-                                        <td>
-                                            <input type="number"
-                                                   id={playerStatisticKey + ".goalsInFavor"}
-                                                   className={"form-control"}
-                                                   name={playerStatisticKey + ".goalsInFavor"}
-                                                   value={playerStatistic.goalsInFavor}
-                                                   onChange={handlePlayerStatisticChange}
-                                            />
-                                        </td>
-                                        <td>
-                                            <label htmlFor={playerStatisticKey + ".ownGoals"}>
-                                                <input type="number"
-                                                       id={playerStatisticKey + ".ownGoals"}
-                                                       className={"form-control"}
-                                                       name={playerStatisticKey + ".ownGoals"}
-                                                       value={playerStatistic.ownGoals}
+                                                <input type={"radio"}
+                                                       className={"btn-check"}
+                                                       name={playerStatisticKey + ".team"}
+                                                       id={playerStatisticKey + ".radioTeamB"}
+                                                       value={"B"}
+                                                       checked={playerStatistic.team === 'B'}
                                                        onChange={handlePlayerStatisticChange}
                                                 />
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label htmlFor={playerStatisticKey + ".yellowCards"}>
+                                                <label className={"btn btn-secondary"}
+                                                       htmlFor={playerStatisticKey + ".radioTeamB"}>B</label>
+                                            </td>
+                                            <td>
                                                 <input type="number"
-                                                       id={playerStatisticKey + ".yellowCards"}
+                                                       id={playerStatisticKey + ".goalsInFavor"}
                                                        className={"form-control"}
-                                                       name={playerStatisticKey + ".yellowCards"}
-                                                       value={playerStatistic.yellowCards}
+                                                       name={playerStatisticKey + ".goalsInFavor"}
+                                                       value={playerStatistic.goalsInFavor}
                                                        onChange={handlePlayerStatisticChange}
                                                 />
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label htmlFor={playerStatisticKey + ".blueCards"}>
-                                                <input type="number"
-                                                       id={playerStatisticKey + ".blueCards"}
-                                                       className={"form-control"}
-                                                       name={playerStatisticKey + ".blueCards"}
-                                                       value={playerStatistic.blueCards}
-                                                       onChange={handlePlayerStatisticChange}
-                                                />
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label htmlFor={playerStatisticKey + ".redCards"}>
-                                                <input type="number"
-                                                       id={playerStatisticKey + ".redCards"}
-                                                       className={"form-control"}
-                                                       name={playerStatisticKey + ".redCards"}
-                                                       value={playerStatistic.redCards}
-                                                       onChange={handlePlayerStatisticChange}
-                                                />
-                                            </label>
-                                        </td>
-                                    </tr>
-                                }
-                            )}
+                                            </td>
+                                            <td>
+                                                <label htmlFor={playerStatisticKey + ".ownGoals"}>
+                                                    <input type="number"
+                                                           id={playerStatisticKey + ".ownGoals"}
+                                                           className={"form-control"}
+                                                           name={playerStatisticKey + ".ownGoals"}
+                                                           value={playerStatistic.ownGoals}
+                                                           onChange={handlePlayerStatisticChange}
+                                                    />
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <label htmlFor={playerStatisticKey + ".yellowCards"}>
+                                                    <input type="number"
+                                                           id={playerStatisticKey + ".yellowCards"}
+                                                           className={"form-control"}
+                                                           name={playerStatisticKey + ".yellowCards"}
+                                                           value={playerStatistic.yellowCards}
+                                                           onChange={handlePlayerStatisticChange}
+                                                    />
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <label htmlFor={playerStatisticKey + ".blueCards"}>
+                                                    <input type="number"
+                                                           id={playerStatisticKey + ".blueCards"}
+                                                           className={"form-control"}
+                                                           name={playerStatisticKey + ".blueCards"}
+                                                           value={playerStatistic.blueCards}
+                                                           onChange={handlePlayerStatisticChange}
+                                                    />
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <label htmlFor={playerStatisticKey + ".redCards"}>
+                                                    <input type="number"
+                                                           id={playerStatisticKey + ".redCards"}
+                                                           className={"form-control"}
+                                                           name={playerStatisticKey + ".redCards"}
+                                                           value={playerStatistic.redCards}
+                                                           onChange={handlePlayerStatisticChange}
+                                                    />
+                                                </label>
+                                            </td>
+                                        </tr>
+                                    }
+                                )}
                             </tbody>
                         </table>
                     }
@@ -210,25 +215,40 @@ export function GamedayNew(
     </div>
 }
 
-function submitGameday(link, formData) {
-    const parsedDate = formData.date + "T00:00:00.000Z"
+function submitGameday(amateurSoccerGroupId, formData) {
+    const parsedDate = formData.date + "T00:00:00.000Z";
 
-    formData.matches.forEach((match) => {
-        match.players = match.players.filter((player) => player.team !== '')
+    const matchesGraphQL = formData.matches.map((match) => {
+        const playersGraphQL = match.players
+            .filter((player) => player.team !== '')
+            .map(player => `
+                    {
+                      playerId: "${player.playerId}"
+                      team: "${player.team}"
+                      goalsInFavor: ${player.goalsInFavor}
+                      ownGoals: ${player.ownGoals}
+                      yellowCards: ${player.yellowCards}
+                      blueCards: ${player.blueCards}
+                      redCards: ${player.redCards}
+                    }
+            `)
+        return `            {
+              players: [${playersGraphQL.join()}]
+            }`;
     })
 
-    return fetch(link, {
-        method: 'POST',
-        headers: {
-            "Accept": "application/hal+json",
-            "Content-Type": "application/json"
-        },
-        mode: "cors",
-        body: JSON.stringify({...formData, date: parsedDate, gamedayId: uuidv4()})
-    })
-        .then(response => response.json())
-}
+    const registerGamedayMutation = `
+        mutation {
+          registerGameday(
+            id: "${uuidv4()}"
+            amateurSoccerGroupId: "${amateurSoccerGroupId}"
+            date: "${parsedDate}"
+            matches: [${matchesGraphQL.join()}]
+          ) {
+            id
+          }
+        }
+    `;
 
-function extractId(url) {
-    return url.slice(url.lastIndexOf("/") + 1)
+    return fetchGraphQL(registerGamedayMutation)
 }
