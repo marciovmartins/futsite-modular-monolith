@@ -1,7 +1,8 @@
-# Learning How to Create a Good Modular Monolith
+# :soccer: Learning How to Create a Good Modular Monolith
 
 [<img src="doc/icons/gitlab-color.svg" width="25px"/>](https://about.gitlab.com/)
 [<img src="doc/icons/kotlin-color.svg" width="25px"/>](https://kotlinlang.org/)
+[<img src="doc/icons/docker-color.svg" width="25px"/>](https://www.docker.com/)
 [<img src="doc/icons/apachemaven-color.svg" width="25px"/>](https://maven.apache.org/)
 [<img src="doc/icons/springboot-color.svg" width="25px"/>](https://spring.io/projects/spring-boot/)
 [<img src="doc/icons/mysql-color.svg" width="25px"/>](https://www.mysql.com/)
@@ -21,16 +22,16 @@
 
 ---
 
-## Index
+## :arrow\_heading\_up: Index
 
-- [Index](#index)
-- [About](#about)
-- [Event Storming Diagram](#event-storming-diagram)
-- [ADR - Architecture Decision Records](#adr---architecture-decision-records)
+- [:arrow\_heading\_up: Index](#index)
+- [:green\_book: About](#about)
+- [:umbrella: Event Storming Diagram](#event-storming-diagram)
+- [:brain: ADR - Architecture Decision Records](#adr---architecture-decision-records)
 
 ---
 
-## About
+## :green\_book: About
 
 Started in September 2022, the project has the goal to study and apply different technics to create a good modular 
 monolith. This is a project of a client that I had from 2005 to 2011 and the company does not exist anymore and I use
@@ -51,14 +52,14 @@ resources was changed to be [HATEOAS](https://spring.io/projects/spring-hateoas)
 After learn about React.js, make sense to have [Spring for GraphQL](https://spring.io/projects/spring-graphql) and avoid
 multiple sequential call to the backend.
 
-## Event Storming Diagram
+## :umbrella: Event Storming Diagram
 
 In August 2023 I decided to redo the event storming diagram. The new diagram groups the Amateur Soccer Group and Ranking
 aggregates and create a new User aggregate. Those changes will be added to the code soon.
 
 <img src="./doc/event-storming.jpg" alt="event storming diagram with two bounded context, the authorisation bounded context and the amateur soccer group bounded context.">
 
-## ADR - Architecture Decision Records
+## :brain: ADR - Architecture Decision Records
 
 - [0001: Record architecture decisions](doc/architecture/decisions/0001-record-architecture-decisions.md)
 - [0002: Spring boot as main framework](doc/architecture/decisions/0002-spring-boot-as-main-framework.md)
