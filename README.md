@@ -60,12 +60,12 @@ aggregates and create a new User aggregate. Those changes will be added to the c
 
 ## ADR - Architecture Decision Records
 
-- [0001-record-architecture-decisions.md](doc/architecture/decisions/0001-record-architecture-decisions.md)
-- [0002-spring-boot-as-main-framework.md](doc/architecture/decisions/0002-spring-boot-as-main-framework.md)
-- [0003-api-versioning.md](doc/architecture/decisions/0003-api-versioning.md)
-- [0004-openapi-api-documentation.md](doc/architecture/decisions/0004-openapi-api-documentation.md)
-- [0005-gitlab-pipeline-for-tests.md](doc/architecture/decisions/0005-gitlab-pipeline-for-tests.md)
-- [0006-gitlab-pipeline-to-deploy-stage-and-production.md](doc/architecture/decisions/0006-gitlab-pipeline-to-deploy-stage-and-production.md)
-- [0007-identity-and-access-mgmt-for-the-apis.md](doc/architecture/decisions/0007-identity-and-access-mgmt-for-the-apis.md)
-- [0008-enforcing-the-architecture-with-archunit.md](doc/architecture/decisions/0008-enforcing-the-architecture-with-archunit.md)
-- [0009-architecture-design.md](doc/architecture/decisions/0009-architecture-design.md)
+- [0001: Record architecture decisions](doc/architecture/decisions/0001-record-architecture-decisions.md)
+- [0002: Spring boot as main framework](doc/architecture/decisions/0002-spring-boot-as-main-framework.md)
+- [0003: Api Versioning](doc/architecture/decisions/0003-api-versioning.md)
+- [0004: OpenAPI Api Documentation](doc/architecture/decisions/0004-openapi-api-documentation.md)
+- [0005: Gitlab pipeline for Tests](doc/architecture/decisions/0005-gitlab-pipeline-for-tests.md)
+- [0006: Gitlab pipeline to deploy Stage and Production](doc/architecture/decisions/0006-gitlab-pipeline-to-deploy-stage-and-production.md)
+- [0007: Setup Identity and Access Mgmt for the Apis](doc/architecture/decisions/0007-identity-and-access-mgmt-for-the-apis.md)
+- [0008: Enforcing the Architecture with ArchUnit](doc/architecture/decisions/0008-enforcing-the-architecture-with-archunit.md)
+- [0009: Architecture Design](doc/architecture/decisions/0009-architecture-design.md)
