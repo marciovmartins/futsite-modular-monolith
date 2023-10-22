@@ -34,7 +34,7 @@
 
 Started in September 2022, the project has the goal to study and apply different technics to create a good modular 
 monolith. This is a project of a client that I had from 2005 to 2011 and the company does not exist anymore and I use
-their use cases to study new development approach.
+their use cases to study new development approach. It is a Management Tool for Soccer Matches.
 
 Created the first [ADR](https://adr.github.io/) to define [the architecture decisions](/doc/architecture/decisions),
 setup Spring Boot and the gitlab pipeline pointing to my personal kubernetes cluster with 3 raspberry pi.
