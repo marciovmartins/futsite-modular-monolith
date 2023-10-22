@@ -24,10 +24,10 @@
 
 ## :arrow\_heading\_up: Index
 
-- [:arrow\_heading\_up: Index](#index)
-- [:green\_book: About](#about)
-- [:umbrella: Event Storming Diagram](#event-storming-diagram)
-- [:brain: ADR - Architecture Decision Records](#adr---architecture-decision-records)
+- [:arrow\_heading\_up: Index](#arrowheadingup-index)
+- [:green\_book: About](#greenbook-about)
+- [:umbrella: Event Storming Diagram](#umbrella-event-storming-diagram)
+- [:brain: ADR - Architecture Decision Records](#brain-adr---architecture-decision-records)
 
 ---
 
