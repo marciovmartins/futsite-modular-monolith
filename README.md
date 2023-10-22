@@ -26,6 +26,7 @@
 - [Index](#index)
 - [About](#about)
 - [Event Storming Diagram](#event-storming-diagram)
+- [ADR - Architecture Decision Records](#adr---architecture-decision-records)
 
 ---
 
@@ -56,3 +57,15 @@ In August 2023 I decided to redo the event storming diagram. The new diagram gro
 aggregates and create a new User aggregate. Those changes will be added to the code soon.
 
 <img src="./doc/event-storming.jpg" alt="event storming diagram with two bounded context, the authorisation bounded context and the amateur soccer group bounded context.">
+
+## ADR - Architecture Decision Records
+
+- [0001-record-architecture-decisions.md](doc/architecture/decisions/0001-record-architecture-decisions.md)
+- [0002-spring-boot-as-main-framework.md](doc/architecture/decisions/0002-spring-boot-as-main-framework.md)
+- [0003-api-versioning.md](doc/architecture/decisions/0003-api-versioning.md)
+- [0004-openapi-api-documentation.md](doc/architecture/decisions/0004-openapi-api-documentation.md)
+- [0005-gitlab-pipeline-for-tests.md](doc/architecture/decisions/0005-gitlab-pipeline-for-tests.md)
+- [0006-gitlab-pipeline-to-deploy-stage-and-production.md](doc/architecture/decisions/0006-gitlab-pipeline-to-deploy-stage-and-production.md)
+- [0007-identity-and-access-mgmt-for-the-apis.md](doc/architecture/decisions/0007-identity-and-access-mgmt-for-the-apis.md)
+- [0008-enforcing-the-architecture-with-archunit.md](doc/architecture/decisions/0008-enforcing-the-architecture-with-archunit.md)
+- [0009-architecture-design.md](doc/architecture/decisions/0009-architecture-design.md)
